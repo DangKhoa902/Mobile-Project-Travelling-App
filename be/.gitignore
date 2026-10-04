@@ -1,0 +1,4 @@
+# Hạn chế lên github
+node_modules/
+dist/
+.env
