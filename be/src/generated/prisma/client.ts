@@ -47,12 +47,82 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model Facility
+ * 
+ */
+export type Facility = Prisma.FacilityModel
+/**
  * Model Destination
  * 
  */
 export type Destination = Prisma.DestinationModel
 /**
+ * Model DestinationImage
+ * 
+ */
+export type DestinationImage = Prisma.DestinationImageModel
+/**
+ * Model Package
+ * 
+ */
+export type Package = Prisma.PackageModel
+/**
+ * Model RoomType
+ * 
+ */
+export type RoomType = Prisma.RoomTypeModel
+/**
+ * Model AddonService
+ * 
+ */
+export type AddonService = Prisma.AddonServiceModel
+/**
+ * Model Voucher
+ * 
+ */
+export type Voucher = Prisma.VoucherModel
+/**
  * Model Booking
  * 
  */
 export type Booking = Prisma.BookingModel
+/**
+ * Model BookingService
+ * 
+ */
+export type BookingService = Prisma.BookingServiceModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
+ * Model Favorite
+ * 
+ */
+export type Favorite = Prisma.FavoriteModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model Conversation
+ * 
+ */
+export type Conversation = Prisma.ConversationModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel

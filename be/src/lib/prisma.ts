@@ -1,17 +1,9 @@
-import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { env } from "../config/env.js";
 import { PrismaClient } from "../generated/prisma/client.js";
 
 function createPrismaClient(): PrismaClient {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is required");
-  }
-
-  const url = new URL(databaseUrl);
-  if (url.protocol !== "mysql:") {
-    throw new Error('DATABASE_URL must use the "mysql://" protocol for MariaDB');
-  }
+  const url = new URL(env.DATABASE_URL);
 
   const adapter = new PrismaMariaDb({
     host: url.hostname,
@@ -19,10 +11,12 @@ function createPrismaClient(): PrismaClient {
     user: decodeURIComponent(url.username),
     password: decodeURIComponent(url.password),
     database: decodeURIComponent(url.pathname.replace(/^\//, "")),
-    connectionLimit: 5,
+    connectionLimit: env.DATABASE_CONNECTION_LIMIT,
   });
 
   return new PrismaClient({ adapter });
 }
 
 export const prisma = createPrismaClient();
+
+export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];

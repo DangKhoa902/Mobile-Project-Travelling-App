@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+tests
+postman
+.agents
+.claude
+.cursor
+.devin
+*.log

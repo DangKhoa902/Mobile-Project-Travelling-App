@@ -1,0 +1,421 @@
+# Luồng nghiệp vụ giữa giao diện và backend
+
+Tài liệu này mô tả các luồng nghiệp vụ đi qua nhiều trang: người dùng làm gì, giao diện gọi API nào, backend kiểm tra gì và dữ liệu thay đổi ra sao. Đặc tả từng trang nằm ở [screens.md](screens.md); cấu trúc bảng nằm ở [../database/README.md](../database/README.md).
+
+Mã trang (T1, B4, M3...) khớp với [screens.md](screens.md).
+
+## 1. Quy ước chung khi gọi API
+
+### 1.1. Định dạng response
+
+| Loại | Dạng |
+|---|---|
+| Một đối tượng | `{ "data": { ... } }` |
+| Danh sách có phân trang | `{ "data": [ ... ], "meta": { "page", "limit", "total", "totalPages" } }` |
+| Lỗi | `{ "code": "NOT_AVAILABLE", "message": "...", "details": ... }` |
+| Thành công không có nội dung | HTTP 204 |
+
+Giao diện nên **dựa vào `code`** để quyết định xử lý (chuyển trang, khóa nút...) và **hiển thị `message`** cho người dùng (backend đã viết sẵn bằng tiếng Việt).
+
+### 1.2. Xử lý theo HTTP status
+
+| Status | Ý nghĩa | Giao diện nên làm |
+|---|---|---|
+| 400 | Dữ liệu không hợp lệ | Với `VALIDATION_ERROR`: hiện `details[].message` dưới ô có tên `details[].path` |
+| 401 | Chưa đăng nhập / token hết hạn | Xóa token, chuyển A1 kèm `redirect` về trang hiện tại |
+| 402 | Thanh toán thất bại | Cho thử lại |
+| 403 | Không có quyền / tài khoản bị khóa | Thông báo; nếu bị khóa thì đăng xuất |
+| 404 | Không tìm thấy (hoặc không phải dữ liệu của mình) | Trang "Không tìm thấy" + nút quay lại |
+| 409 | Vi phạm quy tắc nghiệp vụ | Hiện `message`, xử lý theo `code` (mục 8) |
+| 429 | Gửi quá nhiều lần | "Vui lòng thử lại sau" |
+| 0 / timeout | Mất mạng, server tắt | "Không kết nối được máy chủ" + nút Thử lại |
+
+### 1.3. Token đăng nhập
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant Store as Auth store
+    participant API
+    App->>Store: Mở app → đọc token đã lưu
+    alt có token
+        Store->>API: GET /api/auth/me
+        alt 200
+            API-->>Store: user → trạng thái "đã đăng nhập"
+        else 401 / 403
+            Store->>Store: Xóa token → "khách"
+        end
+    else không có token
+        Store->>Store: "khách"
+    end
+    Note over App,API: Mọi request sau đó gửi kèm Authorization: Bearer <token>
+```
+
+- Lưu token: `expo-secure-store` trên Android/iOS; `localStorage` trên web.
+- Token có hạn 7 ngày (`JWT_EXPIRES_IN`). Hết hạn → API trả 401 → đăng xuất.
+- Khi đăng xuất phải xóa cả cache dữ liệu cá nhân (booking, yêu thích, thông báo) để người đăng nhập sau không thấy dữ liệu người trước.
+
+### 1.4. Làm mới dữ liệu sau khi thay đổi
+
+Sau mỗi thao tác ghi, những màn hình khác đang hiển thị cùng dữ liệu cần được tải lại (với TanStack Query: `invalidateQueries`):
+
+| Thao tác | Dữ liệu cần làm mới |
+|---|---|
+| Bật/tắt yêu thích | Danh sách yêu thích, chi tiết địa điểm (`isFavorite`) |
+| Tạo / thanh toán / hủy booking | Danh sách booking, chi tiết booking, thông báo + badge |
+| Viết / sửa đánh giá | Chi tiết booking, đánh giá của tôi |
+| Staff đổi trạng thái booking | Danh sách booking quản trị, chi tiết booking |
+| Staff duyệt review | Hàng chờ duyệt, chi tiết địa điểm (rating) |
+
+## 2. Luồng khám phá địa điểm (Guest)
+
+Không cần đăng nhập (mục 5 tài liệu nghiệp vụ).
+
+```mermaid
+sequenceDiagram
+    actor Guest
+    participant T1 as T1 Khám phá
+    participant D1 as D1 Tìm kiếm
+    participant D2 as D2 Chi tiết
+    participant API
+    Guest->>T1: Mở app
+    T1->>API: GET /categories, /destinations?featured=true, ?sort=popular
+    API-->>T1: Danh mục + danh sách
+    Guest->>D1: Gõ "Đà Lạt", lọc giá 1–5 triệu, có Spa
+    D1->>API: GET /destinations?q=Đà Lạt&minPrice=1000000&maxPrice=5000000&facilityIds=5
+    API-->>D1: Kết quả + meta phân trang
+    Guest->>D2: Chọn một địa điểm
+    D2->>API: GET /destinations/da-lat-pine-hill-resort
+    API-->>D2: Ảnh, tiện ích, gói, phòng, dịch vụ, 5 review mới, isFavorite=false
+```
+
+Backend chỉ trả địa điểm đang hoạt động (`isActive = true`). Lọc theo giá dùng "Giá từ" (`minPrice`) = gói rẻ nhất + phòng rẻ nhất cho đủ số đêm của gói.
+
+## 3. Luồng đăng ký, đăng nhập và quay lại đúng chỗ
+
+Khi khách đang ở một trang cần đăng nhập (♥ ở D2, "Tiếp tục" ở B1...), đưa họ sang A1 rồi **quay lại đúng trang đó** sau khi đăng nhập, không bắt họ tìm lại từ đầu.
+
+```mermaid
+flowchart TD
+    X[Trang yêu cầu đăng nhập] -->|chưa đăng nhập| A1["A1 Đăng nhập (redirect=/destinations/da-lat...)"]
+    A1 -->|chưa có tài khoản| A2[A2 Đăng ký]
+    A2 -->|POST /auth/register → 201 + token| OK[Lưu token + user]
+    A1 -->|POST /auth/login → 200 + token| OK
+    OK --> X
+    A1 -->|401 INVALID_CREDENTIALS| A1
+    A1 -->|403 tài khoản bị khóa| LOCK[Thông báo liên hệ CSKH]
+```
+
+**Backend kiểm tra khi đăng ký:** dữ liệu hợp lệ → email chưa tồn tại (409 `EMAIL_TAKEN`) → hash mật khẩu bằng bcrypt → tạo tài khoản role `USER` → trả token để đăng nhập luôn.
+
+**Giới hạn:** đăng nhập/đăng ký tối đa 20 lần mỗi 15 phút cho một IP (429).
+
+## 4. Luồng yêu thích (mục 7)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as D2 / T2
+    participant API
+    User->>UI: Nhấn ♥
+    UI->>UI: Đổi icon ngay (optimistic)
+    UI->>API: POST /favorites/{destinationId}/toggle
+    API->>API: Kiểm tra đăng nhập, địa điểm còn hoạt động
+    alt đã yêu thích
+        API->>API: Xóa Favorite
+        API-->>UI: { isFavorite: false }
+    else chưa
+        API->>API: Tạo Favorite
+        API-->>UI: { isFavorite: true }
+    end
+    UI->>UI: Lỗi → hoàn tác icon và báo lỗi
+```
+
+Database có khóa chính `(userId, destinationId)` nên bấm liên tục cũng không tạo bản ghi trùng (BR-03).
+
+## 5. Luồng đặt chỗ (mục 8–14) – quan trọng nhất
+
+### 5.1. Tổng quan các bước
+
+```mermaid
+flowchart LR
+    D2[D2 Chi tiết] --> B1["B1 Gói + ngày + phòng<br/>quote, availability"]
+    B1 --> B2["B2 Dịch vụ<br/>quote"]
+    B2 --> B3["B3 Liên hệ + voucher<br/>quote"]
+    B3 --> B4["B4 Xác nhận<br/>POST /bookings"]
+    B4 -->|ONLINE_MOCK| PAY["B5 Thanh toán<br/>POST /bookings/:id/pay"]
+    B4 -->|PAY_AT_PROPERTY| DONE[B5 Đặt thành công<br/>chờ staff xác nhận]
+    PAY -->|200| OK[B5 Thành công<br/>CONFIRMED]
+    PAY -->|402| PAY
+    OK --> B6[B6 Chi tiết booking]
+    DONE --> B6
+```
+
+- **B1–B3 chỉ gọi báo giá** (`POST /api/bookings/quote`), không tạo gì trong database. Báo giá không cần đăng nhập, nên Guest vẫn xem được tổng tiền.
+- **Chỉ B4 mới tạo booking.** Lúc này backend tính lại toàn bộ giá từ database; giao diện không gửi số tiền lên, vì vậy khách không thể sửa giá.
+
+### 5.2. Báo giá và kiểm tra (B1–B3)
+
+Body gửi lên ở mọi bước (thêm dần các trường):
+
+```json
+{
+  "packageId": 2,
+  "roomTypeId": 2,
+  "checkInDate": "2026-11-20",
+  "checkOutDate": "2026-11-22",
+  "guests": 2,
+  "roomsCount": 1,
+  "services": [{ "addonServiceId": 1, "quantity": 1 }],
+  "voucherCode": "WELCOME10"
+}
+```
+
+Backend kiểm tra theo thứ tự, gặp lỗi đầu tiên thì dừng:
+
+| # | Kiểm tra | Mã lỗi | Hiển thị ở |
+|---|---|---|---|
+| 1 | Ngày đúng định dạng `YYYY-MM-DD` | `VALIDATION_ERROR` | B1 |
+| 2 | Ngày nhận ≥ hôm nay (giờ Việt Nam), ngày trả > ngày nhận, ≤ 30 đêm | `INVALID_DATES` | B1 |
+| 3 | Gói tồn tại, đang bán, địa điểm đang hoạt động | `NOT_FOUND` | B1 |
+| 4 | Loại phòng thuộc cùng địa điểm với gói | `INVALID_ROOM_TYPE` | B1 |
+| 5 | Số đêm ≥ số đêm của gói | `INVALID_DATES` | B1 |
+| 6 | Số khách ≤ sức chứa × số phòng | `CAPACITY_EXCEEDED` | B1 |
+| 7 | Dịch vụ không trùng, thuộc địa điểm, đang bán | `DUPLICATE_SERVICE` / `INVALID_SERVICE` | B2 |
+| 8 | Voucher còn hạn, còn lượt, đơn đủ tối thiểu | `INVALID_VOUCHER` / `VOUCHER_EXHAUSTED` / `VOUCHER_MIN_ORDER` | B3 |
+
+Response báo giá (rút gọn):
+
+```json
+{
+  "data": {
+    "nights": 2,
+    "availableRooms": 10,
+    "isAvailable": true,
+    "taxRate": 0.08,
+    "price": {
+      "packagePrice": 2000000,
+      "roomPrice": 1000000,
+      "servicesPrice": 200000,
+      "subtotal": 3200000,
+      "discountAmount": 200000,
+      "taxAmount": 240000,
+      "totalAmount": 3240000,
+      "services": [{ "addonServiceId": 1, "quantity": 1, "unitPrice": 200000, "totalPrice": 200000 }]
+    }
+  }
+}
+```
+
+`isAvailable = false` nghĩa là không đủ phòng: B1 nên báo ngay và chặn nút Tiếp tục, không đợi đến B4.
+
+### 5.3. Tạo booking (B4)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant B4 as B4 Xác nhận
+    participant API
+    participant DB
+    User->>B4: Nhấn "Xác nhận đặt"
+    B4->>B4: Khóa nút
+    B4->>API: POST /bookings (lựa chọn + liên hệ + paymentMethod)
+    API->>DB: BEGIN
+    API->>DB: SELECT ... FROM RoomType WHERE id=? FOR UPDATE
+    Note over API,DB: Request khác đặt cùng loại phòng phải chờ ở đây
+    API->>DB: Kiểm tra lại mọi điều kiện + đếm phòng trống từng đêm
+    alt hết phòng
+        API->>DB: ROLLBACK
+        API-->>B4: 409 NOT_AVAILABLE
+        B4->>User: "Dịch vụ không còn khả dụng..." → quay về B1
+    else còn phòng
+        API->>DB: Voucher.usedCount + 1
+        API->>DB: Tạo Booking (PENDING, giá snapshot) + BookingService + Payment (UNPAID)
+        API->>DB: Tạo Notification "Đặt chỗ thành công"
+        API->>DB: COMMIT
+        API-->>B4: 201 booking
+        B4->>User: Chuyển B5
+    end
+```
+
+Khóa dòng `FOR UPDATE` giải quyết tình huống hai người cùng đặt phòng cuối cùng: người thứ hai phải chờ người thứ nhất xong, rồi đếm lại và nhận 409 (BR-04).
+
+### 5.4. Thanh toán giả lập (B5)
+
+| Hành động | API | Kết quả trong database |
+|---|---|---|
+| Thanh toán | `POST /bookings/{id}/pay` `{}` | `Payment` → `PAID` + `transactionRef`; `Booking` → `CONFIRMED`; thông báo "Thanh toán thành công" |
+| Mô phỏng thất bại | `POST /bookings/{id}/pay` `{ "simulateFailure": true }` | `Payment` → `FAILED` (booking vẫn `PENDING`, được thử lại); trả 402 |
+| Thanh toán lần 2 | | 409 `ALREADY_PAID` / `INVALID_STATUS` |
+| Booking trả tại nơi ở | | 409 `INVALID_PAYMENT_METHOD` |
+
+Khi tích hợp cổng thật (VNPay, MoMo), B5 sẽ mở trang của cổng thanh toán; backend nhận kết quả qua callback thay cho nút "Thanh toán".
+
+## 6. Vòng đời booking sau khi đặt
+
+### 6.1. Trạng thái và ai được làm gì
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: Khách đặt (B4)
+    PENDING --> CONFIRMED: Khách thanh toán online (B5) / Staff xác nhận đơn trả tại nơi ở (M3)
+    PENDING --> CANCELLED: Khách hủy trước giờ nhận phòng (B6) / Staff hủy (M3)
+    CONFIRMED --> COMPLETED: Staff hoàn thành, từ ngày nhận phòng (M3)
+    CONFIRMED --> CANCELLED: Khách hủy khi còn đủ giờ miễn phí (B6) / Staff hủy (M3)
+    COMPLETED --> [*]: Khách được đánh giá (R1)
+    CANCELLED --> [*]
+```
+
+| Trạng thái | Khách thấy nút | Staff thấy nút |
+|---|---|---|
+| `PENDING` + online chưa trả | Thanh toán · Hủy · Liên hệ CSKH | Hủy |
+| `PENDING` + trả tại nơi ở | Hủy · Liên hệ CSKH | Xác nhận · Hủy |
+| `CONFIRMED` | Hủy (nếu còn hạn) · Liên hệ CSKH | Hoàn thành (từ ngày nhận phòng) · Hủy |
+| `COMPLETED` | Viết / sửa đánh giá | — |
+| `CANCELLED` | — | — |
+
+### 6.2. Hủy booking (BR-07)
+
+Giờ nhận phòng chuẩn: **14:00** ngày nhận (giờ Việt Nam).
+
+```mermaid
+flowchart TD
+    S[Khách nhấn Hủy ở B6] --> Q1{Trạng thái?}
+    Q1 -->|COMPLETED / CANCELLED| N1[409: không thể hủy]
+    Q1 -->|PENDING| Q2{Đã qua 14:00 ngày nhận?}
+    Q1 -->|CONFIRMED| Q3{Còn ≥ freeCancellationHours<br/>trước 14:00 ngày nhận?}
+    Q2 -->|Có| N2[409 CANCELLATION_NOT_ALLOWED]
+    Q2 -->|Chưa| OK[Hủy]
+    Q3 -->|Không| N3[409: liên hệ CSKH]
+    Q3 -->|Có| OK
+    OK --> R[Booking → CANCELLED<br/>Payment PAID → REFUNDED<br/>Voucher usedCount − 1<br/>Thông báo cho khách<br/>Phòng được trả lại]
+```
+
+Staff hủy được ở mọi trạng thái `PENDING` / `CONFIRMED`, không bị giới hạn giờ (dùng khi khách gọi CSKH xin hủy muộn).
+
+### 6.3. Staff xử lý booking (M2 → M3)
+
+| Thao tác | Điều kiện backend kiểm tra | Mã lỗi khi vi phạm |
+|---|---|---|
+| Xác nhận | Đang `PENDING`; nếu thanh toán online thì phải `PAID` (BR-06) | `INVALID_STATUS`, `PAYMENT_REQUIRED` |
+| Hoàn thành | Đang `CONFIRMED`; hôm nay ≥ ngày nhận phòng | `INVALID_STATUS` |
+
+Khi hoàn thành đơn trả tại nơi ở, `Payment` tự chuyển `PAID` (coi như đã thu tiền tại quầy). Khách nhận thông báo "Chuyến đi đã hoàn thành… Hãy để lại đánh giá".
+
+## 7. Luồng đánh giá (mục 16, 22)
+
+```mermaid
+sequenceDiagram
+    actor User
+    actor Staff
+    participant API
+    Note over User,API: Booking đã COMPLETED
+    User->>API: POST /reviews { bookingId, rating, comment } (R1)
+    API->>API: Booking của mình? COMPLETED? chưa có review?
+    API-->>User: 201 (status PENDING) "Đánh giá sẽ hiển thị sau khi được duyệt"
+    Staff->>API: GET /reviews/moderation?status=PENDING (M4)
+    alt hợp lệ
+        Staff->>API: PATCH /reviews/{id}/moderation { APPROVED }
+        API->>API: Tính lại averageRating, reviewCount của địa điểm
+        API-->>User: Thông báo "Đánh giá đã được duyệt"
+    else spam / vi phạm
+        Staff->>API: PATCH /reviews/{id}/moderation { REJECTED, rejectReason }
+        API-->>User: Thông báo kèm lý do
+    end
+    User->>API: PATCH /reviews/{id} (sửa)
+    API->>API: Đưa về PENDING, tính lại rating nếu trước đó đã APPROVED
+```
+
+| Quy tắc | Cách thể hiện trên giao diện |
+|---|---|
+| BR-02 chỉ đánh giá sau khi hoàn thành | Nút "Viết đánh giá" chỉ hiện ở booking `COMPLETED` |
+| BR-08 mỗi booking một review | Đã có review thì nút đổi thành "Xem / sửa đánh giá" |
+| Chỉ review đã duyệt mới công khai | D2, D3 chỉ hiển thị `APPROVED`; P3 hiển thị cả trạng thái chờ/bị từ chối |
+
+## 8. Luồng CSKH (mục 17)
+
+```mermaid
+sequenceDiagram
+    actor User
+    actor Staff
+    participant API
+    User->>API: POST /conversations { subject, content, bookingId? } (C1)
+    Staff->>API: GET /conversations?status=OPEN (M5)
+    Staff->>API: POST /conversations/{id}/messages (M6)
+    API->>API: Gán staffId nếu chưa có người phụ trách
+    API-->>User: Notification "CSKH đã trả lời"
+    loop mỗi 5 giây khi C2 đang mở
+        User->>API: GET /conversations/{id}/messages?after={idTinCuối}
+        API-->>User: Tin mới (đánh dấu đã đọc)
+    end
+    Staff->>API: PATCH /conversations/{id} { status: CLOSED }
+    User->>API: POST /messages → 409 CONVERSATION_CLOSED
+```
+
+Polling mỗi 5 giây đủ cho đồ án. Chỉ poll khi màn hình C2/M6 đang hiển thị (dừng khi rời trang hoặc app chạy nền) để không tốn pin và tải server.
+
+## 9. Luồng thông báo (mục 18)
+
+Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đọc.
+
+| Sự kiện | Người nhận | `type` | `data` → mở trang |
+|---|---|---|---|
+| Đặt chỗ thành công | Khách | `BOOKING` | `bookingId` → B6 |
+| Thanh toán thành công / thất bại | Khách | `PAYMENT` | `bookingId` → B6 |
+| Booking được xác nhận / hoàn thành / bị hủy | Khách | `BOOKING` | `bookingId` → B6 |
+| Staff trả lời chat | Khách | `SUPPORT` | `conversationId` → C2 |
+| Review được duyệt / bị từ chối | Khách | `REVIEW` | `destinationId` → D2 |
+
+**Badge chưa đọc:** gọi `GET /api/notifications/unread-count` khi mở app, khi quay lại app từ nền và sau mỗi thao tác booking. Hiển thị trên tab T4.
+
+**Push notification** (điện thoại báo kể cả khi app đóng) chưa có; xem mục 10.
+
+## 10. Bảng mã lỗi nghiệp vụ
+
+| `code` | Status | Xảy ra khi | Giao diện xử lý |
+|---|---|---|---|
+| `VALIDATION_ERROR` | 400 | Thiếu/sai trường | Hiện lỗi dưới từng ô theo `details[].path` |
+| `INVALID_JSON` | 400 | Body sai cú pháp | Lỗi lập trình, ghi log |
+| `UNAUTHORIZED` | 401 | Chưa đăng nhập / token hết hạn | Đăng xuất → A1 |
+| `INVALID_CREDENTIALS` | 401 | Sai email hoặc mật khẩu | Báo lỗi ở A1 |
+| `FORBIDDEN` | 403 | Sai vai trò / tài khoản bị khóa | Thông báo; bị khóa thì đăng xuất |
+| `NOT_FOUND` | 404 | Không tồn tại hoặc không phải của mình | Trang "Không tìm thấy" |
+| `ROUTE_NOT_FOUND` | 404 | Sai đường dẫn API | Lỗi lập trình |
+| `EMAIL_TAKEN` | 409 | Đăng ký email đã có | Lỗi dưới ô email |
+| `INVALID_PASSWORD` | 400 | Đổi mật khẩu, mật khẩu cũ sai | Lỗi dưới ô mật khẩu hiện tại |
+| `INVALID_DATES` | 400 | Ngày quá khứ / ngày trả ≤ ngày nhận / ít hơn số đêm của gói / > 30 đêm | Lỗi ở ô chọn ngày (B1) |
+| `INVALID_ROOM_TYPE` | 400 | Phòng không thuộc địa điểm | Chọn lại phòng |
+| `CAPACITY_EXCEEDED` | 400 | Quá số khách | Gợi ý tăng số phòng |
+| `DUPLICATE_SERVICE` / `INVALID_SERVICE` | 400 | Dịch vụ trùng / không hợp lệ | Tải lại danh sách dịch vụ |
+| `INVALID_VOUCHER` / `VOUCHER_EXHAUSTED` / `VOUCHER_MIN_ORDER` | 400 | Voucher không dùng được | Lỗi dưới ô voucher, cho đặt tiếp không voucher |
+| `NOT_AVAILABLE` | 409 | Hết phòng lúc đặt | Quay về B1 chọn ngày/phòng khác |
+| `PAYMENT_FAILED` | 402 | Thanh toán thất bại | Nút "Thử lại" |
+| `ALREADY_PAID` / `INVALID_PAYMENT_METHOD` | 409 | Thanh toán không hợp lệ | Tải lại B6 |
+| `INVALID_STATUS` | 409 | Đổi trạng thái sai thứ tự | Tải lại booking (có thể người khác vừa đổi) |
+| `PAYMENT_REQUIRED` | 409 | Staff xác nhận đơn online chưa trả | Khóa nút "Xác nhận" |
+| `CANCELLATION_NOT_ALLOWED` | 409 | Hủy quá hạn | Gợi ý liên hệ CSKH |
+| `BOOKING_NOT_COMPLETED` | 409 | Đánh giá khi chưa hoàn thành | Ẩn nút đánh giá |
+| `ALREADY_REVIEWED` | 409 | Đánh giá lần hai | Chuyển sang chế độ sửa |
+| `REJECT_REASON_REQUIRED` | 400 | Từ chối review không lý do | Bắt buộc ô lý do ở M4 |
+| `CONVERSATION_CLOSED` | 409 | Nhắn vào hội thoại đã đóng | Khóa ô nhập |
+| `DUPLICATE` | 409 | Trùng dữ liệu duy nhất (slug, mã voucher...) | Báo trùng ở form quản trị |
+| `REFERENCE_CONFLICT` | 409 | Xóa dữ liệu đang được dùng | Gợi ý "Ngừng hoạt động" thay vì xóa |
+| `TOO_MANY_REQUESTS` | 429 | Quá nhiều lần đăng nhập/đăng ký | Chờ rồi thử lại |
+| `NETWORK_ERROR` | — | Mất mạng (do client tự tạo) | Nút "Thử lại" |
+
+## 11. API còn thiếu cho giao diện đầy đủ
+
+Các chức năng dưới đây xuất hiện trong [screens.md](screens.md) nhưng backend chưa có. Khi làm tới trang tương ứng, đây là phần cần bổ sung ở backend.
+
+| Chức năng | Trang | Đề xuất |
+|---|---|---|
+| Quên mật khẩu | A1 | `POST /auth/forgot-password`, `POST /auth/reset-password` + bảng token đặt lại + gửi email |
+| Tải ảnh lên (avatar, ảnh địa điểm) | P1, M8 | `POST /uploads` lưu lên Cloudinary/S3, trả URL |
+| Thống kê tổng quan, doanh thu | M1 | `GET /admin/stats?from=&to=` |
+| Phân bố số sao | D3 | Thêm `ratingBreakdown` vào `GET /destinations/:id/reviews` |
+| Lọc booking nhiều trạng thái | T3 | Cho `status=PENDING,CONFIRMED` |
+| Xem cả gói/phòng/dịch vụ đã tắt | M8 | Tham số `includeInactive=true` cho chi tiết địa điểm |
+| Tự hủy booking chưa thanh toán sau 15 phút | B5 | Cột `expiresAt` + job định kỳ |
+| Push notification | T4 | Bảng `DeviceToken` + Expo Push API |
+| Chat thời gian thực | C2, M6 | WebSocket (Socket.IO) thay cho polling |
+| Đăng nhập lâu dài an toàn | — | Refresh token |

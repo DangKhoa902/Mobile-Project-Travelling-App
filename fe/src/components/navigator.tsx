@@ -6,27 +6,36 @@ import { Pressable, Text, View } from "react-native";
 
 export function Navigator() {
   return (
-    <View>
-      <View>
-        <Pressable>
-          <Ionicons name="home" size={24} color="black" />
-          <Text>Search</Text>
+    <View className="bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800 px-2 py-3">
+      <View className="flex-col justify-around items-center">
+        {/* Search / Home */}
+        <Pressable className="items-center justify-center space-y-1 active:opacity-70">
+          <Ionicons name="search-outline" size={22} color="white" />
+          <Text className="text-xs font-medium text-white">Search</Text>
         </Pressable>
-        <Pressable>
-          <MaterialIcons name="favorite-border" size={24} color="black" />
-          <Text>Favourites</Text>
+
+        {/* Favourites */}
+        <Pressable className="items-center justify-center space-y-1 active:opacity-70">
+          <MaterialIcons name="favorite-border" size={22} color="white" />
+          <Text className="text-xs font-medium text-zinc-400">Favourites</Text>
         </Pressable>
-        <Pressable>
-          <Feather name="book" size={24} color="black" />
-          <Text>Booking</Text>
+
+        {/* Booking */}
+        <Pressable className="items-center justify-center space-y-1 active:opacity-70">
+          <Feather name="book-open" size={22} color="#a1a1aa" />
+          <Text className="text-xs font-medium text-zinc-400">Booking</Text>
         </Pressable>
-        <Pressable>
-          <Entypo name="chat" size={24} color="black" />
-          <Text>Inbox</Text>
+
+        {/* Inbox */}
+        <Pressable className="items-center justify-center space-y-1 active:opacity-70">
+          <Entypo name="chat" size={22} color="#a1a1aa" />
+          <Text className="text-xs font-medium text-zinc-400">Inbox</Text>
         </Pressable>
-        <Pressable>
-          <Feather name="user" size={24} color="black" />
-          <Text>Profile</Text>
+
+        {/* Profile */}
+        <Pressable className="items-center justify-center space-y-1 active:opacity-70">
+          <Feather name="user" size={22} color="#a1a1aa" />
+          <Text className="text-xs font-medium text-zinc-400">Profile</Text>
         </Pressable>
       </View>
     </View>
