@@ -28,18 +28,43 @@ export type AggregateDestination = {
 
 export type DestinationAvgAggregateOutputType = {
   id: number | null
+  latitude: number | null
+  longitude: number | null
+  minPrice: number | null
+  averageRating: number | null
+  reviewCount: number | null
+  categoryId: number | null
 }
 
 export type DestinationSumAggregateOutputType = {
   id: number | null
+  latitude: number | null
+  longitude: number | null
+  minPrice: number | null
+  averageRating: number | null
+  reviewCount: number | null
+  categoryId: number | null
 }
 
 export type DestinationMinAggregateOutputType = {
   id: number | null
   name: string | null
+  slug: string | null
   description: string | null
   location: string | null
+  address: string | null
+  latitude: number | null
+  longitude: number | null
   imageUrl: string | null
+  contactPhone: string | null
+  contactEmail: string | null
+  policy: string | null
+  isActive: boolean | null
+  isFeatured: boolean | null
+  minPrice: number | null
+  averageRating: number | null
+  reviewCount: number | null
+  categoryId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,9 +72,22 @@ export type DestinationMinAggregateOutputType = {
 export type DestinationMaxAggregateOutputType = {
   id: number | null
   name: string | null
+  slug: string | null
   description: string | null
   location: string | null
+  address: string | null
+  latitude: number | null
+  longitude: number | null
   imageUrl: string | null
+  contactPhone: string | null
+  contactEmail: string | null
+  policy: string | null
+  isActive: boolean | null
+  isFeatured: boolean | null
+  minPrice: number | null
+  averageRating: number | null
+  reviewCount: number | null
+  categoryId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -57,9 +95,22 @@ export type DestinationMaxAggregateOutputType = {
 export type DestinationCountAggregateOutputType = {
   id: number
   name: number
+  slug: number
   description: number
   location: number
+  address: number
+  latitude: number
+  longitude: number
   imageUrl: number
+  contactPhone: number
+  contactEmail: number
+  policy: number
+  isActive: number
+  isFeatured: number
+  minPrice: number
+  averageRating: number
+  reviewCount: number
+  categoryId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -68,18 +119,43 @@ export type DestinationCountAggregateOutputType = {
 
 export type DestinationAvgAggregateInputType = {
   id?: true
+  latitude?: true
+  longitude?: true
+  minPrice?: true
+  averageRating?: true
+  reviewCount?: true
+  categoryId?: true
 }
 
 export type DestinationSumAggregateInputType = {
   id?: true
+  latitude?: true
+  longitude?: true
+  minPrice?: true
+  averageRating?: true
+  reviewCount?: true
+  categoryId?: true
 }
 
 export type DestinationMinAggregateInputType = {
   id?: true
   name?: true
+  slug?: true
   description?: true
   location?: true
+  address?: true
+  latitude?: true
+  longitude?: true
   imageUrl?: true
+  contactPhone?: true
+  contactEmail?: true
+  policy?: true
+  isActive?: true
+  isFeatured?: true
+  minPrice?: true
+  averageRating?: true
+  reviewCount?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,9 +163,22 @@ export type DestinationMinAggregateInputType = {
 export type DestinationMaxAggregateInputType = {
   id?: true
   name?: true
+  slug?: true
   description?: true
   location?: true
+  address?: true
+  latitude?: true
+  longitude?: true
   imageUrl?: true
+  contactPhone?: true
+  contactEmail?: true
+  policy?: true
+  isActive?: true
+  isFeatured?: true
+  minPrice?: true
+  averageRating?: true
+  reviewCount?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,9 +186,22 @@ export type DestinationMaxAggregateInputType = {
 export type DestinationCountAggregateInputType = {
   id?: true
   name?: true
+  slug?: true
   description?: true
   location?: true
+  address?: true
+  latitude?: true
+  longitude?: true
   imageUrl?: true
+  contactPhone?: true
+  contactEmail?: true
+  policy?: true
+  isActive?: true
+  isFeatured?: true
+  minPrice?: true
+  averageRating?: true
+  reviewCount?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -194,9 +296,22 @@ export type DestinationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type DestinationGroupByOutputType = {
   id: number
   name: string
+  slug: string
   description: string | null
   location: string
+  address: string | null
+  latitude: number | null
+  longitude: number | null
   imageUrl: string | null
+  contactPhone: string | null
+  contactEmail: string | null
+  policy: string | null
+  isActive: boolean
+  isFeatured: boolean
+  minPrice: number
+  averageRating: number
+  reviewCount: number
+  categoryId: number | null
   createdAt: Date
   updatedAt: Date
   _count: DestinationCountAggregateOutputType | null
@@ -227,46 +342,122 @@ export type DestinationWhereInput = {
   NOT?: Prisma.DestinationWhereInput | Prisma.DestinationWhereInput[]
   id?: Prisma.IntFilter<"Destination"> | number
   name?: Prisma.StringFilter<"Destination"> | string
+  slug?: Prisma.StringFilter<"Destination"> | string
   description?: Prisma.StringNullableFilter<"Destination"> | string | null
   location?: Prisma.StringFilter<"Destination"> | string
+  address?: Prisma.StringNullableFilter<"Destination"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
   imageUrl?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Destination"> | string | null
+  policy?: Prisma.StringNullableFilter<"Destination"> | string | null
+  isActive?: Prisma.BoolFilter<"Destination"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Destination"> | boolean
+  minPrice?: Prisma.IntFilter<"Destination"> | number
+  averageRating?: Prisma.FloatFilter<"Destination"> | number
+  reviewCount?: Prisma.IntFilter<"Destination"> | number
+  categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
+  images?: Prisma.DestinationImageListRelationFilter
+  facilities?: Prisma.FacilityListRelationFilter
+  packages?: Prisma.PackageListRelationFilter
+  roomTypes?: Prisma.RoomTypeListRelationFilter
+  services?: Prisma.AddonServiceListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
+  favorites?: Prisma.FavoriteListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
 }
 
 export type DestinationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  policy?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  category?: Prisma.CategoryOrderByWithRelationInput
+  images?: Prisma.DestinationImageOrderByRelationAggregateInput
+  facilities?: Prisma.FacilityOrderByRelationAggregateInput
+  packages?: Prisma.PackageOrderByRelationAggregateInput
+  roomTypes?: Prisma.RoomTypeOrderByRelationAggregateInput
+  services?: Prisma.AddonServiceOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
+  favorites?: Prisma.FavoriteOrderByRelationAggregateInput
+  reviews?: Prisma.ReviewOrderByRelationAggregateInput
   _relevance?: Prisma.DestinationOrderByRelevanceInput
 }
 
 export type DestinationWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  slug?: string
   AND?: Prisma.DestinationWhereInput | Prisma.DestinationWhereInput[]
   OR?: Prisma.DestinationWhereInput[]
   NOT?: Prisma.DestinationWhereInput | Prisma.DestinationWhereInput[]
   name?: Prisma.StringFilter<"Destination"> | string
   description?: Prisma.StringNullableFilter<"Destination"> | string | null
   location?: Prisma.StringFilter<"Destination"> | string
+  address?: Prisma.StringNullableFilter<"Destination"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
   imageUrl?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Destination"> | string | null
+  policy?: Prisma.StringNullableFilter<"Destination"> | string | null
+  isActive?: Prisma.BoolFilter<"Destination"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Destination"> | boolean
+  minPrice?: Prisma.IntFilter<"Destination"> | number
+  averageRating?: Prisma.FloatFilter<"Destination"> | number
+  reviewCount?: Prisma.IntFilter<"Destination"> | number
+  categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
+  images?: Prisma.DestinationImageListRelationFilter
+  facilities?: Prisma.FacilityListRelationFilter
+  packages?: Prisma.PackageListRelationFilter
+  roomTypes?: Prisma.RoomTypeListRelationFilter
+  services?: Prisma.AddonServiceListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
-}, "id">
+  favorites?: Prisma.FavoriteListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
+}, "id" | "slug">
 
 export type DestinationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  policy?: Prisma.SortOrderInput | Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DestinationCountOrderByAggregateInput
@@ -282,70 +473,188 @@ export type DestinationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DestinationScalarWhereWithAggregatesInput | Prisma.DestinationScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Destination"> | number
   name?: Prisma.StringWithAggregatesFilter<"Destination"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"Destination"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
   location?: Prisma.StringWithAggregatesFilter<"Destination"> | string
+  address?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  latitude?: Prisma.FloatNullableWithAggregatesFilter<"Destination"> | number | null
+  longitude?: Prisma.FloatNullableWithAggregatesFilter<"Destination"> | number | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  contactPhone?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  contactEmail?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  policy?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  isActive?: Prisma.BoolWithAggregatesFilter<"Destination"> | boolean
+  isFeatured?: Prisma.BoolWithAggregatesFilter<"Destination"> | boolean
+  minPrice?: Prisma.IntWithAggregatesFilter<"Destination"> | number
+  averageRating?: Prisma.FloatWithAggregatesFilter<"Destination"> | number
+  reviewCount?: Prisma.IntWithAggregatesFilter<"Destination"> | number
+  categoryId?: Prisma.IntNullableWithAggregatesFilter<"Destination"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
 }
 
 export type DestinationCreateInput = {
   name: string
+  slug: string
   description?: string | null
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
   bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
 }
 
 export type DestinationUncheckedCreateInput = {
   id?: number
   name: string
+  slug: string
   description?: string | null
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
 }
 
 export type DestinationUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
 }
 
 export type DestinationUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
 }
 
 export type DestinationCreateManyInput = {
   id?: number
   name: string
+  slug: string
   description?: string | null
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DestinationUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -353,11 +662,34 @@ export type DestinationUpdateManyMutationInput = {
 export type DestinationUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DestinationListRelationFilter = {
+  every?: Prisma.DestinationWhereInput
+  some?: Prisma.DestinationWhereInput
+  none?: Prisma.DestinationWhereInput
+}
+
+export type DestinationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type DestinationOrderByRelevanceInput = {
@@ -369,23 +701,55 @@ export type DestinationOrderByRelevanceInput = {
 export type DestinationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  policy?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type DestinationAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
 }
 
 export type DestinationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  policy?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -393,15 +757,34 @@ export type DestinationMaxOrderByAggregateInput = {
 export type DestinationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
+  policy?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type DestinationSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  minPrice?: Prisma.SortOrder
+  averageRating?: Prisma.SortOrder
+  reviewCount?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
 }
 
 export type DestinationScalarRelationFilter = {
@@ -409,8 +792,168 @@ export type DestinationScalarRelationFilter = {
   isNot?: Prisma.DestinationWhereInput
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type DestinationCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput> | Prisma.DestinationCreateWithoutCategoryInput[] | Prisma.DestinationUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutCategoryInput | Prisma.DestinationCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.DestinationCreateManyCategoryInputEnvelope
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUncheckedCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput> | Prisma.DestinationCreateWithoutCategoryInput[] | Prisma.DestinationUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutCategoryInput | Prisma.DestinationCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.DestinationCreateManyCategoryInputEnvelope
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput> | Prisma.DestinationCreateWithoutCategoryInput[] | Prisma.DestinationUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutCategoryInput | Prisma.DestinationCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutCategoryInput | Prisma.DestinationUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.DestinationCreateManyCategoryInputEnvelope
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutCategoryInput | Prisma.DestinationUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutCategoryInput | Prisma.DestinationUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+}
+
+export type DestinationUncheckedUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput> | Prisma.DestinationCreateWithoutCategoryInput[] | Prisma.DestinationUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutCategoryInput | Prisma.DestinationCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutCategoryInput | Prisma.DestinationUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.DestinationCreateManyCategoryInputEnvelope
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutCategoryInput | Prisma.DestinationUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutCategoryInput | Prisma.DestinationUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+}
+
+export type DestinationCreateNestedManyWithoutFacilitiesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput> | Prisma.DestinationCreateWithoutFacilitiesInput[] | Prisma.DestinationUncheckedCreateWithoutFacilitiesInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFacilitiesInput | Prisma.DestinationCreateOrConnectWithoutFacilitiesInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUncheckedCreateNestedManyWithoutFacilitiesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput> | Prisma.DestinationCreateWithoutFacilitiesInput[] | Prisma.DestinationUncheckedCreateWithoutFacilitiesInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFacilitiesInput | Prisma.DestinationCreateOrConnectWithoutFacilitiesInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUpdateManyWithoutFacilitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput> | Prisma.DestinationCreateWithoutFacilitiesInput[] | Prisma.DestinationUncheckedCreateWithoutFacilitiesInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFacilitiesInput | Prisma.DestinationCreateOrConnectWithoutFacilitiesInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutFacilitiesInput | Prisma.DestinationUpsertWithWhereUniqueWithoutFacilitiesInput[]
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutFacilitiesInput | Prisma.DestinationUpdateWithWhereUniqueWithoutFacilitiesInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutFacilitiesInput | Prisma.DestinationUpdateManyWithWhereWithoutFacilitiesInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+}
+
+export type DestinationUncheckedUpdateManyWithoutFacilitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput> | Prisma.DestinationCreateWithoutFacilitiesInput[] | Prisma.DestinationUncheckedCreateWithoutFacilitiesInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFacilitiesInput | Prisma.DestinationCreateOrConnectWithoutFacilitiesInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutFacilitiesInput | Prisma.DestinationUpsertWithWhereUniqueWithoutFacilitiesInput[]
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutFacilitiesInput | Prisma.DestinationUpdateWithWhereUniqueWithoutFacilitiesInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutFacilitiesInput | Prisma.DestinationUpdateManyWithWhereWithoutFacilitiesInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type DestinationCreateNestedOneWithoutImagesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutImagesInput, Prisma.DestinationUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutImagesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutImagesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutImagesInput, Prisma.DestinationUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutImagesInput
+  upsert?: Prisma.DestinationUpsertWithoutImagesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutImagesInput, Prisma.DestinationUpdateWithoutImagesInput>, Prisma.DestinationUncheckedUpdateWithoutImagesInput>
+}
+
+export type DestinationCreateNestedOneWithoutPackagesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutPackagesInput, Prisma.DestinationUncheckedCreateWithoutPackagesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutPackagesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutPackagesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutPackagesInput, Prisma.DestinationUncheckedCreateWithoutPackagesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutPackagesInput
+  upsert?: Prisma.DestinationUpsertWithoutPackagesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutPackagesInput, Prisma.DestinationUpdateWithoutPackagesInput>, Prisma.DestinationUncheckedUpdateWithoutPackagesInput>
+}
+
+export type DestinationCreateNestedOneWithoutRoomTypesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutRoomTypesInput, Prisma.DestinationUncheckedCreateWithoutRoomTypesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutRoomTypesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutRoomTypesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutRoomTypesInput, Prisma.DestinationUncheckedCreateWithoutRoomTypesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutRoomTypesInput
+  upsert?: Prisma.DestinationUpsertWithoutRoomTypesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutRoomTypesInput, Prisma.DestinationUpdateWithoutRoomTypesInput>, Prisma.DestinationUncheckedUpdateWithoutRoomTypesInput>
+}
+
+export type DestinationCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutServicesInput, Prisma.DestinationUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutServicesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutServicesInput, Prisma.DestinationUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.DestinationUpsertWithoutServicesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutServicesInput, Prisma.DestinationUpdateWithoutServicesInput>, Prisma.DestinationUncheckedUpdateWithoutServicesInput>
 }
 
 export type DestinationCreateNestedOneWithoutBookingsInput = {
@@ -427,23 +970,818 @@ export type DestinationUpdateOneRequiredWithoutBookingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutBookingsInput, Prisma.DestinationUpdateWithoutBookingsInput>, Prisma.DestinationUncheckedUpdateWithoutBookingsInput>
 }
 
-export type DestinationCreateWithoutBookingsInput = {
+export type DestinationCreateNestedOneWithoutFavoritesInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFavoritesInput, Prisma.DestinationUncheckedCreateWithoutFavoritesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFavoritesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutFavoritesNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutFavoritesInput, Prisma.DestinationUncheckedCreateWithoutFavoritesInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutFavoritesInput
+  upsert?: Prisma.DestinationUpsertWithoutFavoritesInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutFavoritesInput, Prisma.DestinationUpdateWithoutFavoritesInput>, Prisma.DestinationUncheckedUpdateWithoutFavoritesInput>
+}
+
+export type DestinationCreateNestedOneWithoutReviewsInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutReviewsInput, Prisma.DestinationUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutReviewsInput
+  connect?: Prisma.DestinationWhereUniqueInput
+}
+
+export type DestinationUpdateOneRequiredWithoutReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutReviewsInput, Prisma.DestinationUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutReviewsInput
+  upsert?: Prisma.DestinationUpsertWithoutReviewsInput
+  connect?: Prisma.DestinationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutReviewsInput, Prisma.DestinationUpdateWithoutReviewsInput>, Prisma.DestinationUncheckedUpdateWithoutReviewsInput>
+}
+
+export type DestinationCreateWithoutCategoryInput = {
   name: string
+  slug: string
   description?: string | null
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutCategoryInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutCategoryInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput>
+}
+
+export type DestinationCreateManyCategoryInputEnvelope = {
+  data: Prisma.DestinationCreateManyCategoryInput | Prisma.DestinationCreateManyCategoryInput[]
+  skipDuplicates?: boolean
+}
+
+export type DestinationUpsertWithWhereUniqueWithoutCategoryInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutCategoryInput, Prisma.DestinationUncheckedUpdateWithoutCategoryInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutCategoryInput, Prisma.DestinationUncheckedCreateWithoutCategoryInput>
+}
+
+export type DestinationUpdateWithWhereUniqueWithoutCategoryInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutCategoryInput, Prisma.DestinationUncheckedUpdateWithoutCategoryInput>
+}
+
+export type DestinationUpdateManyWithWhereWithoutCategoryInput = {
+  where: Prisma.DestinationScalarWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateManyMutationInput, Prisma.DestinationUncheckedUpdateManyWithoutCategoryInput>
+}
+
+export type DestinationScalarWhereInput = {
+  AND?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+  OR?: Prisma.DestinationScalarWhereInput[]
+  NOT?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+  id?: Prisma.IntFilter<"Destination"> | number
+  name?: Prisma.StringFilter<"Destination"> | string
+  slug?: Prisma.StringFilter<"Destination"> | string
+  description?: Prisma.StringNullableFilter<"Destination"> | string | null
+  location?: Prisma.StringFilter<"Destination"> | string
+  address?: Prisma.StringNullableFilter<"Destination"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  imageUrl?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Destination"> | string | null
+  policy?: Prisma.StringNullableFilter<"Destination"> | string | null
+  isActive?: Prisma.BoolFilter<"Destination"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Destination"> | boolean
+  minPrice?: Prisma.IntFilter<"Destination"> | number
+  averageRating?: Prisma.FloatFilter<"Destination"> | number
+  reviewCount?: Prisma.IntFilter<"Destination"> | number
+  categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+}
+
+export type DestinationCreateWithoutFacilitiesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutFacilitiesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutFacilitiesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput>
+}
+
+export type DestinationUpsertWithWhereUniqueWithoutFacilitiesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutFacilitiesInput, Prisma.DestinationUncheckedUpdateWithoutFacilitiesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutFacilitiesInput, Prisma.DestinationUncheckedCreateWithoutFacilitiesInput>
+}
+
+export type DestinationUpdateWithWhereUniqueWithoutFacilitiesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutFacilitiesInput, Prisma.DestinationUncheckedUpdateWithoutFacilitiesInput>
+}
+
+export type DestinationUpdateManyWithWhereWithoutFacilitiesInput = {
+  where: Prisma.DestinationScalarWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateManyMutationInput, Prisma.DestinationUncheckedUpdateManyWithoutFacilitiesInput>
+}
+
+export type DestinationCreateWithoutImagesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutImagesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutImagesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutImagesInput, Prisma.DestinationUncheckedCreateWithoutImagesInput>
+}
+
+export type DestinationUpsertWithoutImagesInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutImagesInput, Prisma.DestinationUncheckedUpdateWithoutImagesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutImagesInput, Prisma.DestinationUncheckedCreateWithoutImagesInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutImagesInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutImagesInput, Prisma.DestinationUncheckedUpdateWithoutImagesInput>
+}
+
+export type DestinationUpdateWithoutImagesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutImagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutPackagesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutPackagesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutPackagesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutPackagesInput, Prisma.DestinationUncheckedCreateWithoutPackagesInput>
+}
+
+export type DestinationUpsertWithoutPackagesInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutPackagesInput, Prisma.DestinationUncheckedUpdateWithoutPackagesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutPackagesInput, Prisma.DestinationUncheckedCreateWithoutPackagesInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutPackagesInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutPackagesInput, Prisma.DestinationUncheckedUpdateWithoutPackagesInput>
+}
+
+export type DestinationUpdateWithoutPackagesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutPackagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutRoomTypesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutRoomTypesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutRoomTypesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutRoomTypesInput, Prisma.DestinationUncheckedCreateWithoutRoomTypesInput>
+}
+
+export type DestinationUpsertWithoutRoomTypesInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutRoomTypesInput, Prisma.DestinationUncheckedUpdateWithoutRoomTypesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutRoomTypesInput, Prisma.DestinationUncheckedCreateWithoutRoomTypesInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutRoomTypesInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutRoomTypesInput, Prisma.DestinationUncheckedUpdateWithoutRoomTypesInput>
+}
+
+export type DestinationUpdateWithoutRoomTypesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutRoomTypesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutServicesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutServicesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutServicesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutServicesInput, Prisma.DestinationUncheckedCreateWithoutServicesInput>
+}
+
+export type DestinationUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutServicesInput, Prisma.DestinationUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutServicesInput, Prisma.DestinationUncheckedCreateWithoutServicesInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutServicesInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutServicesInput, Prisma.DestinationUncheckedUpdateWithoutServicesInput>
+}
+
+export type DestinationUpdateWithoutServicesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutServicesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutBookingsInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
 }
 
 export type DestinationUncheckedCreateWithoutBookingsInput = {
   id?: number
   name: string
+  slug: string
   description?: string | null
   location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
   imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
 }
 
 export type DestinationCreateOrConnectWithoutBookingsInput = {
@@ -464,19 +1802,512 @@ export type DestinationUpdateToOneWithWhereWithoutBookingsInput = {
 
 export type DestinationUpdateWithoutBookingsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
 }
 
 export type DestinationUncheckedUpdateWithoutBookingsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutFavoritesInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutFavoritesInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutFavoritesInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutFavoritesInput, Prisma.DestinationUncheckedCreateWithoutFavoritesInput>
+}
+
+export type DestinationUpsertWithoutFavoritesInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutFavoritesInput, Prisma.DestinationUncheckedUpdateWithoutFavoritesInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutFavoritesInput, Prisma.DestinationUncheckedCreateWithoutFavoritesInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutFavoritesInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutFavoritesInput, Prisma.DestinationUncheckedUpdateWithoutFavoritesInput>
+}
+
+export type DestinationUpdateWithoutFavoritesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutFavoritesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateWithoutReviewsInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutReviewsInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutReviewsInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutReviewsInput, Prisma.DestinationUncheckedCreateWithoutReviewsInput>
+}
+
+export type DestinationUpsertWithoutReviewsInput = {
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutReviewsInput, Prisma.DestinationUncheckedUpdateWithoutReviewsInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutReviewsInput, Prisma.DestinationUncheckedCreateWithoutReviewsInput>
+  where?: Prisma.DestinationWhereInput
+}
+
+export type DestinationUpdateToOneWithWhereWithoutReviewsInput = {
+  where?: Prisma.DestinationWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutReviewsInput, Prisma.DestinationUncheckedUpdateWithoutReviewsInput>
+}
+
+export type DestinationUpdateWithoutReviewsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateManyCategoryInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DestinationUpdateWithoutCategoryInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutCategoryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateManyWithoutCategoryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DestinationUpdateWithoutFacilitiesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutFacilitiesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateManyWithoutFacilitiesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -487,11 +2318,25 @@ export type DestinationUncheckedUpdateWithoutBookingsInput = {
  */
 
 export type DestinationCountOutputType = {
+  images: number
+  facilities: number
+  packages: number
+  roomTypes: number
+  services: number
   bookings: number
+  favorites: number
+  reviews: number
 }
 
 export type DestinationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  images?: boolean | DestinationCountOutputTypeCountImagesArgs
+  facilities?: boolean | DestinationCountOutputTypeCountFacilitiesArgs
+  packages?: boolean | DestinationCountOutputTypeCountPackagesArgs
+  roomTypes?: boolean | DestinationCountOutputTypeCountRoomTypesArgs
+  services?: boolean | DestinationCountOutputTypeCountServicesArgs
   bookings?: boolean | DestinationCountOutputTypeCountBookingsArgs
+  favorites?: boolean | DestinationCountOutputTypeCountFavoritesArgs
+  reviews?: boolean | DestinationCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -507,20 +2352,90 @@ export type DestinationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
 /**
  * DestinationCountOutputType without action
  */
+export type DestinationCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DestinationImageWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountFacilitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FacilityWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountPackagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PackageWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountRoomTypesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RoomTypeWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AddonServiceWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
 export type DestinationCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.BookingWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountFavoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FavoriteWhereInput
+}
+
+/**
+ * DestinationCountOutputType without action
+ */
+export type DestinationCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewWhereInput
 }
 
 
 export type DestinationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   location?: boolean
+  address?: boolean
+  latitude?: boolean
+  longitude?: boolean
   imageUrl?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
+  policy?: boolean
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: boolean
+  averageRating?: boolean
+  reviewCount?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  category?: boolean | Prisma.Destination$categoryArgs<ExtArgs>
+  images?: boolean | Prisma.Destination$imagesArgs<ExtArgs>
+  facilities?: boolean | Prisma.Destination$facilitiesArgs<ExtArgs>
+  packages?: boolean | Prisma.Destination$packagesArgs<ExtArgs>
+  roomTypes?: boolean | Prisma.Destination$roomTypesArgs<ExtArgs>
+  services?: boolean | Prisma.Destination$servicesArgs<ExtArgs>
   bookings?: boolean | Prisma.Destination$bookingsArgs<ExtArgs>
+  favorites?: boolean | Prisma.Destination$favoritesArgs<ExtArgs>
+  reviews?: boolean | Prisma.Destination$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.DestinationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["destination"]>
 
@@ -529,30 +2444,72 @@ export type DestinationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type DestinationSelectScalar = {
   id?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   location?: boolean
+  address?: boolean
+  latitude?: boolean
+  longitude?: boolean
   imageUrl?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
+  policy?: boolean
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: boolean
+  averageRating?: boolean
+  reviewCount?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "location" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
+export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "location" | "address" | "latitude" | "longitude" | "imageUrl" | "contactPhone" | "contactEmail" | "policy" | "isActive" | "isFeatured" | "minPrice" | "averageRating" | "reviewCount" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
 export type DestinationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  category?: boolean | Prisma.Destination$categoryArgs<ExtArgs>
+  images?: boolean | Prisma.Destination$imagesArgs<ExtArgs>
+  facilities?: boolean | Prisma.Destination$facilitiesArgs<ExtArgs>
+  packages?: boolean | Prisma.Destination$packagesArgs<ExtArgs>
+  roomTypes?: boolean | Prisma.Destination$roomTypesArgs<ExtArgs>
+  services?: boolean | Prisma.Destination$servicesArgs<ExtArgs>
   bookings?: boolean | Prisma.Destination$bookingsArgs<ExtArgs>
+  favorites?: boolean | Prisma.Destination$favoritesArgs<ExtArgs>
+  reviews?: boolean | Prisma.Destination$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.DestinationCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $DestinationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Destination"
   objects: {
+    category: Prisma.$CategoryPayload<ExtArgs> | null
+    images: Prisma.$DestinationImagePayload<ExtArgs>[]
+    facilities: Prisma.$FacilityPayload<ExtArgs>[]
+    packages: Prisma.$PackagePayload<ExtArgs>[]
+    roomTypes: Prisma.$RoomTypePayload<ExtArgs>[]
+    services: Prisma.$AddonServicePayload<ExtArgs>[]
     bookings: Prisma.$BookingPayload<ExtArgs>[]
+    favorites: Prisma.$FavoritePayload<ExtArgs>[]
+    reviews: Prisma.$ReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
+    slug: string
     description: string | null
     location: string
+    address: string | null
+    latitude: number | null
+    longitude: number | null
     imageUrl: string | null
+    contactPhone: string | null
+    contactEmail: string | null
+    policy: string | null
+    isActive: boolean
+    isFeatured: boolean
+    minPrice: number
+    averageRating: number
+    reviewCount: number
+    categoryId: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["destination"]>
@@ -895,7 +2852,15 @@ readonly fields: DestinationFieldRefs;
  */
 export interface Prisma__DestinationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  category<T extends Prisma.Destination$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  images<T extends Prisma.Destination$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DestinationImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  facilities<T extends Prisma.Destination$facilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$facilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  packages<T extends Prisma.Destination$packagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$packagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PackagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  roomTypes<T extends Prisma.Destination$roomTypesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$roomTypesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RoomTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  services<T extends Prisma.Destination$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddonServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookings<T extends Prisma.Destination$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favorites<T extends Prisma.Destination$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviews<T extends Prisma.Destination$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -927,9 +2892,22 @@ export interface Prisma__DestinationClient<T, Null = never, ExtArgs extends runt
 export interface DestinationFieldRefs {
   readonly id: Prisma.FieldRef<"Destination", 'Int'>
   readonly name: Prisma.FieldRef<"Destination", 'String'>
+  readonly slug: Prisma.FieldRef<"Destination", 'String'>
   readonly description: Prisma.FieldRef<"Destination", 'String'>
   readonly location: Prisma.FieldRef<"Destination", 'String'>
+  readonly address: Prisma.FieldRef<"Destination", 'String'>
+  readonly latitude: Prisma.FieldRef<"Destination", 'Float'>
+  readonly longitude: Prisma.FieldRef<"Destination", 'Float'>
   readonly imageUrl: Prisma.FieldRef<"Destination", 'String'>
+  readonly contactPhone: Prisma.FieldRef<"Destination", 'String'>
+  readonly contactEmail: Prisma.FieldRef<"Destination", 'String'>
+  readonly policy: Prisma.FieldRef<"Destination", 'String'>
+  readonly isActive: Prisma.FieldRef<"Destination", 'Boolean'>
+  readonly isFeatured: Prisma.FieldRef<"Destination", 'Boolean'>
+  readonly minPrice: Prisma.FieldRef<"Destination", 'Int'>
+  readonly averageRating: Prisma.FieldRef<"Destination", 'Float'>
+  readonly reviewCount: Prisma.FieldRef<"Destination", 'Int'>
+  readonly categoryId: Prisma.FieldRef<"Destination", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Destination", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Destination", 'DateTime'>
 }
@@ -1280,6 +3258,145 @@ export type DestinationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * Destination.category
+ */
+export type Destination$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Category
+   */
+  select?: Prisma.CategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Category
+   */
+  omit?: Prisma.CategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CategoryInclude<ExtArgs> | null
+  where?: Prisma.CategoryWhereInput
+}
+
+/**
+ * Destination.images
+ */
+export type Destination$imagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DestinationImage
+   */
+  select?: Prisma.DestinationImageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DestinationImage
+   */
+  omit?: Prisma.DestinationImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DestinationImageInclude<ExtArgs> | null
+  where?: Prisma.DestinationImageWhereInput
+  orderBy?: Prisma.DestinationImageOrderByWithRelationInput | Prisma.DestinationImageOrderByWithRelationInput[]
+  cursor?: Prisma.DestinationImageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DestinationImageScalarFieldEnum | Prisma.DestinationImageScalarFieldEnum[]
+}
+
+/**
+ * Destination.facilities
+ */
+export type Destination$facilitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Facility
+   */
+  select?: Prisma.FacilitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Facility
+   */
+  omit?: Prisma.FacilityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FacilityInclude<ExtArgs> | null
+  where?: Prisma.FacilityWhereInput
+  orderBy?: Prisma.FacilityOrderByWithRelationInput | Prisma.FacilityOrderByWithRelationInput[]
+  cursor?: Prisma.FacilityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FacilityScalarFieldEnum | Prisma.FacilityScalarFieldEnum[]
+}
+
+/**
+ * Destination.packages
+ */
+export type Destination$packagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Package
+   */
+  select?: Prisma.PackageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Package
+   */
+  omit?: Prisma.PackageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PackageInclude<ExtArgs> | null
+  where?: Prisma.PackageWhereInput
+  orderBy?: Prisma.PackageOrderByWithRelationInput | Prisma.PackageOrderByWithRelationInput[]
+  cursor?: Prisma.PackageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PackageScalarFieldEnum | Prisma.PackageScalarFieldEnum[]
+}
+
+/**
+ * Destination.roomTypes
+ */
+export type Destination$roomTypesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RoomType
+   */
+  select?: Prisma.RoomTypeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RoomType
+   */
+  omit?: Prisma.RoomTypeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoomTypeInclude<ExtArgs> | null
+  where?: Prisma.RoomTypeWhereInput
+  orderBy?: Prisma.RoomTypeOrderByWithRelationInput | Prisma.RoomTypeOrderByWithRelationInput[]
+  cursor?: Prisma.RoomTypeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RoomTypeScalarFieldEnum | Prisma.RoomTypeScalarFieldEnum[]
+}
+
+/**
+ * Destination.services
+ */
+export type Destination$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AddonService
+   */
+  select?: Prisma.AddonServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AddonService
+   */
+  omit?: Prisma.AddonServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AddonServiceInclude<ExtArgs> | null
+  where?: Prisma.AddonServiceWhereInput
+  orderBy?: Prisma.AddonServiceOrderByWithRelationInput | Prisma.AddonServiceOrderByWithRelationInput[]
+  cursor?: Prisma.AddonServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AddonServiceScalarFieldEnum | Prisma.AddonServiceScalarFieldEnum[]
+}
+
+/**
  * Destination.bookings
  */
 export type Destination$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1301,6 +3418,54 @@ export type Destination$bookingsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * Destination.favorites
+ */
+export type Destination$favoritesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Favorite
+   */
+  select?: Prisma.FavoriteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Favorite
+   */
+  omit?: Prisma.FavoriteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FavoriteInclude<ExtArgs> | null
+  where?: Prisma.FavoriteWhereInput
+  orderBy?: Prisma.FavoriteOrderByWithRelationInput | Prisma.FavoriteOrderByWithRelationInput[]
+  cursor?: Prisma.FavoriteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FavoriteScalarFieldEnum | Prisma.FavoriteScalarFieldEnum[]
+}
+
+/**
+ * Destination.reviews
+ */
+export type Destination$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Review
+   */
+  select?: Prisma.ReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Review
+   */
+  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewInclude<ExtArgs> | null
+  where?: Prisma.ReviewWhereInput
+  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
 }
 
 /**

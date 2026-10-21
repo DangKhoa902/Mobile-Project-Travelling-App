@@ -1,0 +1,56 @@
+import request from "supertest";
+import { describe, expect, it } from "vitest";
+import { app } from "../../src/app.js";
+
+// Các case dưới đây bị chặn trước khi chạm DB nên chạy được cả khi không có MariaDB.
+describe("API guards", () => {
+  it("GET / trả trạng thái API", async () => {
+    const response = await request(app).get("/");
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe("ok");
+  });
+
+  it("route không tồn tại trả 404 JSON", async () => {
+    const response = await request(app).get("/api/khong-ton-tai");
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe("ROUTE_NOT_FOUND");
+  });
+
+  it("đăng nhập với body sai trả 400 và chi tiết lỗi", async () => {
+    const response = await request(app).post("/api/auth/login").send({ email: "not-an-email" });
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe("VALIDATION_ERROR");
+    expect(response.body.details.map((issue: { path: string }) => issue.path)).toEqual(
+      expect.arrayContaining(["email", "password"]),
+    );
+  });
+
+  it("JSON sai cú pháp trả 400", async () => {
+    const response = await request(app)
+      .post("/api/auth/login")
+      .set("Content-Type", "application/json")
+      .send('{"email":');
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe("INVALID_JSON");
+  });
+
+  it.each(["/api/bookings", "/api/favorites", "/api/notifications", "/api/users", "/api/auth/me"])(
+    "%s yêu cầu đăng nhập",
+    async (path) => {
+      const response = await request(app).get(path);
+      expect(response.status).toBe(401);
+    },
+  );
+
+  it("token giả bị từ chối", async () => {
+    const response = await request(app).get("/api/bookings").set("Authorization", "Bearer abc.def.ghi");
+    expect(response.status).toBe(401);
+  });
+
+  it("báo giá với ngày sai định dạng trả 400", async () => {
+    const response = await request(app)
+      .post("/api/bookings/quote")
+      .send({ packageId: 1, roomTypeId: 1, checkInDate: "01/12/2026", checkOutDate: "2026-12-03", guests: 2, roomsCount: 1 });
+    expect(response.status).toBe(400);
+  });
+});

@@ -7,41 +7,398 @@ datasource db {
   provider = "mysql"
 }
 
+// Số tiền lưu bằng Int theo đơn vị VNĐ (VNĐ không có phần lẻ).
+
+enum Role {
+  USER
+  STAFF
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  ONLINE_MOCK
+  PAY_AT_PROPERTY
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ServicePricingUnit {
+  PER_BOOKING
+  PER_GUEST
+  PER_NIGHT
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+enum NotificationType {
+  BOOKING
+  PAYMENT
+  SUPPORT
+  REVIEW
+  SYSTEM
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+}
+
 model User {
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String     @unique
+  password    String
+  phone       String?    @db.VarChar(20)
+  dateOfBirth DateTime?  @db.Date
+  avatarUrl   String?    @db.VarChar(500)
+  role        Role       @default(USER)
+  status      UserStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  bookings              Booking[]
+  favorites             Favorite[]
+  reviews               Review[]       @relation("ReviewAuthor")
+  moderatedReviews      Review[]       @relation("ReviewModerator")
+  notifications         Notification[]
+  conversations         Conversation[] @relation("ConversationCustomer")
+  assignedConversations Conversation[] @relation("ConversationStaff")
+  messages              Message[]
+}
+
+model Category {
   id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
+  name      String   @unique
+  slug      String   @unique
+  iconName  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookings Booking[]
+  destinations Destination[]
+}
+
+model Facility {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  iconName String?
+
+  destinations Destination[]
 }
 
 model Destination {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?  @db.Text
-  location    String
-  imageUrl    String?
+  id            Int      @id @default(autoincrement())
+  name          String
+  slug          String   @unique
+  description   String?  @db.Text
+  location      String
+  address       String?  @db.VarChar(500)
+  latitude      Float?
+  longitude     Float?
+  imageUrl      String?  @db.VarChar(500)
+  contactPhone  String?  @db.VarChar(20)
+  contactEmail  String?
+  policy        String?  @db.Text
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  // Giá "từ" thấp nhất, cập nhật khi gói thay đổi để lọc/sắp xếp nhanh.
+  minPrice      Int      @default(0)
+  averageRating Float    @default(0)
+  reviewCount   Int      @default(0)
+  categoryId    Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  category   Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  images     DestinationImage[]
+  facilities Facility[]
+  packages   Package[]
+  roomTypes  RoomType[]
+  services   AddonService[]
+  bookings   Booking[]
+  favorites  Favorite[]
+  reviews    Review[]
+
+  @@index([location])
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+}
+
+model DestinationImage {
+  id            Int    @id @default(autoincrement())
+  destinationId Int
+  url           String @db.VarChar(500)
+  sortOrder     Int    @default(0)
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@index([destinationId])
+}
+
+model Package {
+  id                    Int      @id @default(autoincrement())
+  destinationId         Int
+  name                  String
+  description           String?  @db.Text
+  // Danh sách quyền lợi hiển thị, ví dụ ["Ăn sáng", "Đưa đón sân bay"].
+  inclusions            Json?
+  durationDays          Int
+  durationNights        Int
+  price                 Int
+  // Số giờ trước giờ nhận phòng mà khách vẫn được hủy miễn phí (BR-07).
+  freeCancellationHours Int      @default(48)
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@index([destinationId])
+}
+
+model RoomType {
+  id            Int      @id @default(autoincrement())
+  destinationId Int
+  name          String
+  description   String?  @db.Text
+  capacity      Int
+  pricePerNight Int
+  // Tổng số phòng thuộc loại này; số phòng còn trống được tính từ các booking đang giữ chỗ.
+  totalRooms    Int
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@index([destinationId])
+}
+
+model AddonService {
+  id            Int                @id @default(autoincrement())
+  destinationId Int
+  name          String
+  description   String?            @db.Text
+  price         Int
+  pricingUnit   ServicePricingUnit @default(PER_BOOKING)
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  destination     Destination      @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  bookingServices BookingService[]
+
+  @@index([destinationId])
+}
+
+model Voucher {
+  id            Int          @id @default(autoincrement())
+  code          String       @unique
+  description   String?
+  discountType  DiscountType
+  value         Int
+  maxDiscount   Int?
+  minOrderValue Int          @default(0)
+  usageLimit    Int?
+  usedCount     Int          @default(0)
+  startsAt      DateTime
+  endsAt        DateTime
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   bookings Booking[]
 }
 
 model Booking {
-  id            Int      @id @default(autoincrement())
-  bookingDate   DateTime
-  status        String   @default("PENDING")
+  id     Int           @id @default(autoincrement())
+  code   String        @unique
+  status BookingStatus @default(PENDING)
 
   userId        Int
   destinationId Int
+  packageId     Int
+  roomTypeId    Int
+  voucherId     Int?
 
-  user        User        @relation(fields: [userId], references: [id])
-  destination Destination @relation(fields: [destinationId], references: [id])
+  checkInDate  DateTime @db.Date
+  checkOutDate DateTime @db.Date
+  nights       Int
+  guests       Int
+  roomsCount   Int
+
+  contactName  String
+  contactPhone String  @db.VarChar(20)
+  contactEmail String
+  note         String? @db.Text
+
+  // Giá được chụp lại tại thời điểm đặt để không đổi khi admin sửa bảng giá.
+  packagePrice   Int
+  roomPrice      Int
+  servicesPrice  Int
+  subtotal       Int
+  discountAmount Int @default(0)
+  taxAmount      Int @default(0)
+  totalAmount    Int
+
+  confirmedAt  DateTime?
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?   @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user        User             @relation(fields: [userId], references: [id])
+  destination Destination      @relation(fields: [destinationId], references: [id])
+  package     Package          @relation(fields: [packageId], references: [id])
+  roomType    RoomType         @relation(fields: [roomTypeId], references: [id])
+  voucher     Voucher?         @relation(fields: [voucherId], references: [id])
+  services    BookingService[]
+  payment     Payment?
+  review      Review?
+
+  @@index([userId, status])
+  @@index([roomTypeId, checkInDate, checkOutDate])
+  @@index([status])
+}
+
+model BookingService {
+  id             Int @id @default(autoincrement())
+  bookingId      Int
+  addonServiceId Int
+  quantity       Int
+  unitPrice      Int
+  totalPrice     Int
+
+  booking      Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  addonService AddonService @relation(fields: [addonServiceId], references: [id])
+
+  @@index([bookingId])
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  bookingId      Int           @unique
+  method         PaymentMethod
+  status         PaymentStatus @default(UNPAID)
+  amount         Int
+  transactionRef String?       @unique
+  paidAt         DateTime?
+  refundedAt     DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  userId        Int
+  destinationId Int
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  // BR-03: mỗi user chỉ yêu thích một địa điểm một lần.
+  @@id([userId, destinationId])
+}
+
+model Review {
+  id            Int          @id @default(autoincrement())
+  userId        Int
+  destinationId Int
+  // BR-02 + BR-08: review gắn với một booking đã hoàn thành, mỗi booking một review.
+  bookingId     Int          @unique
+  rating        Int
+  comment       String?      @db.Text
+  status        ReviewStatus @default(PENDING)
+  moderatedById Int?
+  moderatedAt   DateTime?
+  rejectReason  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user        User        @relation("ReviewAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  booking     Booking     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  moderatedBy User?       @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+
+  @@index([destinationId, status])
+  @@index([status])
+}
+
+model Conversation {
+  id            Int                @id @default(autoincrement())
+  customerId    Int
+  staffId       Int?
+  bookingId     Int?
+  subject       String
+  status        ConversationStatus @default(OPEN)
+  lastMessageAt DateTime           @default(now())
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  customer User      @relation("ConversationCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+  staff    User?     @relation("ConversationStaff", fields: [staffId], references: [id], onDelete: SetNull)
+  messages Message[]
+
+  @@index([customerId])
+  @@index([status, lastMessageAt])
+}
+
+model Message {
+  id             Int       @id @default(autoincrement())
+  conversationId Int
+  senderId       Int
+  content        String    @db.Text
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  title     String
+  body      String           @db.Text
+  data      Json?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
 }
