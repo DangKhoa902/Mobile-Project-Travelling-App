@@ -11,11 +11,32 @@
 
 export const Role = {
   USER: 'USER',
+  OWNER: 'OWNER',
   STAFF: 'STAFF',
   ADMIN: 'ADMIN'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const PartnerStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  SUSPENDED: 'SUSPENDED'
+} as const
+
+export type PartnerStatus = (typeof PartnerStatus)[keyof typeof PartnerStatus]
+
+
+export const ListingStatus = {
+  DRAFT: 'DRAFT',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ListingStatus = (typeof ListingStatus)[keyof typeof ListingStatus]
 
 
 export const UserStatus = {
@@ -85,6 +106,7 @@ export const NotificationType = {
   PAYMENT: 'PAYMENT',
   SUPPORT: 'SUPPORT',
   REVIEW: 'REVIEW',
+  PARTNER: 'PARTNER',
   SYSTEM: 'SYSTEM'
 } as const
 

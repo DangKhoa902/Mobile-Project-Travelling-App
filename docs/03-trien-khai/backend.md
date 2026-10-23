@@ -1,273 +1,180 @@
 # Hướng dẫn phát triển backend
 
-Backend nằm trong thư mục `be/`, dùng Node.js, TypeScript, Express 5, Prisma 7 và MariaDB. Tài liệu này mô tả cấu trúc hiện tại, chỉ rõ code thuộc file nào, và hướng dẫn các thao tác thường dùng.
+Backend nằm trong `be/`: Node.js 24, TypeScript, Express 5, Prisma 7 (adapter MariaDB), Zod, JWT, bcrypt. Tài liệu này mô tả kiến trúc theo lớp, file nào chứa gì, và cách thêm một chức năng mới.
 
-## Cấu trúc file
+## 1. Kiến trúc theo lớp
+
+```mermaid
+flowchart TD
+    Client[App Web / Mobile] -->|HTTP JSON| App[app.ts<br/>helmet, cors, json, mount router]
+    App --> MW[middlewares/<br/>authenticate, requireRole]
+    MW --> Route[routes/*.routes.ts<br/>đọc request, validate bằng Zod, trả response]
+    Route --> Service[services/*.service.ts<br/>quy tắc nghiệp vụ, transaction, thông báo]
+    Route -.->|truy vấn đọc đơn giản| DAO
+    Service --> DAO[dao/*.dao.ts<br/>câu truy vấn Prisma dùng lại]
+    Service --> Pure[services/pricing.ts, booking-rules.ts<br/>hàm thuần, không I/O]
+    DAO --> Prisma[lib/prisma.ts<br/>PrismaClient + adapter MariaDB]
+    Prisma --> DB[(MariaDB)]
+    Route -->|throw| EH[middlewares/error-handler.ts<br/>chuyển lỗi thành JSON]
+```
+
+| Lớp | Thư mục | Được làm | Không được làm |
+|---|---|---|---|
+| Route | `src/routes/` | Khai báo URL, gắn middleware quyền, `schema.parse(request.body)`, gọi service/DAO, chọn HTTP status | Chứa quy tắc nghiệp vụ phức tạp |
+| Validator | `src/validators/` | Schema Zod dùng chung giữa nhiều route | Truy cập DB |
+| Service | `src/services/` | Quy tắc nghiệp vụ (BR-xx), transaction, kiểm tra quyền sở hữu, tạo thông báo | Đọc `request`/`response` |
+| Hàm thuần | `src/services/pricing.ts`, `booking-rules.ts` | Tính tiền, hoa hồng, trạng thái, ngày giờ | Gọi DB (để unit test được) |
+| DAO | `src/dao/` | Câu truy vấn Prisma dùng ở nhiều nơi, `select`/`include` chuẩn | Ném lỗi HTTP |
+| Hạ tầng | `src/lib/`, `src/config/`, `src/middlewares/` | Prisma client, env, lỗi HTTP, phân trang, xác thực | |
+
+Route đơn giản (chỉ đọc một bảng) được gọi Prisma trực tiếp; khi có quy tắc nghiệp vụ hoặc ghi nhiều bảng thì đưa vào service.
+
+## 2. Cấu trúc file
 
 ```text
 be/
-├── .env                         # Cấu hình local; không commit
-├── .env.example                 # Mẫu biến môi trường
-├── package.json                 # Dependencies và lệnh npm
-├── prisma.config.ts             # Prisma CLI: schema, migrations, DATABASE_URL
+├── Dockerfile, .dockerignore         Build image production
+├── .env.example                      Mẫu biến môi trường (xem deploy.md)
+├── prisma.config.ts                  Prisma CLI: schema, migrations, seed
 ├── prisma/
-│   ├── schema.prisma            # Models, fields, relations, types
-│   └── migrations/              # SQL migration được Prisma tạo
-├── src/
-│   ├── app.ts                   # Middleware và mount router
-│   ├── server.ts                # Port, listen và shutdown
-│   ├── routes/                  # HTTP routes, tách riêng theo resource/bảng
-│   │   ├── user.routes.ts
-│   │   ├── destination.routes.ts
-│   │   └── booking.routes.ts
-│   ├── dao/                     # Truy vấn Prisma, tách riêng theo bảng
-│   │   ├── user.dao.ts
-│   │   ├── destination.dao.ts
-│   │   └── booking.dao.ts
-│   ├── lib/
-│   │   └── prisma.ts            # Khởi tạo Prisma Client + MariaDB adapter
-│   └── generated/prisma/        # Prisma Client được generate; không sửa tay
-└── tsconfig.json                # Cấu hình TypeScript
+│   ├── schema.prisma                 18 model, 12 enum
+│   ├── migrations/                   SQL migration (đã sửa tên bảng PascalCase)
+│   └── seed.ts                       Dữ liệu demo, chạy lại an toàn
+├── postman/                          Collection kiểm thử end-to-end
+├── tests/
+│   ├── unit/                         pricing, booking-rules
+│   └── integration/                  Supertest: quyền, validation (không cần DB)
+└── src/
+    ├── server.ts                     Listen, job hủy booking quá hạn, tắt an toàn
+    ├── app.ts                        Middleware chung + mount router
+    ├── config/env.ts                 Đọc và kiểm tra biến môi trường bằng Zod
+    ├── lib/                          prisma, http-error, pagination, slug
+    ├── middlewares/
+    │   ├── auth.ts                   authenticate, optionalAuth, requireRole, signAccessToken
+    │   └── error-handler.ts          HttpError / ZodError / Prisma error → JSON
+    ├── validators/                   auth, booking, destination
+    ├── dao/                          user, destination, booking
+    ├── services/
+    │   ├── access.service.ts         assertCanManageDestination, commissionRateFor
+    │   ├── auth.service.ts           Đăng ký, đăng nhập, hồ sơ
+    │   ├── booking.service.ts        Báo giá, đặt, thanh toán, hủy, xác nhận, hết hạn
+    │   ├── booking-rules.ts          Máy trạng thái, chính sách hủy, ngày giờ VN, mã booking
+    │   ├── pricing.ts                Công thức giá, giảm giá, hoa hồng
+    │   ├── destination.service.ts    Tạo/sửa tin, gửi duyệt, duyệt, giá từ, rating
+    │   ├── review.service.ts         Đánh giá, kiểm duyệt
+    │   ├── notification.service.ts   createNotification, notifyRoles
+    │   └── stats.service.ts          Dashboard
+    ├── routes/
+    │   ├── auth.routes.ts            /api/auth
+    │   ├── user.routes.ts            /api/users
+    │   ├── catalog.routes.ts         /api/categories, facilities, packages, room-types, addon-services, vouchers
+    │   ├── destination.routes.ts     /api/destinations
+    │   ├── manage.routes.ts          /api/manage (trang quản lý của chủ / admin)
+    │   ├── partner.routes.ts         /api/partners
+    │   ├── booking.routes.ts         /api/bookings
+    │   ├── favorite.routes.ts        /api/favorites
+    │   ├── review.routes.ts          /api/reviews
+    │   ├── notification.routes.ts    /api/notifications
+    │   ├── conversation.routes.ts    /api/conversations
+    │   └── stats.routes.ts           /api/stats
+    └── generated/prisma/             Prisma Client sinh tự động – không sửa tay
 ```
 
-## Luồng của một request
+## 3. Phân quyền
 
-```text
-HTTP client
-  → src/server.ts (lắng nghe port)
-  → src/app.ts (middleware và mount router)
-  → src/routes/<resource>.routes.ts (HTTP endpoint)
-  → src/dao/<model>.dao.ts (truy vấn Prisma)
-  → src/lib/prisma.ts (Prisma Client)
-  → MariaDB
-```
+Có hai lớp kiểm tra, cả hai đều cần:
 
-- `prisma/schema.prisma`: mô tả database bằng Prisma Schema Language.
-- `prisma.config.ts`: cho Prisma CLI biết đường dẫn schema, thư mục migrations và URL database.
-- `src/lib/prisma.ts`: tạo adapter kết nối MariaDB và export một Prisma Client dùng chung.
-- `src/app.ts`: cấu hình middleware và mount router; giữ file này gọn.
-- `src/server.ts`: chạy HTTP server; không đặt truy vấn hoặc định nghĩa model ở đây.
-- `src/routes/*.routes.ts`: khai báo endpoint HTTP theo resource/bảng, kiểm tra input cơ bản, gọi DAO và trả response.
-- `src/dao/*.dao.ts`: chứa truy vấn Prisma cho từng model/bảng; không xử lý HTTP ở đây.
+1. **Theo vai trò** – middleware trên route:
 
-## 1. Cấu hình môi trường
+   ```ts
+   bookingRouter.patch("/:id/status", requireRole("OWNER", "STAFF", "ADMIN"), handler);
+   ```
 
-Trong `be/.env`, đặt URL kết nối và port. Giữ file này ở local, không đưa mật khẩu thật vào Git.
+2. **Theo quyền sở hữu** – trong service, vì vai trò đúng chưa đủ (chủ A không được sửa địa điểm của chủ B):
 
-```env
-DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/travelling_app"
-PORT=3000
-```
+   ```ts
+   await assertCanManageDestination(currentUser(request), input.destinationId); // 403 nếu không phải của mình
+   ```
 
-`mysql://` là scheme Prisma dùng cho MariaDB. Nếu username hoặc password có ký tự đặc biệt trong URL (ví dụ `@`, `#`, `/`), hãy URL-encode ký tự đó. Mẫu biến nằm trong `be/.env.example`; không đặt URL connection thứ hai trong code.
+| Hàm | File | Dùng khi |
+|---|---|---|
+| `authenticate` | `middlewares/auth.ts` | Bắt buộc đăng nhập; đọc lại user từ DB mỗi request (BR-11) |
+| `optionalAuth` | `middlewares/auth.ts` | API công khai nhưng trả thêm dữ liệu cá nhân (`isFavorite`) |
+| `requireRole(...roles)` | `middlewares/auth.ts` | Giới hạn vai trò |
+| `isStaff(user)` | `middlewares/auth.ts` | STAFF hoặc ADMIN |
+| `isOwner(user)`, `assertCanManageDestination` | `services/access.service.ts` | Chủ địa điểm |
+| `canManageBooking` | `services/booking.service.ts` | Staff/Admin, hoặc chủ của địa điểm trong booking |
 
-`be/prisma.config.ts` đọc `DATABASE_URL` để chạy các lệnh Prisma. Ứng dụng runtime cũng đọc biến này trong `be/src/lib/prisma.ts` và chuyển thông tin URL cho `PrismaMariaDb` adapter.
+Dữ liệu không thuộc quyền truy cập trả **404** thay vì 403 (BR-10), trừ thao tác quản lý địa điểm trả 403 để chủ biết họ không có quyền.
 
-## 2. Thêm hoặc chỉnh sửa bảng/model
+## 4. Quy ước code
 
-Sửa `be/prisma/schema.prisma`. Model tương ứng với bảng; field tương ứng với cột. Ví dụ model hiện có:
+- **Express 5 tự bắt lỗi async:** handler chỉ cần `throw`, không cần `try/catch` hay `next(error)`.
+- **Validate mọi input bằng Zod** ngay đầu handler: `const input = schema.parse(request.body)`. Không truyền thẳng `request.body` vào Prisma.
+- **Lỗi nghiệp vụ** dùng helper trong `lib/http-error.ts` với `code` ổn định để giao diện xử lý:
 
-```prisma
-model Destination {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?   @db.Text
-  location    String
-  imageUrl    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  ```ts
+  throw conflict("Booking chưa được thanh toán", "PAYMENT_REQUIRED");
+  ```
 
-  bookings Booking[]
-}
-```
+  Thông báo viết tiếng Việt (hiển thị thẳng cho người dùng); `code` viết HOA_GẠCH_DƯỚI.
+- **Response:** một đối tượng `{ data }`; danh sách `paginated(data, total, query)` → `{ data, meta }`; xóa trả 204.
+- **Không trả `password`:** luôn dùng `publicUserSelect` hoặc `select` tường minh khi lấy `User`.
+- **Ghi nhiều bảng** dùng `prisma.$transaction(async (tx) => ...)` và truyền `tx` vào hàm con (`createNotification(input, tx)`).
+- **Thông báo** tạo trong cùng transaction với thay đổi nghiệp vụ.
+- **Tiền** là số nguyên VNĐ; **ngày ở** là chuỗi `YYYY-MM-DD` → `parseDateOnly`; "hôm nay" dùng `todayInVietnam()`.
+- **Raw SQL** (`$queryRaw`) viết tên bảng PascalCase (`Booking`, `RoomType`) để chạy được trên Linux.
 
-Ví dụ thêm một model `Review` có quan hệ tới `User` và `Destination`:
+## 5. Thêm một chức năng mới – ví dụ "Chủ địa điểm trả lời đánh giá"
 
-```prisma
-model Review {
-  id            Int         @id @default(autoincrement())
-  rating        Int
-  comment       String?     @db.Text
-  userId        Int
-  destinationId Int
-  createdAt     DateTime    @default(now())
+| Bước | File | Việc |
+|---|---|---|
+| 1 | `prisma/schema.prisma` | Thêm `ownerReply String? @db.Text` và `ownerRepliedAt DateTime?` vào `Review` |
+| 2 | `prisma/migrations/` | Tạo migration (mục 6); **sửa tên bảng PascalCase** trong SQL |
+| 3 | `src/services/review.service.ts` | `replyToReview(user, reviewId, content)`: lấy review → `assertCanManageDestination(user, review.destinationId)` → cập nhật → `createNotification` cho khách |
+| 4 | `src/routes/review.routes.ts` | `reviewRouter.patch("/:id/reply", requireRole("OWNER", "ADMIN"), ...)` với schema `{ content: z.string().trim().min(1).max(1000) }` |
+| 5 | `src/dao/destination.dao.ts` | Thêm `ownerReply`, `ownerRepliedAt` vào `reviewPublicSelect` để khách thấy |
+| 6 | `tests/` + `postman/` | Test chặn quyền (401/403) và luồng đúng |
+| 7 | `docs/` | Cập nhật [api.md](../02-thiet-ke/api.md), [co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md), [nhat-ky-thay-doi.md](../04-quan-ly-du-an/nhat-ky-thay-doi.md) |
 
-  user        User        @relation(fields: [userId], references: [id])
-  destination Destination @relation(fields: [destinationId], references: [id])
-}
-```
+Route cụ thể (`/moderation`, `/mine`) phải khai báo **trước** route tham số (`/:id`).
 
-Khi thêm model có quan hệ ngược, thêm field quan hệ vào model hiện có, ví dụ `reviews Review[]` trong `User` và `Destination`. Với field bắt buộc mới trên bảng đã có dữ liệu, đặt giá trị mặc định hoặc triển khai migration theo nhiều bước để dữ liệu cũ cũng hợp lệ.
-
-Tạo và áp dụng migration trong môi trường phát triển:
+## 6. Prisma và migration
 
 ```bash
 cd be
-npm run db:migrate -- --name add_review
+npm run db:generate                          # sinh lại client sau khi sửa schema
+npm run db:migrate -- --name ten_migration   # dev: tạo + áp dụng migration (terminal tương tác)
+npm run db:deploy                            # server: áp dụng migration chưa chạy
+npm run db:seed                              # nạp dữ liệu demo
+npm run db:studio                            # giao diện xem dữ liệu
 ```
 
-Prisma sẽ tạo SQL dưới `be/prisma/migrations/`, áp dụng migration lên MariaDB và generate lại Prisma Client. Nếu chỉ sửa schema và cần generate client mà chưa migrate:
+**Khi `migrate dev` không chạy được** (terminal không tương tác, như khi chạy qua công cụ tự động), sinh SQL bằng `migrate diff` rồi áp dụng:
 
 ```bash
-npm run db:generate
+mkdir prisma/migrations/20261101090000_ten_migration
+npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script > prisma/migrations/20261101090000_ten_migration/migration.sql
+# Mở file SQL, sửa `booking` → `Booking`, `user` → `User`... (MariaDB trên Windows viết thường)
+npx prisma migrate deploy
+npx prisma generate
 ```
 
-Không chỉnh tay `src/generated/prisma/`; thư mục đó là output được sinh từ schema. Không xóa hay sửa migration đã được chia sẻ/áp dụng ở môi trường chung; tạo migration mới để thay đổi tiếp.
+Không sửa migration đã được chia sẻ cho nhóm hoặc đã chạy ở server; tạo migration mới để thay đổi tiếp. Thêm cột bắt buộc vào bảng đã có dữ liệu phải có `@default(...)`.
 
-## 3. Tách route và DAO theo bảng
+## 7. Job nền
 
-`src/app.ts` không chứa toàn bộ endpoint. File này cấu hình middleware và mount router theo prefix:
+`server.ts` chạy `expireOverdueBookings()` mỗi 60 giây để hủy booking thanh toán online quá hạn (BR-19). Job không chạy trong test (test chỉ import `app.ts`). Khi chạy nhiều instance API, chuyển job sang một tiến trình cron riêng để không chạy trùng.
 
-```ts
-app.use("/api/users", userRouter);
-app.use("/api/destinations", destinationRouter);
-app.use("/api/bookings", bookingRouter);
-```
-
-Mỗi bảng có hai file riêng:
-
-| Phần | File hiện tại | Trách nhiệm |
-|---|---|---|
-| HTTP routes | `be/src/routes/user.routes.ts` | URL, HTTP status, đọc/kiểm tra params, gọi DAO, trả response |
-| User queries | `be/src/dao/user.dao.ts` | Truy vấn Prisma cho model `User` |
-| HTTP routes | `be/src/routes/destination.routes.ts` | Endpoint địa điểm |
-| Destination queries | `be/src/dao/destination.dao.ts` | Truy vấn Prisma cho model `Destination` |
-| HTTP routes | `be/src/routes/booking.routes.ts` | Endpoint đặt chỗ |
-| Booking queries | `be/src/dao/booking.dao.ts` | Truy vấn Prisma cho model `Booking` |
-
-Các endpoint mẫu hiện có:
-
-- `GET /api/users` và `GET /api/users/:id`
-- `GET /api/destinations` và `GET /api/destinations/:id`
-- `GET /api/bookings` và `GET /api/bookings/:id`
-
-Route chi tiết nhận và kiểm tra ID, gọi DAO rồi trả JSON hoặc status `400`/`404`. Ví dụ, `user.routes.ts` gọi `userDao.findById(id)`; câu Prisma `findUnique` nằm trong `user.dao.ts`.
-
-Khi thêm endpoint cho bảng hiện có, đặt HTTP handler vào router tương ứng và câu query vào DAO tương ứng. Khi thêm model mới, tạo `<model>.dao.ts` và `<resource>.routes.ts`, export router rồi mount router mới trong `src/app.ts`. Đặt route cụ thể như `/search` trước route tham số `/:id`.
-
-DAO chỉ truy cập database; route chỉ xử lý HTTP. Không truyền trực tiếp `request.body` vào Prisma: validate input và chỉ chọn các field được phép. Khi thêm chức năng ghi, tạo phương thức DAO riêng như `create`, `update`, `delete` cùng endpoint phù hợp.
-
-## 4. Truy vấn database bằng Prisma
-
-DAO import singleton từ `be/src/lib/prisma.ts`; route nên gọi DAO thay vì tự truy vấn database:
-
-```ts
-import { prisma } from "../lib/prisma.js";
-```
-
-Đường dẫn import tùy vị trí file. Không tạo `new PrismaClient()` cho mỗi request.
-
-### Đọc nhiều bản ghi
-
-```ts
-const destinations = await prisma.destination.findMany({
-  where: { location: "Đà Nẵng" },
-  orderBy: { name: "asc" },
-  take: 20,
-  select: { id: true, name: true, location: true, imageUrl: true },
-});
-```
-
-### Đọc một bản ghi theo khóa chính hoặc điều kiện duy nhất
-
-```ts
-const destination = await prisma.destination.findUnique({
-  where: { id: 1 },
-});
-```
-
-`findUnique` cần field có `@id` hoặc `@unique`. Dùng `findFirst` cho điều kiện không duy nhất.
-
-### Thêm bản ghi
-
-```ts
-const destination = await prisma.destination.create({
-  data: {
-    name: "Bãi biển Mỹ Khê",
-    location: "Đà Nẵng",
-    description: "Bãi biển tại Đà Nẵng",
-    imageUrl: null,
-  },
-});
-```
-
-### Cập nhật và xóa
-
-```ts
-const updated = await prisma.destination.update({
-  where: { id: 1 },
-  data: { name: "Tên mới" },
-});
-
-const deleted = await prisma.destination.delete({
-  where: { id: 1 },
-});
-```
-
-`update` và `delete` theo unique key sẽ báo lỗi nếu không tìm thấy bản ghi. Hãy xử lý lỗi đó ở tầng route/service để trả HTTP status phù hợp.
-
-### Lấy dữ liệu quan hệ
-
-```ts
-const booking = await prisma.booking.findUnique({
-  where: { id: 1 },
-  include: {
-    user: { select: { id: true, name: true, email: true } },
-    destination: { select: { id: true, name: true, location: true } },
-  },
-});
-```
-
-Dùng `select` để chỉ trả field cần thiết. Model `User` có field `password`, vì vậy không trả toàn bộ User ra API; tuyệt đối không trả password/hash về client.
-
-### Transaction cho nhiều thao tác liên quan
-
-```ts
-const result = await prisma.$transaction(async (tx) => {
-  const booking = await tx.booking.create({
-    data: {
-      bookingDate: new Date("2026-12-01T00:00:00.000Z"),
-      userId: 1,
-      destinationId: 1,
-    },
-  });
-
-  // Thêm các thao tác cần cùng thành công/thất bại vào đây.
-  return booking;
-});
-```
-
-Nếu một thao tác trong transaction thất bại, Prisma rollback các thao tác thuộc transaction đó.
-
-## 5. Tên Prisma model và tên bảng MariaDB
-
-Theo mặc định, Prisma ánh xạ model `Destination` sang bảng database tương ứng theo quy ước của Prisma. Nếu database hiện có dùng tên bảng/cột khác, dùng `@@map("table_name")` trên model hoặc `@map("column_name")` trên field trong `schema.prisma`, sau đó tạo migration phù hợp. Kiểm tra migration SQL trước khi áp dụng vào database có dữ liệu.
-
-## 6. Các lệnh thường dùng
-
-Chạy từ thư mục `be/`:
+## 8. Lệnh npm
 
 | Lệnh | Công dụng |
 |---|---|
-| `npm run dev` | Chạy API development, tự reload khi sửa TypeScript |
-| `npm run build` | Biên dịch TypeScript vào `dist/` |
+| `npm run dev` | Chạy API, tự reload khi sửa code |
+| `npm run typecheck` | Kiểm tra kiểu TypeScript |
+| `npm test` | Unit + integration test (Vitest) |
+| `npm run build` | `prisma generate` + biên dịch vào `dist/` |
 | `npm start` | Chạy bản đã build |
-| `npm run db:generate` | Generate Prisma Client từ schema |
-| `npm run db:migrate -- --name ten_migration` | Tạo và áp dụng migration development |
-| `npm run db:studio` | Mở giao diện xem/sửa dữ liệu database |
+| `npm run db:*` | Xem mục 6 |
 
-Health check hiện có tại `GET /health`; `GET /` xác nhận API đang chạy.
-
-## 7. Vị trí đặt code khi bổ sung tính năng
-
-Khi thêm ví dụ `GET /api/destinations`:
-
-1. **Model và quan hệ:** `be/prisma/schema.prisma`.
-2. **Thay đổi cấu trúc MariaDB:** migration do `npm run db:migrate` tạo trong `be/prisma/migrations/`.
-3. **Kết nối DB:** tiếp tục dùng client singleton ở `be/src/lib/prisma.ts`.
-4. **Truy vấn DB:** thêm phương thức trong DAO tương ứng, ví dụ `be/src/dao/destination.dao.ts`.
-5. **HTTP endpoint:** khai báo trong router tương ứng, ví dụ `be/src/routes/destination.routes.ts`.
-6. **Đăng ký router mới:** mount trong `be/src/app.ts`. Bảng mới cần DAO và router riêng.
-7. **Startup/port:** `be/src/server.ts`; thường không cần sửa khi thêm endpoint.
-8. **Biến môi trường:** thêm tên biến cần thiết vào `.env.example`, đọc giá trị thật từ `.env`; không commit bí mật.
-9. **Sinh client và chạy:** `npm run db:generate` nếu schema đổi, sau đó `npm run dev`.
+Kiểm thử chi tiết: [kiem-thu.md](kiem-thu.md). Triển khai: [deploy.md](deploy.md).

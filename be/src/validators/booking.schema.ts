@@ -34,6 +34,8 @@ export const createBookingSchema = quoteBookingSchema.extend({
 });
 
 export const listBookingsSchema = paginationSchema.extend({
+  // mine: booking mình đặt với tư cách khách. managed: booking mình quản lý (OWNER: tại địa điểm của mình, STAFF/ADMIN: tất cả).
+  scope: z.enum(["mine", "managed"]).optional(),
   status: z.enum(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]).optional(),
   code: z.string().trim().optional(),
 });
@@ -47,6 +49,7 @@ export const updateBookingStatusSchema = z.object({
 });
 
 export const payBookingSchema = z.object({
+  channel: z.enum(["CARD", "EWALLET", "BANK_TRANSFER"]).default("CARD"),
   // Cho phép mô phỏng thanh toán thất bại khi demo.
   simulateFailure: z.boolean().default(false),
 });

@@ -15,6 +15,8 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().default("*"),
   // Thuế/phí áp dụng trên (tạm tính - giảm giá). 0.08 = 8%.
   BOOKING_TAX_RATE: z.coerce.number().min(0).max(1).default(0.08),
+  // Số phút khách phải thanh toán online sau khi đặt; quá hạn booking tự hủy và trả phòng.
+  PAYMENT_TIMEOUT_MINUTES: z.coerce.number().int().min(1).max(1440).default(15),
   // Số lượng proxy đứng trước app (Nginx, Render, Railway...) để đọc đúng IP client.
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
 });

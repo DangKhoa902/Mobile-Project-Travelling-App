@@ -1,8 +1,8 @@
 # Luồng nghiệp vụ giữa giao diện và backend
 
-Tài liệu này mô tả các luồng nghiệp vụ đi qua nhiều trang: người dùng làm gì, giao diện gọi API nào, backend kiểm tra gì và dữ liệu thay đổi ra sao. Đặc tả từng trang nằm ở [screens.md](screens.md); cấu trúc bảng nằm ở [../database/README.md](../database/README.md).
+Tài liệu này mô tả các luồng nghiệp vụ đi qua nhiều trang: người dùng làm gì, giao diện gọi API nào, backend kiểm tra gì và dữ liệu thay đổi ra sao. Đặc tả từng trang nằm ở [../02-thiet-ke/giao-dien.md](../02-thiet-ke/giao-dien.md); cấu trúc bảng ở [../02-thiet-ke/co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md); danh sách API ở [../02-thiet-ke/api.md](../02-thiet-ke/api.md).
 
-Mã trang (T1, B4, M3...) khớp với [screens.md](screens.md).
+Mã trang (T1, B4, O3, M3...) khớp với [giao-dien.md](../02-thiet-ke/giao-dien.md).
 
 ## 1. Quy ước chung khi gọi API
 
@@ -64,7 +64,8 @@ Sau mỗi thao tác ghi, những màn hình khác đang hiển thị cùng dữ 
 | Bật/tắt yêu thích | Danh sách yêu thích, chi tiết địa điểm (`isFavorite`) |
 | Tạo / thanh toán / hủy booking | Danh sách booking, chi tiết booking, thông báo + badge |
 | Viết / sửa đánh giá | Chi tiết booking, đánh giá của tôi |
-| Staff đổi trạng thái booking | Danh sách booking quản trị, chi tiết booking |
+| Chủ địa điểm / Staff đổi trạng thái booking | Danh sách booking quản lý, chi tiết booking, dashboard |
+| Chủ địa điểm sửa gói/phòng, gửi duyệt; admin duyệt tin | Danh sách tin đăng, chi tiết quản lý địa điểm |
 | Staff duyệt review | Hàng chờ duyệt, chi tiết địa điểm (rating) |
 
 ## 2. Luồng khám phá địa điểm (Guest)
@@ -106,7 +107,7 @@ flowchart TD
     A1 -->|403 tài khoản bị khóa| LOCK[Thông báo liên hệ CSKH]
 ```
 
-**Backend kiểm tra khi đăng ký:** dữ liệu hợp lệ → email chưa tồn tại (409 `EMAIL_TAKEN`) → hash mật khẩu bằng bcrypt → tạo tài khoản role `USER` → trả token để đăng nhập luôn.
+**Backend kiểm tra khi đăng ký:** dữ liệu hợp lệ (trường bắt buộc: họ tên, email, mật khẩu, đồng ý điều khoản – xem [tai-khoan-va-dang-ky.md](tai-khoan-va-dang-ky.md)) → email chưa tồn tại (409 `EMAIL_TAKEN`) → hash mật khẩu bằng bcrypt → tạo tài khoản role `USER` → trả token để đăng nhập luôn.
 
 **Giới hạn:** đăng nhập/đăng ký tối đa 20 lần mỗi 15 phút cho một IP (429).
 
@@ -242,14 +243,25 @@ Khóa dòng `FOR UPDATE` giải quyết tình huống hai người cùng đặt 
 
 ### 5.4. Thanh toán giả lập (B5)
 
+Đặc tả đầy đủ: [thanh-toan-gia-lap.md](thanh-toan-gia-lap.md). Tóm tắt:
+
 | Hành động | API | Kết quả trong database |
 |---|---|---|
-| Thanh toán | `POST /bookings/{id}/pay` `{}` | `Payment` → `PAID` + `transactionRef`; `Booking` → `CONFIRMED`; thông báo "Thanh toán thành công" |
-| Mô phỏng thất bại | `POST /bookings/{id}/pay` `{ "simulateFailure": true }` | `Payment` → `FAILED` (booking vẫn `PENDING`, được thử lại); trả 402 |
-| Thanh toán lần 2 | | 409 `ALREADY_PAID` / `INVALID_STATUS` |
-| Booking trả tại nơi ở | | 409 `INVALID_PAYMENT_METHOD` |
+| Đặt với `ONLINE_MOCK` | `POST /bookings` | Booking `PENDING`, `paymentDueAt` = 15 phút sau; phòng được giữ tới hạn này |
+| Thanh toán | `POST /bookings/{id}/pay` `{ "channel": "EWALLET" }` | `Payment` → `PAID` + `channel` + `transactionRef`; `Booking` → `CONFIRMED`; thông báo |
+| Mô phỏng thất bại | `{ "simulateFailure": true }` | `Payment` → `FAILED` (được thử lại trước hạn); trả 402 |
+| Quá hạn | | Thanh toán trả 409 `PAYMENT_EXPIRED`; phòng được trả ngay; job mỗi phút hủy booking với lý do "Quá hạn thanh toán" |
 
-Khi tích hợp cổng thật (VNPay, MoMo), B5 sẽ mở trang của cổng thanh toán; backend nhận kết quả qua callback thay cho nút "Thanh toán".
+### 5.5. Hoa hồng môi giới
+
+Lúc tạo booking, backend chụp lại hoa hồng theo tỷ lệ của chủ địa điểm (xem [tong-quan.md](tong-quan.md) mục 2):
+
+```text
+commissionAmount = round((subtotal - discountAmount) × commissionRate)
+ownerRevenue     = (subtotal - discountAmount) - commissionAmount
+```
+
+Ví dụ hóa đơn ở B4 (tạm tính 3.200.000đ, giảm 200.000đ) tại địa điểm có hoa hồng 15%: hoa hồng sàn **450.000đ**, doanh thu chủ **2.550.000đ**, thuế 240.000đ do sàn thu hộ. Khách không thấy các con số này; chỉ chủ địa điểm và admin thấy.
 
 ## 6. Vòng đời booking sau khi đặt
 
@@ -258,15 +270,17 @@ Khi tích hợp cổng thật (VNPay, MoMo), B5 sẽ mở trang của cổng tha
 ```mermaid
 stateDiagram-v2
     [*] --> PENDING: Khách đặt (B4)
-    PENDING --> CONFIRMED: Khách thanh toán online (B5) / Staff xác nhận đơn trả tại nơi ở (M3)
-    PENDING --> CANCELLED: Khách hủy trước giờ nhận phòng (B6) / Staff hủy (M3)
-    CONFIRMED --> COMPLETED: Staff hoàn thành, từ ngày nhận phòng (M3)
-    CONFIRMED --> CANCELLED: Khách hủy khi còn đủ giờ miễn phí (B6) / Staff hủy (M3)
+    PENDING --> CONFIRMED: Khách thanh toán online (B5) / Chủ hoặc Staff xác nhận đơn trả tại nơi ở
+    PENDING --> CANCELLED: Khách hủy trước giờ nhận phòng / Quá hạn thanh toán (tự động) / Chủ hoặc Staff hủy
+    CONFIRMED --> COMPLETED: Chủ hoặc Staff hoàn thành, từ ngày nhận phòng
+    CONFIRMED --> CANCELLED: Khách hủy khi còn đủ giờ miễn phí / Chủ hoặc Staff hủy
     COMPLETED --> [*]: Khách được đánh giá (R1)
     CANCELLED --> [*]
 ```
 
-| Trạng thái | Khách thấy nút | Staff thấy nút |
+"Chủ" = chủ của địa điểm trong booking (trang O6–O7). Staff/Admin xử lý được mọi booking (M2–M3).
+
+| Trạng thái | Khách thấy nút | Chủ địa điểm / Staff thấy nút |
 |---|---|---|
 | `PENDING` + online chưa trả | Thanh toán · Hủy · Liên hệ CSKH | Hủy |
 | `PENDING` + trả tại nơi ở | Hủy · Liên hệ CSKH | Xác nhận · Hủy |
@@ -291,9 +305,9 @@ flowchart TD
     OK --> R[Booking → CANCELLED<br/>Payment PAID → REFUNDED<br/>Voucher usedCount − 1<br/>Thông báo cho khách<br/>Phòng được trả lại]
 ```
 
-Staff hủy được ở mọi trạng thái `PENDING` / `CONFIRMED`, không bị giới hạn giờ (dùng khi khách gọi CSKH xin hủy muộn).
+Chủ địa điểm và Staff hủy được ở mọi trạng thái `PENDING` / `CONFIRMED`, không bị giới hạn giờ (ví dụ khách gọi CSKH xin hủy muộn, hoặc cơ sở gặp sự cố), nhưng **bắt buộc ghi lý do** (400 `CANCEL_REASON_REQUIRED`). Khách và chủ địa điểm đều nhận thông báo.
 
-### 6.3. Staff xử lý booking (M2 → M3)
+### 6.3. Chủ địa điểm / Staff xử lý booking (O6–O7, M2–M3)
 
 | Thao tác | Điều kiện backend kiểm tra | Mã lỗi khi vi phạm |
 |---|---|---|
@@ -354,23 +368,109 @@ sequenceDiagram
 
 Polling mỗi 5 giây đủ cho đồ án. Chỉ poll khi màn hình C2/M6 đang hiển thị (dừng khi rời trang hoặc app chạy nền) để không tốn pin và tải server.
 
-## 9. Luồng thông báo (mục 18)
+## 9. Luồng trở thành đối tác và đăng tin
+
+### 9.1. Nộp hồ sơ và được duyệt
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    actor A as Admin
+    participant API
+    U->>API: POST /partners/apply (P4) { businessName, businessAddress, contactPhone, acceptPartnerTerms, ... }
+    API->>API: role phải là USER, chưa có hồ sơ đang chờ/đã duyệt
+    API-->>U: 201 hồ sơ PENDING
+    API-->>A: Thông báo "Hồ sơ đối tác mới"
+    A->>API: GET /partners?status=PENDING (M12)
+    alt thiếu tài khoản ngân hàng
+        A->>API: PATCH /partners/{id}/review { APPROVED }
+        API-->>A: 409 PARTNER_BANK_REQUIRED
+        U->>API: PATCH /partners/me { bankName, bankAccountNumber, bankAccountName }
+    end
+    alt duyệt
+        A->>API: PATCH /partners/{id}/review { APPROVED, commissionRate: 0.12 }
+        API->>API: role USER → OWNER
+        API-->>U: Thông báo "Hồ sơ đối tác đã được duyệt"
+    else từ chối
+        A->>API: PATCH /partners/{id}/review { REJECTED, rejectReason }
+        API-->>U: Thông báo kèm lý do (được nộp lại)
+    end
+```
+
+Quyền mới có hiệu lực ngay ở request tiếp theo (backend đọc role từ DB mỗi request). Giao diện chỉ cần gọi lại `GET /auth/me` để hiện menu chủ địa điểm.
+
+### 9.2. Đăng tin địa điểm
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT: Chủ tạo tin (O3)
+    DRAFT --> PENDING_REVIEW: Gửi duyệt (cần ≥1 gói + ≥1 phòng)
+    PENDING_REVIEW --> APPROVED: Admin duyệt (M13)
+    PENDING_REVIEW --> REJECTED: Admin từ chối + lý do
+    REJECTED --> PENDING_REVIEW: Chủ sửa và gửi lại
+    APPROVED --> APPROVED: Chủ sửa nội dung, giá (vẫn hiển thị)
+```
+
+| Bước | Ai | API | Ghi chú |
+|---|---|---|---|
+| Tạo tin | Owner | `POST /destinations` | Luôn là `DRAFT`, `ownerId` = chính mình; `isFeatured` bị bỏ qua |
+| Thêm phòng / gói / dịch vụ | Owner | `POST /room-types`, `/packages`, `/addon-services` | Chỉ cho địa điểm của mình (403 nếu không phải) |
+| Xem trước | Owner | `GET /destinations/{id}` (có token) | Khách vãng lai nhận 404 |
+| Gửi duyệt | Owner | `POST /destinations/{id}/submit` | 400 `LISTING_INCOMPLETE` nếu thiếu gói/phòng; admin nhận thông báo |
+| Hàng chờ duyệt | Admin | `GET /manage/destinations?listingStatus=PENDING_REVIEW` | |
+| Duyệt / từ chối | Admin | `PATCH /destinations/{id}/review` | Chủ nhận thông báo; tin duyệt xong hiện ngay cho khách |
+| Tạm ngưng nhận khách | Owner | `PATCH /destinations/{id}` `{ isActive: false }` | Ẩn khỏi tìm kiếm, không đặt mới được; booking cũ giữ nguyên |
+| Xóa | Owner | `DELETE /destinations/{id}` | Chỉ tin chưa từng được duyệt (409 `LISTING_APPROVED`) |
+
+### 9.3. Tạm ngưng đối tác
+
+Admin `PATCH /partners/{id}/status { status: "SUSPENDED", reason }` → role về `USER`, mọi địa điểm của đối tác bị ẩn (`isActive = false`), chủ không vào được trang quản lý nữa. Mở lại (`APPROVED`) trả quyền `OWNER`; chủ tự bật lại từng địa điểm.
+
+## 10. Luồng dashboard
+
+Một API duy nhất, dữ liệu tự giới hạn theo vai trò:
+
+```text
+GET /api/stats/overview?from=2026-10-01&to=2026-10-31     (mặc định 30 ngày gần nhất, tối đa 366 ngày)
+```
+
+| Khối số liệu | Admin (`scope = PLATFORM`) | Owner (`scope = OWNER`) |
+|---|---|---|
+| `summary` | Tổng giá trị booking (GBV), doanh thu sàn (hoa hồng), doanh thu đối tác, giảm giá, số booking, tỷ lệ hủy, giá trị TB/booking, số đêm phòng bán ra | Cùng các chỉ số nhưng chỉ của địa điểm mình |
+| `revenueByDay` | Mỗi ngày: số booking, GBV, hoa hồng, doanh thu chủ (đủ mọi ngày, ngày trống = 0) | Như bên trái |
+| `bookingsByStatus` | Số booking theo trạng thái | Như bên trái |
+| `topDestinations` | 5 địa điểm doanh thu cao nhất | 5 địa điểm của mình |
+| `paymentMethods` | Số lượng và tiền theo phương thức | Như bên trái |
+| `users` | Người dùng mới, tổng người dùng, số đối tác đang hoạt động | — |
+| `listings` | — | Số tin theo trạng thái (nháp, chờ duyệt, đã duyệt, bị từ chối) |
+| `rating` | — | Điểm trung bình và số đánh giá của các địa điểm mình |
+| `pending` | Hồ sơ đối tác chờ duyệt, tin chờ duyệt, đánh giá chờ duyệt, booking trả tại nơi ở chờ xác nhận, hội thoại đang mở | Booking chờ xác nhận, lượt nhận phòng trong 7 ngày tới |
+
+**Cách tính:** doanh thu chỉ gồm booking `CONFIRMED` và `COMPLETED`, theo ngày **tạo** booking, giờ Việt Nam. Tỷ lệ hủy = booking `CANCELLED` / tổng booking tạo trong kỳ.
+
+Giao diện dashboard: xem trang M1 và O1 trong [giao-dien.md](../02-thiet-ke/giao-dien.md).
+
+## 11. Luồng thông báo (mục 18)
 
 Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đọc.
 
 | Sự kiện | Người nhận | `type` | `data` → mở trang |
 |---|---|---|---|
 | Đặt chỗ thành công | Khách | `BOOKING` | `bookingId` → B6 |
-| Thanh toán thành công / thất bại | Khách | `PAYMENT` | `bookingId` → B6 |
+| Có booking mới / booking bị hủy tại địa điểm | Chủ địa điểm | `BOOKING` | `bookingId` → O7 |
+| Thanh toán thành công / thất bại / quá hạn | Khách | `PAYMENT` | `bookingId` → B6 |
 | Booking được xác nhận / hoàn thành / bị hủy | Khách | `BOOKING` | `bookingId` → B6 |
 | Staff trả lời chat | Khách | `SUPPORT` | `conversationId` → C2 |
 | Review được duyệt / bị từ chối | Khách | `REVIEW` | `destinationId` → D2 |
+| Hồ sơ đối tác mới; tin đăng chờ duyệt | Mọi Admin | `PARTNER` | `partnerProfileId` → M12; `destinationId` → M13 |
+| Hồ sơ đối tác được duyệt / từ chối / tạm ngưng / mở lại | Người nộp | `PARTNER` | → P4 hoặc O1 |
+| Tin đăng được duyệt / bị từ chối | Chủ địa điểm | `PARTNER` | `destinationId` → O4 |
 
 **Badge chưa đọc:** gọi `GET /api/notifications/unread-count` khi mở app, khi quay lại app từ nền và sau mỗi thao tác booking. Hiển thị trên tab T4.
 
-**Push notification** (điện thoại báo kể cả khi app đóng) chưa có; xem mục 10.
+**Push notification** (điện thoại báo kể cả khi app đóng) chưa có; xem mục 13.
 
-## 10. Bảng mã lỗi nghiệp vụ
+## 12. Bảng mã lỗi nghiệp vụ
 
 | `code` | Status | Xảy ra khi | Giao diện xử lý |
 |---|---|---|---|
@@ -378,7 +478,7 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 | `INVALID_JSON` | 400 | Body sai cú pháp | Lỗi lập trình, ghi log |
 | `UNAUTHORIZED` | 401 | Chưa đăng nhập / token hết hạn | Đăng xuất → A1 |
 | `INVALID_CREDENTIALS` | 401 | Sai email hoặc mật khẩu | Báo lỗi ở A1 |
-| `FORBIDDEN` | 403 | Sai vai trò / tài khoản bị khóa | Thông báo; bị khóa thì đăng xuất |
+| `FORBIDDEN` | 403 | Sai vai trò / tài khoản bị khóa / quản lý địa điểm không phải của mình | Thông báo; bị khóa thì đăng xuất |
 | `NOT_FOUND` | 404 | Không tồn tại hoặc không phải của mình | Trang "Không tìm thấy" |
 | `ROUTE_NOT_FOUND` | 404 | Sai đường dẫn API | Lỗi lập trình |
 | `EMAIL_TAKEN` | 409 | Đăng ký email đã có | Lỗi dưới ô email |
@@ -390,32 +490,47 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 | `INVALID_VOUCHER` / `VOUCHER_EXHAUSTED` / `VOUCHER_MIN_ORDER` | 400 | Voucher không dùng được | Lỗi dưới ô voucher, cho đặt tiếp không voucher |
 | `NOT_AVAILABLE` | 409 | Hết phòng lúc đặt | Quay về B1 chọn ngày/phòng khác |
 | `PAYMENT_FAILED` | 402 | Thanh toán thất bại | Nút "Thử lại" |
+| `PAYMENT_EXPIRED` | 409 | Thanh toán sau 15 phút | "Booking đã hết hạn, vui lòng đặt lại" → D2 |
 | `ALREADY_PAID` / `INVALID_PAYMENT_METHOD` | 409 | Thanh toán không hợp lệ | Tải lại B6 |
 | `INVALID_STATUS` | 409 | Đổi trạng thái sai thứ tự | Tải lại booking (có thể người khác vừa đổi) |
-| `PAYMENT_REQUIRED` | 409 | Staff xác nhận đơn online chưa trả | Khóa nút "Xác nhận" |
-| `CANCELLATION_NOT_ALLOWED` | 409 | Hủy quá hạn | Gợi ý liên hệ CSKH |
+| `PAYMENT_REQUIRED` | 409 | Xác nhận đơn online chưa trả | Khóa nút "Xác nhận" |
+| `CANCELLATION_NOT_ALLOWED` | 409 | Khách hủy quá hạn | Gợi ý liên hệ CSKH |
+| `CANCEL_REASON_REQUIRED` | 400 | Chủ/Staff hủy booking không ghi lý do | Bắt buộc ô lý do |
 | `BOOKING_NOT_COMPLETED` | 409 | Đánh giá khi chưa hoàn thành | Ẩn nút đánh giá |
 | `ALREADY_REVIEWED` | 409 | Đánh giá lần hai | Chuyển sang chế độ sửa |
-| `REJECT_REASON_REQUIRED` | 400 | Từ chối review không lý do | Bắt buộc ô lý do ở M4 |
+| `REJECT_REASON_REQUIRED` | 400 | Từ chối review/hồ sơ không lý do | Bắt buộc ô lý do |
 | `CONVERSATION_CLOSED` | 409 | Nhắn vào hội thoại đã đóng | Khóa ô nhập |
+| `INVALID_ROLE` | 409 | Tài khoản không phải USER nộp hồ sơ đối tác | Ẩn nút "Trở thành đối tác" |
+| `ALREADY_APPLIED` | 409 | Đã có hồ sơ đang chờ / đã duyệt | Mở trang trạng thái hồ sơ |
+| `PARTNER_BANK_REQUIRED` | 409 | Duyệt hồ sơ thiếu ngân hàng | Admin yêu cầu đối tác bổ sung |
+| `INVALID_PARTNER_STATUS` | 409 | Duyệt/tạm ngưng sai trạng thái | Tải lại hồ sơ |
+| `PARTNER_SUSPENDED` | 409 | Đối tác bị ngưng sửa hồ sơ | Hiện thông báo tạm ngưng |
+| `LISTING_INCOMPLETE` | 400 | Gửi duyệt khi thiếu gói/phòng | Dẫn tới tab Gói / Phòng |
+| `INVALID_LISTING_STATUS` | 409 | Gửi/duyệt tin sai trạng thái | Tải lại tin |
+| `LISTING_APPROVED` | 409 | Chủ xóa tin đã duyệt | Gợi ý "Tạm ngưng" |
+| `INVALID_OWNER` | 400 | Admin gán chủ không phải OWNER | Chọn lại chủ |
+| `USE_PARTNER_API` | 400 | Đổi role tài khoản OWNER ở trang người dùng | Dẫn sang trang đối tác |
+| `INVALID_RANGE` | 400 | Khoảng ngày thống kê sai / > 366 ngày | Báo lỗi ở bộ chọn ngày |
 | `DUPLICATE` | 409 | Trùng dữ liệu duy nhất (slug, mã voucher...) | Báo trùng ở form quản trị |
 | `REFERENCE_CONFLICT` | 409 | Xóa dữ liệu đang được dùng | Gợi ý "Ngừng hoạt động" thay vì xóa |
 | `TOO_MANY_REQUESTS` | 429 | Quá nhiều lần đăng nhập/đăng ký | Chờ rồi thử lại |
 | `NETWORK_ERROR` | — | Mất mạng (do client tự tạo) | Nút "Thử lại" |
 
-## 11. API còn thiếu cho giao diện đầy đủ
+## 13. API còn thiếu cho giao diện đầy đủ
 
-Các chức năng dưới đây xuất hiện trong [screens.md](screens.md) nhưng backend chưa có. Khi làm tới trang tương ứng, đây là phần cần bổ sung ở backend.
+Các chức năng dưới đây xuất hiện trong [giao-dien.md](../02-thiet-ke/giao-dien.md) nhưng backend chưa có.
 
 | Chức năng | Trang | Đề xuất |
 |---|---|---|
 | Quên mật khẩu | A1 | `POST /auth/forgot-password`, `POST /auth/reset-password` + bảng token đặt lại + gửi email |
-| Tải ảnh lên (avatar, ảnh địa điểm) | P1, M8 | `POST /uploads` lưu lên Cloudinary/S3, trả URL |
-| Thống kê tổng quan, doanh thu | M1 | `GET /admin/stats?from=&to=` |
+| Tải ảnh lên (avatar, ảnh địa điểm) | P1, O3, M8 | `POST /uploads` lưu lên Cloudinary/S3, trả URL |
 | Phân bố số sao | D3 | Thêm `ratingBreakdown` vào `GET /destinations/:id/reviews` |
-| Lọc booking nhiều trạng thái | T3 | Cho `status=PENDING,CONFIRMED` |
-| Xem cả gói/phòng/dịch vụ đã tắt | M8 | Tham số `includeInactive=true` cho chi tiết địa điểm |
-| Tự hủy booking chưa thanh toán sau 15 phút | B5 | Cột `expiresAt` + job định kỳ |
+| Lọc booking nhiều trạng thái | T3, O6 | Cho `status=PENDING,CONFIRMED` |
+| Đối soát, chuyển tiền cho chủ địa điểm | O1, M12 | Bảng `Payout` theo kỳ + trang đối soát |
+| Chủ địa điểm trả lời đánh giá | O4 | Cột `ownerReply` trong `Review` |
+| Xuất báo cáo CSV | M1, O1 | `GET /stats/export?format=csv` |
 | Push notification | T4 | Bảng `DeviceToken` + Expo Push API |
 | Chat thời gian thực | C2, M6 | WebSocket (Socket.IO) thay cho polling |
 | Đăng nhập lâu dài an toàn | — | Refresh token |
+
+Đã bổ sung so với bản trước: thống kê dashboard (`/stats/overview`), xem cả gói/phòng đã tắt (`/manage/destinations/:id`), tự hủy booking quá hạn thanh toán.

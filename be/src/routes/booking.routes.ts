@@ -25,7 +25,7 @@ bookingRouter.post("/", async (request, response) => {
   response.status(201).json({ data: booking });
 });
 
-// User: booking của mình. Staff/Admin: tất cả booking, lọc theo status/code.
+// ?scope=mine: booking mình đặt. ?scope=managed (mặc định với OWNER/STAFF/ADMIN): booking mình quản lý.
 bookingRouter.get("/", async (request, response) => {
   const query = listBookingsSchema.parse(request.query);
   const { data, total } = await bookingService.listBookings(currentUser(request), query);
@@ -45,12 +45,13 @@ bookingRouter.post("/:id/cancel", async (request, response) => {
 
 bookingRouter.post("/:id/pay", async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
-  const { simulateFailure } = payBookingSchema.parse(request.body ?? {});
-  response.json({ data: await bookingService.payBooking(currentUser(request), id, simulateFailure) });
+  const input = payBookingSchema.parse(request.body ?? {});
+  response.json({ data: await bookingService.payBooking(currentUser(request), id, input) });
 });
 
-bookingRouter.patch("/:id/status", requireRole("STAFF", "ADMIN"), async (request, response) => {
+// Chủ địa điểm xử lý booking tại địa điểm của mình; Staff/Admin xử lý mọi booking.
+bookingRouter.patch("/:id/status", requireRole("OWNER", "STAFF", "ADMIN"), async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
   const { status } = updateBookingStatusSchema.parse(request.body);
-  response.json({ data: await bookingService.updateBookingStatus(id, status) });
+  response.json({ data: await bookingService.updateBookingStatus(currentUser(request), id, status) });
 });

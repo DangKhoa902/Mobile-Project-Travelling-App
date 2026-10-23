@@ -17,8 +17,11 @@ import {
 import { conversationRouter } from "./routes/conversation.routes.js";
 import { destinationRouter } from "./routes/destination.routes.js";
 import { favoriteRouter } from "./routes/favorite.routes.js";
+import { manageRouter } from "./routes/manage.routes.js";
 import { notificationRouter } from "./routes/notification.routes.js";
+import { partnerRouter } from "./routes/partner.routes.js";
 import { reviewRouter } from "./routes/review.routes.js";
+import { statsRouter } from "./routes/stats.routes.js";
 import { userRouter } from "./routes/user.routes.js";
 
 export const app = express();
@@ -57,6 +60,9 @@ app.use("/api/bookings", bookingRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/conversations", conversationRouter);
+app.use("/api/partners", partnerRouter);
+app.use("/api/manage", manageRouter);
+app.use("/api/stats", statsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

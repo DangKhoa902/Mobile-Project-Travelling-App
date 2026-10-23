@@ -222,6 +222,74 @@ async function main() {
     await refreshDestinationMinPrice(destination.id);
   }
 
+  // Chủ địa điểm (đối tác). Hội An để trống chủ để minh họa địa điểm do sàn tự quản lý.
+  const partners = [
+    {
+      email: "owner1@travelling.app",
+      name: "Trần Thị Bình",
+      status: "APPROVED" as const,
+      profile: {
+        businessName: "Công ty TNHH Du lịch Đà Lạt Xanh",
+        taxCode: "5801234567",
+        businessAddress: "12 Trần Hưng Đạo, Phường 10, Đà Lạt, Lâm Đồng",
+        contactPhone: "0263381234",
+        commissionRate: 0.15,
+      },
+      destinations: ["da-lat-pine-hill-resort", "sa-pa-mountain-lodge", "vinh-ha-long-cruise"],
+    },
+    {
+      email: "owner2@travelling.app",
+      name: "Lê Văn Cường",
+      status: "APPROVED" as const,
+      profile: {
+        businessName: "Biển Việt Hospitality",
+        taxCode: "0401234567",
+        businessAddress: "88 Võ Nguyên Giáp, Sơn Trà, Đà Nẵng",
+        contactPhone: "0236391234",
+        commissionRate: 0.12,
+      },
+      destinations: ["my-khe-beach-hotel", "phu-quoc-sunset-resort"],
+    },
+    {
+      email: "partner.pending@travelling.app",
+      name: "Phạm Minh Đức",
+      status: "PENDING" as const,
+      profile: {
+        businessName: "Homestay Mộc Châu Xanh",
+        taxCode: null,
+        businessAddress: "Tiểu khu 19/5, Mộc Châu, Sơn La",
+        contactPhone: "0912000111",
+        commissionRate: 0.15,
+      },
+      destinations: [],
+    },
+  ];
+  for (const partner of partners) {
+    const user = await prisma.user.upsert({
+      where: { email: partner.email },
+      update: {},
+      create: { email: partner.email, name: partner.name, password, role: partner.status === "APPROVED" ? "OWNER" : "USER" },
+    });
+    await prisma.partnerProfile.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: {
+        ...partner.profile,
+        userId: user.id,
+        status: partner.status,
+        bankName: "Vietcombank",
+        bankAccountNumber: "0071000123456",
+        bankAccountName: partner.name.toUpperCase(),
+        reviewedById: partner.status === "APPROVED" ? users.ADMIN.id : null,
+        reviewedAt: partner.status === "APPROVED" ? new Date() : null,
+      },
+    });
+    await prisma.destination.updateMany({
+      where: { slug: { in: partner.destinations }, ownerId: null },
+      data: { ownerId: user.id },
+    });
+  }
+
   const now = new Date();
   await prisma.voucher.upsert({
     where: { code: "WELCOME10" },
@@ -292,8 +360,105 @@ async function main() {
     await refreshDestinationRating(destination.id);
   }
 
+  await seedDashboardBookings(demoUser.id);
+
   console.log(`Seed completed. Demo accounts (password: ${DEFAULT_PASSWORD}):`);
   for (const account of accounts) console.log(`  ${account.role.padEnd(5)} ${account.email}`);
+  for (const partner of partners) {
+    console.log(`  ${(partner.status === "APPROVED" ? "OWNER" : "USER").padEnd(5)} ${partner.email} (hồ sơ đối tác ${partner.status})`);
+  }
+}
+
+// Booking trong 30 ngày qua để dashboard có số liệu. Đánh dấu bằng note để chỉ tạo một lần.
+const DASHBOARD_NOTE = "[seed-dashboard]";
+
+async function seedDashboardBookings(userId: number) {
+  if ((await prisma.booking.count({ where: { note: DASHBOARD_NOTE } })) > 0) return;
+
+  const destinationsWithPrices = await prisma.destination.findMany({
+    include: {
+      packages: { orderBy: { price: "asc" }, take: 1 },
+      roomTypes: { orderBy: { pricePerNight: "asc" }, take: 1 },
+      owner: { select: { partnerProfile: { select: { commissionRate: true } } } },
+    },
+  });
+  const day = 24 * 60 * 60 * 1000;
+  const today = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()));
+  // [số ngày trước khi đặt, chỉ số địa điểm, trạng thái, phương thức]
+  const plan: [number, number, "COMPLETED" | "CONFIRMED" | "CANCELLED", "ONLINE_MOCK" | "PAY_AT_PROPERTY"][] = [
+    [28, 0, "COMPLETED", "ONLINE_MOCK"],
+    [26, 1, "COMPLETED", "PAY_AT_PROPERTY"],
+    [23, 2, "COMPLETED", "ONLINE_MOCK"],
+    [21, 0, "CANCELLED", "ONLINE_MOCK"],
+    [18, 3, "COMPLETED", "ONLINE_MOCK"],
+    [15, 1, "COMPLETED", "ONLINE_MOCK"],
+    [12, 4, "COMPLETED", "PAY_AT_PROPERTY"],
+    [10, 5, "CONFIRMED", "ONLINE_MOCK"],
+    [7, 0, "CONFIRMED", "ONLINE_MOCK"],
+    [5, 2, "CANCELLED", "PAY_AT_PROPERTY"],
+    [3, 1, "CONFIRMED", "ONLINE_MOCK"],
+    [1, 0, "CONFIRMED", "PAY_AT_PROPERTY"],
+  ];
+
+  for (const [daysAgo, index, status, method] of plan) {
+    const destination = destinationsWithPrices[index % destinationsWithPrices.length];
+    const [pkg] = destination.packages;
+    const [room] = destination.roomTypes;
+    if (!pkg || !room) continue;
+
+    const createdAt = new Date(today.getTime() - daysAgo * day + 3 * 60 * 60 * 1000);
+    const nights = Math.max(pkg.durationNights, 1);
+    // Chuyến đã hoàn thành nằm trong quá khứ; chuyến đã xác nhận nằm ở tương lai xa để không chiếm phòng gần.
+    const checkIn = status === "COMPLETED" ? new Date(createdAt.getTime() + 2 * day) : new Date(today.getTime() + (60 + daysAgo) * day);
+    const subtotal = pkg.price + room.pricePerNight * nights;
+    const tax = Math.round(subtotal * 0.08);
+    const rate = destination.ownerId ? (destination.owner?.partnerProfile?.commissionRate ?? 1) : 1;
+    const commissionAmount = Math.round(subtotal * rate);
+    const paid = status !== "CANCELLED" && (method === "ONLINE_MOCK" || status === "COMPLETED");
+
+    await prisma.booking.create({
+      data: {
+        code: generateBookingCode(createdAt),
+        status,
+        userId,
+        destinationId: destination.id,
+        packageId: pkg.id,
+        roomTypeId: room.id,
+        checkInDate: new Date(Date.UTC(checkIn.getUTCFullYear(), checkIn.getUTCMonth(), checkIn.getUTCDate())),
+        checkOutDate: new Date(Date.UTC(checkIn.getUTCFullYear(), checkIn.getUTCMonth(), checkIn.getUTCDate()) + nights * day),
+        nights,
+        guests: 2,
+        roomsCount: 1,
+        contactName: "Nguyễn Văn A",
+        contactPhone: "0901234567",
+        contactEmail: "user@travelling.app",
+        note: DASHBOARD_NOTE,
+        packagePrice: pkg.price,
+        roomPrice: room.pricePerNight * nights,
+        servicesPrice: 0,
+        subtotal,
+        taxAmount: tax,
+        totalAmount: subtotal + tax,
+        commissionRate: rate,
+        commissionAmount,
+        ownerRevenue: subtotal - commissionAmount,
+        createdAt,
+        confirmedAt: status === "CANCELLED" ? null : createdAt,
+        completedAt: status === "COMPLETED" ? new Date(checkIn.getTime() + nights * day) : null,
+        cancelledAt: status === "CANCELLED" ? new Date(createdAt.getTime() + day) : null,
+        cancelReason: status === "CANCELLED" ? "Khách đổi kế hoạch" : null,
+        payment: {
+          create: {
+            method,
+            status: status === "CANCELLED" && method === "ONLINE_MOCK" ? "REFUNDED" : paid ? "PAID" : "UNPAID",
+            channel: method === "ONLINE_MOCK" ? "CARD" : null,
+            amount: subtotal + tax,
+            paidAt: paid || method === "ONLINE_MOCK" ? createdAt : null,
+          },
+        },
+      },
+    });
+  }
 }
 
 main()

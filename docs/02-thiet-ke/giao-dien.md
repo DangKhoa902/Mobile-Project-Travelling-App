@@ -2,7 +2,7 @@
 
 Tài liệu này liệt kê các trang cần có cho Travelling App và nghiệp vụ của từng trang: trang dùng để làm gì, hiển thị gì, gọi API nào, người dùng thao tác gì và hệ thống phản hồi ra sao. Các API đều đã có trong backend (`be/src/routes`); trang nào cần API chưa có sẽ được ghi rõ.
 
-Luồng nghiệp vụ xuyên nhiều trang (đặt chỗ, thanh toán, hủy, đánh giá...) và danh sách mã lỗi nằm ở [business-flows.md](business-flows.md).
+Luồng nghiệp vụ xuyên nhiều trang (đặt chỗ, thanh toán, hủy, đánh giá, đăng tin...) và danh sách mã lỗi nằm ở [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md). Cách dựng **một codebase cho cả Web và Mobile** (bố cục, breakpoint, file `.web.tsx`) nằm ở [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile.md); mỗi trang dưới đây có thêm dòng **Web / Mobile** ghi điểm khác nhau giữa hai nền tảng.
 
 ## 1. Cách đọc tài liệu
 
@@ -11,7 +11,8 @@ Mỗi trang được mô tả theo cùng một khung:
 | Mục | Nội dung |
 |---|---|
 | **Route** | File trong `fe/src/app/` (Expo Router) |
-| **Ai dùng** | Guest (chưa đăng nhập), User, Staff, Admin |
+| **Ai dùng** | Guest (chưa đăng nhập), User, Owner (chủ địa điểm), Staff, Admin |
+| **Web / Mobile** | Điểm khác nhau về bố cục giữa hai nền tảng (nếu có) |
 | **Ưu tiên** | **MVP**: bắt buộc để demo luồng chính · **P2**: nên có · **P3**: mở rộng |
 | **Hiển thị** | Thành phần trên màn hình |
 | **API** | Endpoint backend cần gọi |
@@ -19,7 +20,7 @@ Mỗi trang được mô tả theo cùng một khung:
 | **Trạng thái** | Loading / rỗng / lỗi cần xử lý |
 | **Quy tắc** | Business rule áp dụng (BR-xx trong `docs/Mô tả hệ thống.docx`) |
 
-Mọi trang có gọi API đều phải có đủ 3 trạng thái **đang tải, rỗng, lỗi** (Definition of Done trong `Mobile_Project_Full_Development_Guide.md`).
+Mọi trang có gọi API đều phải có đủ 3 trạng thái **đang tải, rỗng, lỗi** (Definition of Done trong [huong-dan-react-native-expo.md](../tham-khao/huong-dan-react-native-expo.md)).
 
 ## 2. Sơ đồ trang (sitemap)
 
@@ -61,7 +62,18 @@ fe/src/app/
 ├── profile/
 │   ├── edit.tsx                     P1  Sửa hồ sơ
 │   ├── password.tsx                 P2  Đổi mật khẩu
-│   └── reviews.tsx                  P3  Đánh giá của tôi
+│   ├── reviews.tsx                  P3  Đánh giá của tôi
+│   └── partner.tsx                  P4  Trở thành đối tác / trạng thái hồ sơ
+│
+├── owner/                           Khu chủ địa điểm (ưu tiên Web, có bản Mobile rút gọn)
+│   ├── _layout.tsx                  Chặn role OWNER, sidebar (web) / stack (mobile)
+│   ├── index.tsx                    O1  Dashboard của chủ
+│   ├── destinations/index.tsx       O2  Tin đăng của tôi
+│   ├── destinations/[id].tsx        O3  Tạo / sửa tin: thông tin, phòng, gói, dịch vụ
+│   ├── destinations/[id]/status.tsx O4  Trạng thái duyệt, xem trước, đánh giá của khách
+│   ├── profile.tsx                  O5  Hồ sơ đối tác & tài khoản nhận tiền
+│   ├── bookings/index.tsx           O6  Booking tại cơ sở của tôi
+│   └── bookings/[id].tsx            O7  Xử lý booking
 │
 └── admin/                           Khu quản trị (ưu tiên chạy trên Web)
     ├── _layout.tsx                  Chặn theo role STAFF/ADMIN, sidebar
@@ -75,7 +87,9 @@ fe/src/app/
     ├── destinations/[id].tsx        M8  Thêm / sửa địa điểm, gói, phòng, dịch vụ (ADMIN)
     ├── catalog.tsx                  M9  Danh mục & tiện ích         (ADMIN)
     ├── vouchers.tsx                 M10 Mã giảm giá                 (ADMIN)
-    └── users.tsx                    M11 Quản lý người dùng
+    ├── users.tsx                    M11 Quản lý người dùng
+    ├── partners.tsx                 M12 Hồ sơ đối tác: duyệt, hoa hồng, tạm ngưng (ADMIN)
+    └── listings.tsx                 M13 Duyệt tin đăng địa điểm     (ADMIN)
 ```
 
 Nhóm `(tabs)` và `(auth)` trong ngoặc là route group của Expo Router: không xuất hiện trong URL, chỉ để gom layout.
@@ -369,19 +383,28 @@ Nút **Xác nhận đặt** phải bị khóa trong lúc chờ API để khách 
 
 ---
 
-### B5 – Kết quả đặt chỗ / thanh toán
+### B5 – Cổng thanh toán giả lập / kết quả đặt chỗ
 
 - **Route:** `booking/result.tsx?bookingId=` · **Ai dùng:** User · **Ưu tiên:** MVP
-- **Mục đích:** mục 13–14.
+- **Mục đích:** mục 13–14. Đặc tả nghiệp vụ: [thanh-toan-gia-lap.md](../01-dac-ta/thanh-toan-gia-lap.md).
+- **Web / Mobile:** web hiển thị hai cột (tóm tắt đơn bên trái, cổng thanh toán bên phải); mobile xếp dọc, nút thanh toán cố định đáy.
 
-**Với `ONLINE_MOCK`** – trang thanh toán giả lập:
+**Với `ONLINE_MOCK`** – cổng thanh toán giả lập:
 
-- Hiển thị mã booking, tổng tiền, nút **Thanh toán** và (chỉ để demo) nút "Mô phỏng thất bại".
-- **API:** `POST /api/bookings/{id}/pay` với `{ "simulateFailure": false }`.
-  - 200 → "Thanh toán thành công, booking đã được xác nhận" ✓
-  - 402 `PAYMENT_FAILED` → "Thanh toán thất bại" + nút "Thử lại"
+1. Dải cảnh báo nhỏ: "Môi trường thử nghiệm – không phát sinh giao dịch thật".
+2. Mã booking, tổng tiền, **đồng hồ đếm ngược** tới `paymentDueAt` ("Giữ chỗ trong 14:32").
+3. Chọn kênh: **Thẻ** (`CARD`) · **Ví điện tử** (`EWALLET`, hiện ảnh QR minh họa) · **Chuyển khoản** (`BANK_TRANSFER`, hiện nội dung chuyển khoản = mã booking).
+4. Nút **Thanh toán** và nút phụ "Mô phỏng thất bại" (để demo).
+5. **Không có ô nhập số thẻ, CVV, OTP** – kể cả dữ liệu giả.
 
-**Với `PAY_AT_PROPERTY`:** "Đặt chỗ thành công – đang chờ xác nhận" + mã booking.
+| Thao tác | API | Kết quả |
+|---|---|---|
+| Thanh toán | `POST /api/bookings/{id}/pay` `{ "channel": "EWALLET" }` | 200 → "Thanh toán thành công, booking đã được xác nhận" ✓ |
+| Mô phỏng thất bại | `{ "channel": "CARD", "simulateFailure": true }` | 402 `PAYMENT_FAILED` → "Thanh toán thất bại" + "Thử lại" (còn trong hạn) |
+| Hết giờ đếm ngược | (không gọi) | Khóa nút, hiện "Đã hết thời gian giữ chỗ" + nút "Đặt lại" → D2 |
+| Thanh toán sau hạn | | 409 `PAYMENT_EXPIRED` → như trên |
+
+**Với `PAY_AT_PROPERTY`:** "Đặt chỗ thành công – đang chờ cơ sở xác nhận" + mã booking. Không có đồng hồ.
 
 Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của hệ thống không được quay lại B4 (dùng `router.replace`).
 
@@ -476,10 +499,17 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 
 1. Avatar, tên, email, vai trò.
 2. Menu: Sửa hồ sơ (P1) · Đổi mật khẩu (P2) · Đánh giá của tôi (P3) · Địa điểm yêu thích (T2) · Hỗ trợ (T4).
-3. Nếu `role` là STAFF/ADMIN: mục **Trang quản trị** → M1.
+3. Theo vai trò:
+
+| Role | Mục thêm |
+|---|---|
+| `USER` | **Trở thành đối tác** → P4 (nếu đã nộp: hiện trạng thái hồ sơ) |
+| `OWNER` | **Quản lý cơ sở** → O1 |
+| `STAFF` / `ADMIN` | **Trang quản trị** → M1 |
+
 4. Nút **Đăng xuất**: xóa token, xóa cache dữ liệu cá nhân, về T1.
 
-**API:** `GET /api/auth/me`.
+**API:** `GET /api/auth/me`; với USER thêm `GET /api/partners/me` (404 = chưa nộp hồ sơ).
 
 ---
 
@@ -496,15 +526,27 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 | 403 | "Tài khoản đã bị khóa, vui lòng liên hệ CSKH" |
 | 429 `TOO_MANY_REQUESTS` | "Bạn thử quá nhiều lần, vui lòng thử lại sau" |
 
-**Đề xuất API bổ sung:** "Quên mật khẩu" (chưa có, xem business-flows.md mục 7).
+**Đề xuất API bổ sung:** "Quên mật khẩu" (chưa có, xem [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 13).
 
 ### A2 – Đăng ký
 
 - **Route:** `(auth)/register.tsx` · **Ai dùng:** Guest · **Ưu tiên:** MVP
 - **Mục đích:** mục 6: nhập thông tin → kiểm tra → kiểm tra email trùng → mã hóa mật khẩu → tạo tài khoản → thông báo thành công.
-- **Hiển thị:** họ tên, email, số điện thoại (tùy chọn), ngày sinh (tùy chọn), mật khẩu, nhập lại mật khẩu, checkbox điều khoản.
-- **Kiểm tra trên giao diện:** mật khẩu 8–72 ký tự, có chữ và số; hai ô mật khẩu khớp; email đúng định dạng.
-- **API:** `POST /api/auth/register` → trả về `token` luôn, nên đăng nhập tự động sau khi đăng ký.
+- **Web / Mobile:** web là form một cột rộng tối đa 480px giữa màn hình; mobile toàn màn hình, bàn phím không che nút (dùng `KeyboardAvoidingView`).
+
+**Hiển thị** – đánh dấu `*` cho trường bắt buộc (quy tắc chi tiết: [tai-khoan-va-dang-ky.md](../01-dac-ta/tai-khoan-va-dang-ky.md)):
+
+| Ô | Bắt buộc | Kiểm tra trên giao diện |
+|---|---|---|
+| Họ tên * | ✓ | 2–100 ký tự |
+| Email * | ✓ | Định dạng email; bàn phím email; không tự viết hoa |
+| Mật khẩu * | ✓ | 8–72 ký tự, có chữ và số; hiện thanh độ mạnh |
+| Nhập lại mật khẩu * | ✓ | Trùng mật khẩu (chỉ kiểm tra ở giao diện) |
+| Số điện thoại | | `0xxxxxxxxx` / `+84...` |
+| Ngày sinh | | Date picker, không chọn ngày tương lai |
+| ☐ Tôi đồng ý Điều khoản sử dụng và Chính sách bảo mật * | ✓ | Nút **Đăng ký** khóa tới khi tích |
+
+- **API:** `POST /api/auth/register` `{ name, email, password, phone?, dateOfBirth?, acceptTerms: true }` → trả về `token` luôn, nên đăng nhập tự động sau khi đăng ký.
 - **Lỗi:** 409 `EMAIL_TAKEN` → báo dưới ô email "Email đã được sử dụng"; 400 → hiển thị `details[].message` dưới đúng ô theo `details[].path`.
 
 ### P1 – Sửa hồ sơ · P2 – Đổi mật khẩu · P3 – Đánh giá của tôi
@@ -515,7 +557,102 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 | P2 `profile/password.tsx` | P2 | Mật khẩu hiện tại, mật khẩu mới, nhập lại | `PATCH /api/auth/me/password` (204); 400 `INVALID_PASSWORD` → "Mật khẩu hiện tại không đúng" |
 | P3 `profile/reviews.tsx` | P3 | Review của tôi kèm trạng thái: Chờ duyệt / Đã hiển thị / Bị từ chối + lý do | `GET /api/reviews/mine` |
 
-## 4. Trang quản trị (Staff / Admin)
+### P4 – Trở thành đối tác
+
+- **Route:** `profile/partner.tsx` · **Ai dùng:** User · **Ưu tiên:** MVP (cần để có chủ địa điểm)
+- **Mục đích:** UC-U9 – nộp hồ sơ để đăng địa điểm lên sàn.
+- **Web / Mobile:** web chia 2 cột (form bên trái, quyền lợi + mức hoa hồng bên phải); mobile form nhiều bước: Thông tin cơ sở → Tài khoản nhận tiền → Xác nhận.
+
+**Theo trạng thái hồ sơ** (`GET /api/partners/me`):
+
+| Trạng thái | Hiển thị |
+|---|---|
+| Chưa có (404) | Giới thiệu chương trình đối tác + form nộp hồ sơ |
+| `PENDING` | "Hồ sơ đang được xét duyệt" + thông tin đã nộp; cho sửa thông tin ngân hàng (`PATCH /partners/me`) |
+| `REJECTED` | Lý do từ chối + form đã điền sẵn để sửa và **Nộp lại** |
+| `APPROVED` | "Bạn đã là đối tác" + nút **Vào trang quản lý** → O1 (sau khi gọi lại `GET /auth/me`) |
+| `SUSPENDED` | "Tài khoản đối tác đang tạm ngưng, liên hệ CSKH" |
+
+**Form** (`*` = bắt buộc): Tên cơ sở *, Địa chỉ kinh doanh *, SĐT liên hệ *, Mã số thuế, Giới thiệu, Ngân hàng, Số tài khoản, Chủ tài khoản, ☐ Đồng ý điều khoản đối tác * (hiển thị mức hoa hồng mặc định 15%). Ghi chú dưới phần ngân hàng: "Bắt buộc trước khi hồ sơ được duyệt".
+
+**API:** `POST /api/partners/apply`. Lỗi: 409 `ALREADY_APPLIED`, 409 `INVALID_ROLE` (Staff/Admin không nộp).
+
+## 4. Trang chủ địa điểm (Owner)
+
+Khu `owner/` dành cho đối tác đã được duyệt. **Web là giao diện chính** (chủ thường quản lý trên máy tính: bảng, form dài, biểu đồ). **Mobile** có bản rút gọn để xử lý việc gấp: xem dashboard, xác nhận booking, bật/tắt nhận khách.
+
+`owner/_layout.tsx`: chưa đăng nhập → A1; `role ≠ OWNER` → T5. Backend vẫn kiểm tra quyền và quyền sở hữu ở từng API.
+
+| Bố cục | Web (≥ 1024px) | Mobile |
+|---|---|---|
+| Điều hướng | Sidebar trái: Tổng quan · Tin đăng · Booking · Hồ sơ đối tác | Stack mở từ T5 → "Quản lý cơ sở"; màn hình O1 có lưới nút tắt |
+| Danh sách (O2, O6) | Bảng có cột, lọc, phân trang | Thẻ dọc, cuộn vô hạn |
+| Form (O3) | Tab ngang: Thông tin · Phòng · Gói · Dịch vụ | Từng phần một màn hình, nút Lưu cố định đáy |
+
+### O1 – Dashboard của chủ
+
+- **Ưu tiên:** MVP
+- **API:** `GET /api/stats/overview?from=&to=` (tự giới hạn theo địa điểm của chủ, `scope = OWNER`).
+
+**Hiển thị**
+
+1. Bộ chọn khoảng thời gian: 7 ngày · 30 ngày · Tháng này · Tùy chọn.
+2. **Thẻ chỉ số:** Doanh thu của tôi (`ownerRevenue`) · Tổng giá trị booking (`grossBookingValue`) · Hoa hồng sàn (`platformRevenue`) · Số booking đã chốt · Tỷ lệ hủy · Đêm phòng đã bán · Điểm đánh giá TB (`rating`).
+3. **Biểu đồ đường** doanh thu theo ngày (`revenueByDay[].ownerRevenue`) – trục X ngày, trục Y VNĐ.
+4. **Việc cần làm:** "N booking chờ xác nhận" → O6 (lọc PENDING); "N lượt nhận phòng trong 7 ngày" → O6.
+5. **Tin đăng:** số tin theo trạng thái (`listings`), tin bị từ chối hiện màu đỏ → O4.
+6. **Top địa điểm** của tôi theo doanh thu.
+
+**Rỗng:** chưa có tin đăng → "Đăng địa điểm đầu tiên" → O3.
+
+### O2 – Tin đăng của tôi
+
+- **Ưu tiên:** MVP · **API:** `GET /api/manage/destinations?listingStatus=&q=&page=`
+- **Hiển thị:** ảnh, tên, khu vực, badge trạng thái duyệt (Nháp xám · Chờ duyệt vàng · Đã duyệt xanh · Bị từ chối đỏ), công tắc **Nhận khách** (`isActive`), số booking, rating; nút "+ Đăng địa điểm mới".
+- **Thao tác:** công tắc → `PATCH /api/destinations/{id}` `{ isActive }`; chạm dòng → O3 (nháp/bị từ chối) hoặc O4 (đã duyệt/chờ duyệt).
+
+### O3 – Tạo / sửa tin đăng
+
+- **Ưu tiên:** MVP · **API đọc:** `GET /api/manage/destinations/{id}` (gồm cả phòng/gói/dịch vụ đang tắt)
+
+| Tab | Trường | API ghi |
+|---|---|---|
+| Thông tin | Tên *, Khu vực *, danh mục, địa chỉ, tọa độ, mô tả, chính sách, liên hệ, ảnh (URL), tiện ích | `POST /api/destinations` (tạo nháp) · `PATCH /api/destinations/{id}` |
+| Phòng | Tên, mô tả, sức chứa, giá/đêm, tổng số phòng, đang bán | `POST /api/room-types` · `PATCH /api/room-types/{id}` |
+| Gói | Tên, mô tả, quyền lợi, số ngày/đêm, giá, giờ hủy miễn phí, đang bán | `POST /api/packages` · `PATCH /api/packages/{id}` |
+| Dịch vụ | Tên, mô tả, giá, đơn vị tính, đang bán | `POST /api/addon-services` · `PATCH /api/addon-services/{id}` |
+
+- **Thanh hành động:** **Lưu nháp** · **Xem trước** (mở D2 với token chủ) · **Gửi duyệt** (`POST /api/destinations/{id}/submit`).
+- **Kiểm tra trước khi gửi:** checklist "Có ít nhất 1 phòng ✓ · 1 gói ✓ · có ảnh · có mô tả"; API trả 400 `LISTING_INCOMPLETE` nếu thiếu phòng/gói.
+- Tin `REJECTED` hiện lý do từ chối ở đầu trang. Không có trường "Nổi bật" (chỉ admin).
+
+### O4 – Trạng thái tin và đánh giá
+
+- **Ưu tiên:** P2
+- **Hiển thị:** dòng thời gian duyệt (tạo → gửi duyệt `submittedAt` → duyệt `approvedAt` / từ chối + lý do), link xem trang công khai, danh sách đánh giá của khách (`GET /api/destinations/{id}/reviews`).
+- **Đề xuất API bổ sung:** chủ trả lời đánh giá.
+
+### O5 – Hồ sơ đối tác
+
+- **Ưu tiên:** P2 · **API:** `GET /api/partners/me`, `PATCH /api/partners/me`
+- **Hiển thị:** thông tin cơ sở, tài khoản nhận tiền (che bớt số tài khoản: `•••• 3456`), tỷ lệ hoa hồng hiện tại (chỉ đọc), ngày được duyệt.
+
+### O6 – Booking tại cơ sở của tôi · O7 – Xử lý booking
+
+- **Ưu tiên:** MVP
+- **O6:** `GET /api/bookings?status=&code=&page=` (với OWNER mặc định `scope=managed` = booking tại địa điểm của mình). Bảng: mã, khách, địa điểm, nhận → trả, số khách, tổng tiền, **doanh thu của tôi** (`ownerRevenue`), thanh toán, trạng thái.
+- **O7:** như B6 + thông tin liên hệ khách + phần "Doanh thu": tạm tính, giảm giá, hoa hồng (`commissionRate`, `commissionAmount`), doanh thu của tôi.
+
+| Điều kiện | Nút | API |
+|---|---|---|
+| `PENDING` + trả tại nơi ở | Xác nhận | `PATCH /api/bookings/{id}/status` `{ "status": "CONFIRMED" }` |
+| `PENDING` + online chưa trả | (khóa) "Chờ khách thanh toán – hết hạn lúc hh:mm" | |
+| `CONFIRMED`, từ ngày nhận phòng | Hoàn thành | `{ "status": "COMPLETED" }` |
+| `PENDING` / `CONFIRMED` | Hủy (**bắt buộc lý do**) | `POST /api/bookings/{id}/cancel` `{ reason }` |
+
+Muốn xem booking mình đặt với tư cách khách, chủ dùng tab T3 (gọi `GET /api/bookings?scope=mine`).
+
+## 5. Trang quản trị (Staff / Admin)
 
 Khu `admin/` nên ưu tiên giao diện **web** (màn hình rộng, bảng dữ liệu, sidebar). Trên mobile vẫn dùng được nhưng có thể đơn giản hơn.
 
@@ -531,13 +668,33 @@ Khu `admin/` nên ưu tiên giao diện **web** (màn hình rộng, bảng dữ 
 | M9 Danh mục & tiện ích | | ✓ |
 | M10 Voucher | | ✓ |
 | M11 Người dùng | Xem | Xem, khóa/mở, đổi role |
+| M12 Hồ sơ đối tác | | ✓ |
+| M13 Duyệt tin đăng | | ✓ |
 
-### M1 – Tổng quan
+### M1 – Dashboard toàn sàn
 
-- **Ưu tiên:** P2
-- **Hiển thị:** thẻ số liệu: booking chờ xác nhận, review chờ duyệt, hội thoại đang mở; danh sách 5 booking mới nhất.
-- **API hiện có:** `GET /api/bookings?status=PENDING&limit=5` (dùng `meta.total`), `GET /api/reviews/moderation?status=PENDING&limit=1`, `GET /api/conversations?status=OPEN&limit=1`.
-- **Đề xuất API bổ sung:** `GET /api/admin/stats` cho doanh thu theo ngày/tháng, tỷ lệ hủy, top địa điểm (để vẽ biểu đồ).
+- **Ưu tiên:** MVP (Admin); Staff chỉ xem phần "Việc cần xử lý"
+- **API:** `GET /api/stats/overview?from=&to=` (`scope = PLATFORM`). Staff không gọi được API này (403); trang của Staff dùng các API đếm ở M2, M4, M5.
+- **Web / Mobile:** web lưới 4 cột thẻ chỉ số + 2 biểu đồ cạnh nhau; mobile 2 cột thẻ, biểu đồ xếp dọc, bảng top địa điểm thành danh sách.
+
+**Hiển thị**
+
+1. Bộ chọn khoảng thời gian (mặc định 30 ngày).
+2. **Thẻ chỉ số:** Tổng giá trị booking (GBV) · **Doanh thu sàn** (hoa hồng) · Doanh thu trả đối tác · Booking đã chốt · Tỷ lệ hủy · Giá trị TB/booking · Người dùng mới · Đối tác đang hoạt động.
+3. **Biểu đồ cột chồng** theo ngày: hoa hồng sàn + doanh thu đối tác (`revenueByDay`).
+4. **Biểu đồ tròn / thanh ngang:** booking theo trạng thái (`bookingsByStatus`), theo phương thức thanh toán (`paymentMethods`).
+5. **Bảng top 5 địa điểm** (`topDestinations`): tên, khu vực, số booking, GBV, hoa hồng, rating.
+6. **Việc cần xử lý** (`pending`), mỗi thẻ có nút dẫn tới trang xử lý:
+
+| Thẻ | Dẫn tới |
+|---|---|
+| Hồ sơ đối tác chờ duyệt | M12 |
+| Tin đăng chờ duyệt | M13 |
+| Đánh giá chờ duyệt | M4 |
+| Booking trả tại nơi ở chờ xác nhận | M2 (lọc PENDING) |
+| Hội thoại đang mở | M5 |
+
+**Cách đọc số liệu** (ghi chú nhỏ dưới tiêu đề): doanh thu chỉ tính booking đã xác nhận/hoàn thành, theo ngày đặt.
 
 ### M2 – Quản lý booking · M3 – Xử lý booking
 
@@ -573,9 +730,11 @@ Mỗi thao tác backend tự gửi thông báo cho khách; giao diện chỉ c�
 
 ### M7 – Danh sách địa điểm · M8 – Thêm / sửa địa điểm
 
+Admin dùng chung giao diện O3 cho M8, thêm 2 trường: **Chủ địa điểm** (`ownerId`, chọn từ đối tác đã duyệt; để trống = sàn tự quản lý) và **Nổi bật** (`isFeatured`). Địa điểm admin tạo được duyệt sẵn. Đọc dữ liệu đầy đủ bằng `GET /api/manage/destinations/{id}`.
+
 - **Ưu tiên:** P2 (dữ liệu demo đã có sẵn nhờ seed)
 - **M7:** bảng tên, khu vực, danh mục, giá từ, rating, Nổi bật (toggle), Hoạt động (toggle); nút "+ Thêm địa điểm".
-  - **API:** `GET /api/destinations?includeInactive=true&page=`; toggle: `PATCH /api/destinations/{id}` `{ isFeatured }` / `{ isActive }`.
+  - **API:** `GET /api/manage/destinations?ownerId=&listingStatus=&q=&page=` (thêm cột Chủ địa điểm, Trạng thái duyệt); toggle: `PATCH /api/destinations/{id}` `{ isFeatured }` / `{ isActive }`.
 - **M8:** form nhiều tab:
 
 | Tab | Trường | API |
@@ -586,7 +745,7 @@ Mỗi thao tác backend tự gửi thông báo cho khách; giao diện chỉ c�
 | Dịch vụ | Tên, mô tả, giá, đơn vị tính, hoạt động | `POST /api/addon-services` · `PATCH /api/addon-services/{id}` |
 
 - **Quy tắc:** xóa địa điểm đã có booking trả 409 → giao diện nên đề xuất "Ngừng hoạt động" thay vì xóa. Số đêm của gói không được lớn hơn số ngày.
-- **Đề xuất API bổ sung:** chi tiết địa điểm hiện chỉ trả gói/phòng/dịch vụ đang hoạt động; trang quản trị cần thêm tham số để lấy cả mục đã tắt. Tải ảnh lên cần endpoint upload (hiện chỉ nhập URL).
+- **Đề xuất API bổ sung:** tải ảnh lên cần endpoint upload (hiện chỉ nhập URL).
 
 ### M9 – Danh mục & tiện ích · M10 – Voucher · M11 – Người dùng
 
@@ -598,15 +757,46 @@ Mỗi thao tác backend tự gửi thông báo cho khách; giao diện chỉ c�
 
 M11: Admin không tự khóa hoặc tự đổi quyền chính mình (API trả 400). Khóa tài khoản có hiệu lực ngay, kể cả khi người đó đang đăng nhập.
 
-## 5. Thứ tự làm đề xuất
+### M12 – Hồ sơ đối tác
+
+- **Ưu tiên:** MVP (ADMIN)
+- **Hiển thị:** tab Chờ duyệt · Đã duyệt · Bị từ chối · Tạm ngưng; bảng tên cơ sở, người nộp, email, SĐT, MST, đủ thông tin ngân hàng (✓/✗), số địa điểm, ngày nộp, hoa hồng.
+- **API:** `GET /api/partners?status=&q=&page=`, `GET /api/partners/{id}`
+
+| Thao tác | API | Ghi chú |
+|---|---|---|
+| Duyệt (+ đặt hoa hồng) | `PATCH /api/partners/{id}/review` `{ status: "APPROVED", commissionRate }` | Khóa nút nếu thiếu ngân hàng (409 `PARTNER_BANK_REQUIRED`) |
+| Từ chối | `{ status: "REJECTED", rejectReason }` | Bắt buộc lý do |
+| Tạm ngưng / Mở lại | `PATCH /api/partners/{id}/status` `{ status: "SUSPENDED" \| "APPROVED", reason }` | Hộp thoại cảnh báo: "Mọi địa điểm của đối tác sẽ bị ẩn" |
+| Đổi hoa hồng | `PATCH /api/partners/{id}/commission` `{ commissionRate }` | Ghi chú: "Chỉ áp dụng cho booking mới" |
+
+### M13 – Duyệt tin đăng
+
+- **Ưu tiên:** MVP (ADMIN)
+- **Hiển thị:** danh sách tin `PENDING_REVIEW` cũ nhất trước: ảnh, tên, chủ địa điểm, ngày gửi, số phòng/gói. Chọn một tin → xem trước như D2 (dùng `GET /api/manage/destinations/{id}`) + nút **Duyệt** / **Từ chối**.
+- **API:** `GET /api/manage/destinations?listingStatus=PENDING_REVIEW`; `PATCH /api/destinations/{id}/review` `{ status, rejectReason? }`.
+- **Checklist cho người duyệt** (hiển thị bên cạnh): ảnh thật, mô tả đúng sự thật, giá hợp lý, địa chỉ có trên bản đồ, chính sách hủy rõ ràng. Lý do từ chối gợi ý nhanh: "Thiếu ảnh", "Sai địa chỉ", "Giá bất thường", "Nội dung không phù hợp".
+
+## 6. Thứ tự làm đề xuất
 
 | Đợt | Trang | Kết quả demo được |
 |---|---|---|
 | 1 | Layout + 5 tab, T1, D2, A1, A2, T5 | Khám phá, xem chi tiết, đăng nhập/đăng ký |
 | 2 | D1, T2 | Tìm kiếm, lọc, yêu thích |
-| 3 | B1 → B5, T3, B6 | **Luồng đặt chỗ hoàn chỉnh** (nghiệp vụ quan trọng nhất) |
-| 4 | M2, M3, M4, R1, T4 (thông báo) | Staff xác nhận/hoàn thành → khách đánh giá → staff duyệt |
-| 5 | C1, C2, M5, M6, P1–P3, D3 | Chat CSKH, quản lý hồ sơ |
-| 6 | M1, M7–M11 | Quản trị nội dung |
+| 3 | B1 → B5, T3, B6 | **Luồng đặt chỗ + cổng thanh toán giả lập** (nghiệp vụ quan trọng nhất) |
+| 4 | P4, M12, O1, O2, O3, M13 | **Đối tác đăng tin → admin duyệt → khách thấy tin** |
+| 5 | O6, O7, M2, M3, M4, R1, T4 | Chủ/Staff xác nhận, hoàn thành → khách đánh giá → staff duyệt |
+| 6 | M1 | Dashboard toàn sàn |
+| 7 | C1, C2, M5, M6, P1–P3, D3, O4, O5 | Chat CSKH, hồ sơ, đánh giá |
+| 8 | M7–M11 | Quản trị nội dung còn lại |
 
-Tài khoản demo sau khi chạy `npm run db:seed` trong `be/` (mật khẩu `Password123`): `user@travelling.app`, `staff@travelling.app`, `admin@travelling.app`.
+Tài khoản demo sau khi chạy `npm run db:seed` trong `be/` (mật khẩu `Password123`):
+
+| Email | Vai trò | Dùng để thử |
+|---|---|---|
+| `user@travelling.app` | USER | Khách đặt chỗ, có sẵn 1 chuyến đã hoàn thành + đánh giá |
+| `owner1@travelling.app` | OWNER | Chủ Đà Lạt, Sa Pa, Hạ Long (hoa hồng 15%) |
+| `owner2@travelling.app` | OWNER | Chủ Mỹ Khê, Phú Quốc (hoa hồng 12%) |
+| `partner.pending@travelling.app` | USER | Có hồ sơ đối tác đang chờ duyệt |
+| `staff@travelling.app` | STAFF | CSKH, kiểm duyệt đánh giá |
+| `admin@travelling.app` | ADMIN | Dashboard, duyệt đối tác và tin đăng |

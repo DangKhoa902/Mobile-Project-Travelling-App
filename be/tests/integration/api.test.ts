@@ -34,13 +34,21 @@ describe("API guards", () => {
     expect(response.body.code).toBe("INVALID_JSON");
   });
 
-  it.each(["/api/bookings", "/api/favorites", "/api/notifications", "/api/users", "/api/auth/me"])(
+  it.each(["/api/bookings", "/api/favorites", "/api/notifications", "/api/users", "/api/auth/me", "/api/partners/me", "/api/manage/destinations", "/api/stats/overview"])(
     "%s yêu cầu đăng nhập",
     async (path) => {
       const response = await request(app).get(path);
       expect(response.status).toBe(401);
     },
   );
+
+  it("đăng ký thiếu đồng ý điều khoản trả 400", async () => {
+    const response = await request(app)
+      .post("/api/auth/register")
+      .send({ name: "Khách", email: "a@example.com", password: "Secret123" });
+    expect(response.status).toBe(400);
+    expect(response.body.details.map((issue: { path: string }) => issue.path)).toContain("acceptTerms");
+  });
 
   it("token giả bị từ chối", async () => {
     const response = await request(app).get("/api/bookings").set("Authorization", "Bearer abc.def.ghi");

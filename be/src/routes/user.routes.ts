@@ -13,7 +13,7 @@ userRouter.use(authenticate, requireRole("STAFF", "ADMIN"));
 
 const listUsersSchema = paginationSchema.extend({
   q: z.string().trim().optional(),
-  role: z.enum(["USER", "STAFF", "ADMIN"]).optional(),
+  role: z.enum(["USER", "OWNER", "STAFF", "ADMIN"]).optional(),
   status: z.enum(["ACTIVE", "LOCKED"]).optional(),
 });
 
@@ -55,5 +55,8 @@ userRouter.patch("/:id/role", requireRole("ADMIN"), async (request, response) =>
   const { id } = idParamSchema.parse(request.params);
   const { role } = z.object({ role: z.enum(["USER", "STAFF", "ADMIN"]) }).parse(request.body);
   if (id === currentUser(request).id) throw badRequest("Không thể tự đổi quyền của mình");
+  // Quyền OWNER gắn với hồ sơ đối tác; cấp/thu hồi qua /api/partners để dữ liệu không lệch nhau.
+  const target = await userDao.findById(id);
+  if (target?.role === "OWNER") throw badRequest("Đổi quyền chủ địa điểm qua quản lý đối tác", "USE_PARTNER_API");
   response.json({ data: await userDao.update(id, { role }) });
 });

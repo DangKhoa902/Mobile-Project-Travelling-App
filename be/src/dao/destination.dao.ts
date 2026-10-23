@@ -13,6 +13,8 @@ export const destinationSummarySelect = {
   reviewCount: true,
   isFeatured: true,
   isActive: true,
+  listingStatus: true,
+  ownerId: true,
   category: { select: { id: true, name: true, slug: true } },
 } as const satisfies Prisma.DestinationSelect;
 
@@ -36,7 +38,8 @@ const SORT_ORDERS: Record<ListDestinationsInput["sort"], Prisma.DestinationOrder
 
 export function buildDestinationWhere(query: ListDestinationsInput, canSeeInactive: boolean): Prisma.DestinationWhereInput {
   return {
-    ...(canSeeInactive && query.includeInactive ? {} : { isActive: true }),
+    // Công khai: chỉ tin đã duyệt và đang hoạt động. Staff/Admin có thể xem tất cả bằng includeInactive=true.
+    ...(canSeeInactive && query.includeInactive ? {} : { isActive: true, listingStatus: "APPROVED" as const }),
     ...(query.categoryId ? { categoryId: query.categoryId } : {}),
     ...(query.location ? { location: { contains: query.location } } : {}),
     ...(query.featured !== undefined ? { isFeatured: query.featured } : {}),
@@ -73,6 +76,21 @@ export const destinationDao = {
     const id = Number(idOrSlug);
     const where: Prisma.DestinationWhereUniqueInput = Number.isInteger(id) && id > 0 ? { id } : { slug: idOrSlug };
     return prisma.destination.findUnique({ where, include: destinationDetailInclude });
+  },
+
+  // Bản đầy đủ cho trang quản lý: gồm cả gói/phòng/dịch vụ đang tắt và thông tin kiểm duyệt.
+  findForManagement(id: number) {
+    return prisma.destination.findUnique({
+      where: { id },
+      include: {
+        ...destinationDetailInclude,
+        packages: { orderBy: { price: "asc" } },
+        roomTypes: { orderBy: { pricePerNight: "asc" } },
+        services: { orderBy: { price: "asc" } },
+        owner: { select: { id: true, name: true, email: true, partnerProfile: { select: { businessName: true } } } },
+        _count: { select: { bookings: true, favorites: true } },
+      },
+    });
   },
 
   findLatestApprovedReviews(destinationId: number, take = 5) {

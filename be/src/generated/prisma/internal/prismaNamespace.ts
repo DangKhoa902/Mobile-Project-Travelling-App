@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  PartnerProfile: 'PartnerProfile',
   Category: 'Category',
   Facility: 'Facility',
   Destination: 'Destination',
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "category" | "facility" | "destination" | "destinationImage" | "package" | "roomType" | "addonService" | "voucher" | "booking" | "bookingService" | "payment" | "favorite" | "review" | "conversation" | "message" | "notification"
+    modelProps: "user" | "partnerProfile" | "category" | "facility" | "destination" | "destinationImage" | "package" | "roomType" | "addonService" | "voucher" | "booking" | "bookingService" | "payment" | "favorite" | "review" | "conversation" | "message" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -496,6 +497,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PartnerProfile: {
+      payload: Prisma.$PartnerProfilePayload<ExtArgs>
+      fields: Prisma.PartnerProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PartnerProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PartnerProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.PartnerProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PartnerProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        findMany: {
+          args: Prisma.PartnerProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>[]
+        }
+        create: {
+          args: Prisma.PartnerProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        createMany: {
+          args: Prisma.PartnerProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PartnerProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        update: {
+          args: Prisma.PartnerProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.PartnerProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PartnerProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PartnerProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartnerProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.PartnerProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePartnerProfile>
+        }
+        groupBy: {
+          args: Prisma.PartnerProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PartnerProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PartnerProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PartnerProfileCountAggregateOutputType> | number
         }
       }
     }
@@ -1611,6 +1678,29 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const PartnerProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  businessName: 'businessName',
+  taxCode: 'taxCode',
+  businessAddress: 'businessAddress',
+  contactPhone: 'contactPhone',
+  description: 'description',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  status: 'status',
+  commissionRate: 'commissionRate',
+  rejectReason: 'rejectReason',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PartnerProfileScalarFieldEnum = (typeof PartnerProfileScalarFieldEnum)[keyof typeof PartnerProfileScalarFieldEnum]
+
+
 export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1651,6 +1741,11 @@ export const DestinationScalarFieldEnum = {
   averageRating: 'averageRating',
   reviewCount: 'reviewCount',
   categoryId: 'categoryId',
+  ownerId: 'ownerId',
+  listingStatus: 'listingStatus',
+  listingRejectReason: 'listingRejectReason',
+  submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1762,6 +1857,10 @@ export const BookingScalarFieldEnum = {
   discountAmount: 'discountAmount',
   taxAmount: 'taxAmount',
   totalAmount: 'totalAmount',
+  commissionRate: 'commissionRate',
+  commissionAmount: 'commissionAmount',
+  ownerRevenue: 'ownerRevenue',
+  paymentDueAt: 'paymentDueAt',
   confirmedAt: 'confirmedAt',
   completedAt: 'completedAt',
   cancelledAt: 'cancelledAt',
@@ -1790,6 +1889,7 @@ export const PaymentScalarFieldEnum = {
   bookingId: 'bookingId',
   method: 'method',
   status: 'status',
+  channel: 'channel',
   amount: 'amount',
   transactionRef: 'transactionRef',
   paidAt: 'paidAt',
@@ -1904,6 +2004,21 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const PartnerProfileOrderByRelevanceFieldEnum = {
+  businessName: 'businessName',
+  taxCode: 'taxCode',
+  businessAddress: 'businessAddress',
+  contactPhone: 'contactPhone',
+  description: 'description',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  rejectReason: 'rejectReason'
+} as const
+
+export type PartnerProfileOrderByRelevanceFieldEnum = (typeof PartnerProfileOrderByRelevanceFieldEnum)[keyof typeof PartnerProfileOrderByRelevanceFieldEnum]
+
+
 export const CategoryOrderByRelevanceFieldEnum = {
   name: 'name',
   slug: 'slug',
@@ -1930,7 +2045,8 @@ export const DestinationOrderByRelevanceFieldEnum = {
   imageUrl: 'imageUrl',
   contactPhone: 'contactPhone',
   contactEmail: 'contactEmail',
-  policy: 'policy'
+  policy: 'policy',
+  listingRejectReason: 'listingRejectReason'
 } as const
 
 export type DestinationOrderByRelevanceFieldEnum = (typeof DestinationOrderByRelevanceFieldEnum)[keyof typeof DestinationOrderByRelevanceFieldEnum]
@@ -2005,6 +2121,7 @@ export type BookingOrderByRelevanceFieldEnum = (typeof BookingOrderByRelevanceFi
 
 
 export const PaymentOrderByRelevanceFieldEnum = {
+  channel: 'channel',
   transactionRef: 'transactionRef'
 } as const
 
@@ -2083,6 +2200,13 @@ export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 
 
 /**
+ * Reference to a field of type 'PartnerStatus'
+ */
+export type EnumPartnerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PartnerStatus'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2093,6 +2217,13 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'ListingStatus'
+ */
+export type EnumListingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListingStatus'>
     
 
 
@@ -2317,6 +2448,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  partnerProfile?: Prisma.PartnerProfileOmit
   category?: Prisma.CategoryOmit
   facility?: Prisma.FacilityOmit
   destination?: Prisma.DestinationOmit

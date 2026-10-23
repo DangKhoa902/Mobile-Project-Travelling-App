@@ -43,6 +43,9 @@ export type BookingAvgAggregateOutputType = {
   discountAmount: number | null
   taxAmount: number | null
   totalAmount: number | null
+  commissionRate: number | null
+  commissionAmount: number | null
+  ownerRevenue: number | null
 }
 
 export type BookingSumAggregateOutputType = {
@@ -62,6 +65,9 @@ export type BookingSumAggregateOutputType = {
   discountAmount: number | null
   taxAmount: number | null
   totalAmount: number | null
+  commissionRate: number | null
+  commissionAmount: number | null
+  ownerRevenue: number | null
 }
 
 export type BookingMinAggregateOutputType = {
@@ -89,6 +95,10 @@ export type BookingMinAggregateOutputType = {
   discountAmount: number | null
   taxAmount: number | null
   totalAmount: number | null
+  commissionRate: number | null
+  commissionAmount: number | null
+  ownerRevenue: number | null
+  paymentDueAt: Date | null
   confirmedAt: Date | null
   completedAt: Date | null
   cancelledAt: Date | null
@@ -122,6 +132,10 @@ export type BookingMaxAggregateOutputType = {
   discountAmount: number | null
   taxAmount: number | null
   totalAmount: number | null
+  commissionRate: number | null
+  commissionAmount: number | null
+  ownerRevenue: number | null
+  paymentDueAt: Date | null
   confirmedAt: Date | null
   completedAt: Date | null
   cancelledAt: Date | null
@@ -155,6 +169,10 @@ export type BookingCountAggregateOutputType = {
   discountAmount: number
   taxAmount: number
   totalAmount: number
+  commissionRate: number
+  commissionAmount: number
+  ownerRevenue: number
+  paymentDueAt: number
   confirmedAt: number
   completedAt: number
   cancelledAt: number
@@ -182,6 +200,9 @@ export type BookingAvgAggregateInputType = {
   discountAmount?: true
   taxAmount?: true
   totalAmount?: true
+  commissionRate?: true
+  commissionAmount?: true
+  ownerRevenue?: true
 }
 
 export type BookingSumAggregateInputType = {
@@ -201,6 +222,9 @@ export type BookingSumAggregateInputType = {
   discountAmount?: true
   taxAmount?: true
   totalAmount?: true
+  commissionRate?: true
+  commissionAmount?: true
+  ownerRevenue?: true
 }
 
 export type BookingMinAggregateInputType = {
@@ -228,6 +252,10 @@ export type BookingMinAggregateInputType = {
   discountAmount?: true
   taxAmount?: true
   totalAmount?: true
+  commissionRate?: true
+  commissionAmount?: true
+  ownerRevenue?: true
+  paymentDueAt?: true
   confirmedAt?: true
   completedAt?: true
   cancelledAt?: true
@@ -261,6 +289,10 @@ export type BookingMaxAggregateInputType = {
   discountAmount?: true
   taxAmount?: true
   totalAmount?: true
+  commissionRate?: true
+  commissionAmount?: true
+  ownerRevenue?: true
+  paymentDueAt?: true
   confirmedAt?: true
   completedAt?: true
   cancelledAt?: true
@@ -294,6 +326,10 @@ export type BookingCountAggregateInputType = {
   discountAmount?: true
   taxAmount?: true
   totalAmount?: true
+  commissionRate?: true
+  commissionAmount?: true
+  ownerRevenue?: true
+  paymentDueAt?: true
   confirmedAt?: true
   completedAt?: true
   cancelledAt?: true
@@ -414,6 +450,10 @@ export type BookingGroupByOutputType = {
   discountAmount: number
   taxAmount: number
   totalAmount: number
+  commissionRate: number
+  commissionAmount: number
+  ownerRevenue: number
+  paymentDueAt: Date | null
   confirmedAt: Date | null
   completedAt: Date | null
   cancelledAt: Date | null
@@ -470,6 +510,10 @@ export type BookingWhereInput = {
   discountAmount?: Prisma.IntFilter<"Booking"> | number
   taxAmount?: Prisma.IntFilter<"Booking"> | number
   totalAmount?: Prisma.IntFilter<"Booking"> | number
+  commissionRate?: Prisma.FloatFilter<"Booking"> | number
+  commissionAmount?: Prisma.IntFilter<"Booking"> | number
+  ownerRevenue?: Prisma.IntFilter<"Booking"> | number
+  paymentDueAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   confirmedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   cancelledAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
@@ -511,6 +555,10 @@ export type BookingOrderByWithRelationInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
+  paymentDueAt?: Prisma.SortOrderInput | Prisma.SortOrder
   confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -556,6 +604,10 @@ export type BookingWhereUniqueInput = Prisma.AtLeast<{
   discountAmount?: Prisma.IntFilter<"Booking"> | number
   taxAmount?: Prisma.IntFilter<"Booking"> | number
   totalAmount?: Prisma.IntFilter<"Booking"> | number
+  commissionRate?: Prisma.FloatFilter<"Booking"> | number
+  commissionAmount?: Prisma.IntFilter<"Booking"> | number
+  ownerRevenue?: Prisma.IntFilter<"Booking"> | number
+  paymentDueAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   confirmedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   cancelledAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
@@ -597,6 +649,10 @@ export type BookingOrderByWithAggregationInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
+  paymentDueAt?: Prisma.SortOrderInput | Prisma.SortOrder
   confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -638,6 +694,10 @@ export type BookingScalarWhereWithAggregatesInput = {
   discountAmount?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   taxAmount?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   totalAmount?: Prisma.IntWithAggregatesFilter<"Booking"> | number
+  commissionRate?: Prisma.FloatWithAggregatesFilter<"Booking"> | number
+  commissionAmount?: Prisma.IntWithAggregatesFilter<"Booking"> | number
+  ownerRevenue?: Prisma.IntWithAggregatesFilter<"Booking"> | number
+  paymentDueAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
   confirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
   cancelledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
@@ -665,6 +725,10 @@ export type BookingCreateInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -706,6 +770,10 @@ export type BookingUncheckedCreateInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -736,6 +804,10 @@ export type BookingUpdateInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -777,6 +849,10 @@ export type BookingUncheckedUpdateInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -813,6 +889,10 @@ export type BookingCreateManyInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -840,6 +920,10 @@ export type BookingUpdateManyMutationInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -873,6 +957,10 @@ export type BookingUncheckedUpdateManyInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -922,6 +1010,10 @@ export type BookingCountOrderByAggregateInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
+  paymentDueAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   cancelledAt?: Prisma.SortOrder
@@ -947,6 +1039,9 @@ export type BookingAvgOrderByAggregateInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
 }
 
 export type BookingMaxOrderByAggregateInput = {
@@ -974,6 +1069,10 @@ export type BookingMaxOrderByAggregateInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
+  paymentDueAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   cancelledAt?: Prisma.SortOrder
@@ -1007,6 +1106,10 @@ export type BookingMinOrderByAggregateInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
+  paymentDueAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   cancelledAt?: Prisma.SortOrder
@@ -1032,6 +1135,9 @@ export type BookingSumOrderByAggregateInput = {
   discountAmount?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
+  commissionRate?: Prisma.SortOrder
+  commissionAmount?: Prisma.SortOrder
+  ownerRevenue?: Prisma.SortOrder
 }
 
 export type BookingScalarRelationFilter = {
@@ -1314,6 +1420,10 @@ export type BookingCreateWithoutUserInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1353,6 +1463,10 @@ export type BookingUncheckedCreateWithoutUserInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1418,6 +1532,10 @@ export type BookingScalarWhereInput = {
   discountAmount?: Prisma.IntFilter<"Booking"> | number
   taxAmount?: Prisma.IntFilter<"Booking"> | number
   totalAmount?: Prisma.IntFilter<"Booking"> | number
+  commissionRate?: Prisma.FloatFilter<"Booking"> | number
+  commissionAmount?: Prisma.IntFilter<"Booking"> | number
+  ownerRevenue?: Prisma.IntFilter<"Booking"> | number
+  paymentDueAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   confirmedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
   cancelledAt?: Prisma.DateTimeNullableFilter<"Booking"> | Date | string | null
@@ -1445,6 +1563,10 @@ export type BookingCreateWithoutDestinationInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1484,6 +1606,10 @@ export type BookingUncheckedCreateWithoutDestinationInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1540,6 +1666,10 @@ export type BookingCreateWithoutPackageInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1579,6 +1709,10 @@ export type BookingUncheckedCreateWithoutPackageInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1635,6 +1769,10 @@ export type BookingCreateWithoutRoomTypeInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1674,6 +1812,10 @@ export type BookingUncheckedCreateWithoutRoomTypeInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1730,6 +1872,10 @@ export type BookingCreateWithoutVoucherInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1769,6 +1915,10 @@ export type BookingUncheckedCreateWithoutVoucherInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1825,6 +1975,10 @@ export type BookingCreateWithoutServicesInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1865,6 +2019,10 @@ export type BookingUncheckedCreateWithoutServicesInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -1910,6 +2068,10 @@ export type BookingUpdateWithoutServicesInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1950,6 +2112,10 @@ export type BookingUncheckedUpdateWithoutServicesInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1979,6 +2145,10 @@ export type BookingCreateWithoutPaymentInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2019,6 +2189,10 @@ export type BookingUncheckedCreateWithoutPaymentInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2064,6 +2238,10 @@ export type BookingUpdateWithoutPaymentInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2104,6 +2282,10 @@ export type BookingUncheckedUpdateWithoutPaymentInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2133,6 +2315,10 @@ export type BookingCreateWithoutReviewInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2173,6 +2359,10 @@ export type BookingUncheckedCreateWithoutReviewInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2218,6 +2408,10 @@ export type BookingUpdateWithoutReviewInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2258,6 +2452,10 @@ export type BookingUncheckedUpdateWithoutReviewInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2292,6 +2490,10 @@ export type BookingCreateManyUserInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2319,6 +2521,10 @@ export type BookingUpdateWithoutUserInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2358,6 +2564,10 @@ export type BookingUncheckedUpdateWithoutUserInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2393,6 +2603,10 @@ export type BookingUncheckedUpdateManyWithoutUserInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2425,6 +2639,10 @@ export type BookingCreateManyDestinationInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2452,6 +2670,10 @@ export type BookingUpdateWithoutDestinationInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2491,6 +2713,10 @@ export type BookingUncheckedUpdateWithoutDestinationInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2526,6 +2752,10 @@ export type BookingUncheckedUpdateManyWithoutDestinationInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2558,6 +2788,10 @@ export type BookingCreateManyPackageInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2585,6 +2819,10 @@ export type BookingUpdateWithoutPackageInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2624,6 +2862,10 @@ export type BookingUncheckedUpdateWithoutPackageInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2659,6 +2901,10 @@ export type BookingUncheckedUpdateManyWithoutPackageInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2691,6 +2937,10 @@ export type BookingCreateManyRoomTypeInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2718,6 +2968,10 @@ export type BookingUpdateWithoutRoomTypeInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2757,6 +3011,10 @@ export type BookingUncheckedUpdateWithoutRoomTypeInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2792,6 +3050,10 @@ export type BookingUncheckedUpdateManyWithoutRoomTypeInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2824,6 +3086,10 @@ export type BookingCreateManyVoucherInput = {
   discountAmount?: number
   taxAmount?: number
   totalAmount: number
+  commissionRate?: number
+  commissionAmount?: number
+  ownerRevenue?: number
+  paymentDueAt?: Date | string | null
   confirmedAt?: Date | string | null
   completedAt?: Date | string | null
   cancelledAt?: Date | string | null
@@ -2851,6 +3117,10 @@ export type BookingUpdateWithoutVoucherInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2890,6 +3160,10 @@ export type BookingUncheckedUpdateWithoutVoucherInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2925,6 +3199,10 @@ export type BookingUncheckedUpdateManyWithoutVoucherInput = {
   discountAmount?: Prisma.IntFieldUpdateOperationsInput | number
   taxAmount?: Prisma.IntFieldUpdateOperationsInput | number
   totalAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  commissionRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  commissionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerRevenue?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2989,6 +3267,10 @@ export type BookingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   discountAmount?: boolean
   taxAmount?: boolean
   totalAmount?: boolean
+  commissionRate?: boolean
+  commissionAmount?: boolean
+  ownerRevenue?: boolean
+  paymentDueAt?: boolean
   confirmedAt?: boolean
   completedAt?: boolean
   cancelledAt?: boolean
@@ -3033,6 +3315,10 @@ export type BookingSelectScalar = {
   discountAmount?: boolean
   taxAmount?: boolean
   totalAmount?: boolean
+  commissionRate?: boolean
+  commissionAmount?: boolean
+  ownerRevenue?: boolean
+  paymentDueAt?: boolean
   confirmedAt?: boolean
   completedAt?: boolean
   cancelledAt?: boolean
@@ -3041,7 +3327,7 @@ export type BookingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "status" | "userId" | "destinationId" | "packageId" | "roomTypeId" | "voucherId" | "checkInDate" | "checkOutDate" | "nights" | "guests" | "roomsCount" | "contactName" | "contactPhone" | "contactEmail" | "note" | "packagePrice" | "roomPrice" | "servicesPrice" | "subtotal" | "discountAmount" | "taxAmount" | "totalAmount" | "confirmedAt" | "completedAt" | "cancelledAt" | "cancelReason" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
+export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "status" | "userId" | "destinationId" | "packageId" | "roomTypeId" | "voucherId" | "checkInDate" | "checkOutDate" | "nights" | "guests" | "roomsCount" | "contactName" | "contactPhone" | "contactEmail" | "note" | "packagePrice" | "roomPrice" | "servicesPrice" | "subtotal" | "discountAmount" | "taxAmount" | "totalAmount" | "commissionRate" | "commissionAmount" | "ownerRevenue" | "paymentDueAt" | "confirmedAt" | "completedAt" | "cancelledAt" | "cancelReason" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
 export type BookingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -3091,6 +3377,10 @@ export type $BookingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     discountAmount: number
     taxAmount: number
     totalAmount: number
+    commissionRate: number
+    commissionAmount: number
+    ownerRevenue: number
+    paymentDueAt: Date | null
     confirmedAt: Date | null
     completedAt: Date | null
     cancelledAt: Date | null
@@ -3498,6 +3788,10 @@ export interface BookingFieldRefs {
   readonly discountAmount: Prisma.FieldRef<"Booking", 'Int'>
   readonly taxAmount: Prisma.FieldRef<"Booking", 'Int'>
   readonly totalAmount: Prisma.FieldRef<"Booking", 'Int'>
+  readonly commissionRate: Prisma.FieldRef<"Booking", 'Float'>
+  readonly commissionAmount: Prisma.FieldRef<"Booking", 'Int'>
+  readonly ownerRevenue: Prisma.FieldRef<"Booking", 'Int'>
+  readonly paymentDueAt: Prisma.FieldRef<"Booking", 'DateTime'>
   readonly confirmedAt: Prisma.FieldRef<"Booking", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Booking", 'DateTime'>
   readonly cancelledAt: Prisma.FieldRef<"Booking", 'DateTime'>

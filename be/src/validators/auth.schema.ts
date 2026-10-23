@@ -14,6 +14,8 @@ export const registerSchema = z.object({
   password: passwordSchema,
   phone: phoneSchema.optional(),
   dateOfBirth: z.iso.date().optional(),
+  // Bắt buộc theo quy định bảo vệ dữ liệu cá nhân; không lưu vào DB, chỉ kiểm tra lúc đăng ký.
+  acceptTerms: z.literal(true, { error: "Cần đồng ý điều khoản sử dụng và chính sách bảo mật" }),
 });
 
 export const loginSchema = z.object({

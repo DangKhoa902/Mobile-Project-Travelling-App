@@ -34,6 +34,7 @@ export type DestinationAvgAggregateOutputType = {
   averageRating: number | null
   reviewCount: number | null
   categoryId: number | null
+  ownerId: number | null
 }
 
 export type DestinationSumAggregateOutputType = {
@@ -44,6 +45,7 @@ export type DestinationSumAggregateOutputType = {
   averageRating: number | null
   reviewCount: number | null
   categoryId: number | null
+  ownerId: number | null
 }
 
 export type DestinationMinAggregateOutputType = {
@@ -65,6 +67,11 @@ export type DestinationMinAggregateOutputType = {
   averageRating: number | null
   reviewCount: number | null
   categoryId: number | null
+  ownerId: number | null
+  listingStatus: $Enums.ListingStatus | null
+  listingRejectReason: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -88,6 +95,11 @@ export type DestinationMaxAggregateOutputType = {
   averageRating: number | null
   reviewCount: number | null
   categoryId: number | null
+  ownerId: number | null
+  listingStatus: $Enums.ListingStatus | null
+  listingRejectReason: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -111,6 +123,11 @@ export type DestinationCountAggregateOutputType = {
   averageRating: number
   reviewCount: number
   categoryId: number
+  ownerId: number
+  listingStatus: number
+  listingRejectReason: number
+  submittedAt: number
+  approvedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -125,6 +142,7 @@ export type DestinationAvgAggregateInputType = {
   averageRating?: true
   reviewCount?: true
   categoryId?: true
+  ownerId?: true
 }
 
 export type DestinationSumAggregateInputType = {
@@ -135,6 +153,7 @@ export type DestinationSumAggregateInputType = {
   averageRating?: true
   reviewCount?: true
   categoryId?: true
+  ownerId?: true
 }
 
 export type DestinationMinAggregateInputType = {
@@ -156,6 +175,11 @@ export type DestinationMinAggregateInputType = {
   averageRating?: true
   reviewCount?: true
   categoryId?: true
+  ownerId?: true
+  listingStatus?: true
+  listingRejectReason?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -179,6 +203,11 @@ export type DestinationMaxAggregateInputType = {
   averageRating?: true
   reviewCount?: true
   categoryId?: true
+  ownerId?: true
+  listingStatus?: true
+  listingRejectReason?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -202,6 +231,11 @@ export type DestinationCountAggregateInputType = {
   averageRating?: true
   reviewCount?: true
   categoryId?: true
+  ownerId?: true
+  listingStatus?: true
+  listingRejectReason?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -312,6 +346,11 @@ export type DestinationGroupByOutputType = {
   averageRating: number
   reviewCount: number
   categoryId: number | null
+  ownerId: number | null
+  listingStatus: $Enums.ListingStatus
+  listingRejectReason: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: DestinationCountAggregateOutputType | null
@@ -358,8 +397,14 @@ export type DestinationWhereInput = {
   averageRating?: Prisma.FloatFilter<"Destination"> | number
   reviewCount?: Prisma.IntFilter<"Destination"> | number
   categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  ownerId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  listingStatus?: Prisma.EnumListingStatusFilter<"Destination"> | $Enums.ListingStatus
+  listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   images?: Prisma.DestinationImageListRelationFilter
   facilities?: Prisma.FacilityListRelationFilter
@@ -390,8 +435,14 @@ export type DestinationOrderByWithRelationInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  listingStatus?: Prisma.SortOrder
+  listingRejectReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  owner?: Prisma.UserOrderByWithRelationInput
   category?: Prisma.CategoryOrderByWithRelationInput
   images?: Prisma.DestinationImageOrderByRelationAggregateInput
   facilities?: Prisma.FacilityOrderByRelationAggregateInput
@@ -426,8 +477,14 @@ export type DestinationWhereUniqueInput = Prisma.AtLeast<{
   averageRating?: Prisma.FloatFilter<"Destination"> | number
   reviewCount?: Prisma.IntFilter<"Destination"> | number
   categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  ownerId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  listingStatus?: Prisma.EnumListingStatusFilter<"Destination"> | $Enums.ListingStatus
+  listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   images?: Prisma.DestinationImageListRelationFilter
   facilities?: Prisma.FacilityListRelationFilter
@@ -458,6 +515,11 @@ export type DestinationOrderByWithAggregationInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  listingStatus?: Prisma.SortOrder
+  listingRejectReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DestinationCountOrderByAggregateInput
@@ -489,6 +551,11 @@ export type DestinationScalarWhereWithAggregatesInput = {
   averageRating?: Prisma.FloatWithAggregatesFilter<"Destination"> | number
   reviewCount?: Prisma.IntWithAggregatesFilter<"Destination"> | number
   categoryId?: Prisma.IntNullableWithAggregatesFilter<"Destination"> | number | null
+  ownerId?: Prisma.IntNullableWithAggregatesFilter<"Destination"> | number | null
+  listingStatus?: Prisma.EnumListingStatusWithAggregatesFilter<"Destination"> | $Enums.ListingStatus
+  listingRejectReason?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
+  submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Destination"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Destination"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
 }
@@ -510,8 +577,13 @@ export type DestinationCreateInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -542,6 +614,11 @@ export type DestinationUncheckedCreateInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -571,8 +648,13 @@ export type DestinationUpdateInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -603,6 +685,11 @@ export type DestinationUncheckedUpdateInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -634,6 +721,11 @@ export type DestinationCreateManyInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -655,6 +747,10 @@ export type DestinationUpdateManyMutationInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -678,6 +774,11 @@ export type DestinationUncheckedUpdateManyInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -717,6 +818,11 @@ export type DestinationCountOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrder
+  listingStatus?: Prisma.SortOrder
+  listingRejectReason?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -729,6 +835,7 @@ export type DestinationAvgOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrder
 }
 
 export type DestinationMaxOrderByAggregateInput = {
@@ -750,6 +857,11 @@ export type DestinationMaxOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrder
+  listingStatus?: Prisma.SortOrder
+  listingRejectReason?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -773,6 +885,11 @@ export type DestinationMinOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrder
+  listingStatus?: Prisma.SortOrder
+  listingRejectReason?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -785,11 +902,54 @@ export type DestinationSumOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  ownerId?: Prisma.SortOrder
 }
 
 export type DestinationScalarRelationFilter = {
   is?: Prisma.DestinationWhereInput
   isNot?: Prisma.DestinationWhereInput
+}
+
+export type DestinationCreateNestedManyWithoutOwnerInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput> | Prisma.DestinationCreateWithoutOwnerInput[] | Prisma.DestinationUncheckedCreateWithoutOwnerInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutOwnerInput | Prisma.DestinationCreateOrConnectWithoutOwnerInput[]
+  createMany?: Prisma.DestinationCreateManyOwnerInputEnvelope
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUncheckedCreateNestedManyWithoutOwnerInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput> | Prisma.DestinationCreateWithoutOwnerInput[] | Prisma.DestinationUncheckedCreateWithoutOwnerInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutOwnerInput | Prisma.DestinationCreateOrConnectWithoutOwnerInput[]
+  createMany?: Prisma.DestinationCreateManyOwnerInputEnvelope
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+}
+
+export type DestinationUpdateManyWithoutOwnerNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput> | Prisma.DestinationCreateWithoutOwnerInput[] | Prisma.DestinationUncheckedCreateWithoutOwnerInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutOwnerInput | Prisma.DestinationCreateOrConnectWithoutOwnerInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutOwnerInput | Prisma.DestinationUpsertWithWhereUniqueWithoutOwnerInput[]
+  createMany?: Prisma.DestinationCreateManyOwnerInputEnvelope
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutOwnerInput | Prisma.DestinationUpdateWithWhereUniqueWithoutOwnerInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutOwnerInput | Prisma.DestinationUpdateManyWithWhereWithoutOwnerInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+}
+
+export type DestinationUncheckedUpdateManyWithoutOwnerNestedInput = {
+  create?: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput> | Prisma.DestinationCreateWithoutOwnerInput[] | Prisma.DestinationUncheckedCreateWithoutOwnerInput[]
+  connectOrCreate?: Prisma.DestinationCreateOrConnectWithoutOwnerInput | Prisma.DestinationCreateOrConnectWithoutOwnerInput[]
+  upsert?: Prisma.DestinationUpsertWithWhereUniqueWithoutOwnerInput | Prisma.DestinationUpsertWithWhereUniqueWithoutOwnerInput[]
+  createMany?: Prisma.DestinationCreateManyOwnerInputEnvelope
+  set?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  disconnect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  delete?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  connect?: Prisma.DestinationWhereUniqueInput | Prisma.DestinationWhereUniqueInput[]
+  update?: Prisma.DestinationUpdateWithWhereUniqueWithoutOwnerInput | Prisma.DestinationUpdateWithWhereUniqueWithoutOwnerInput[]
+  updateMany?: Prisma.DestinationUpdateManyWithWhereWithoutOwnerInput | Prisma.DestinationUpdateManyWithWhereWithoutOwnerInput[]
+  deleteMany?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
 }
 
 export type DestinationCreateNestedManyWithoutCategoryInput = {
@@ -884,20 +1044,8 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type EnumListingStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ListingStatus
 }
 
 export type DestinationCreateNestedOneWithoutImagesInput = {
@@ -998,6 +1146,132 @@ export type DestinationUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DestinationUpdateToOneWithWhereWithoutReviewsInput, Prisma.DestinationUpdateWithoutReviewsInput>, Prisma.DestinationUncheckedUpdateWithoutReviewsInput>
 }
 
+export type DestinationCreateWithoutOwnerInput = {
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
+  images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationUncheckedCreateWithoutOwnerInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
+  facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
+  packages?: Prisma.PackageUncheckedCreateNestedManyWithoutDestinationInput
+  roomTypes?: Prisma.RoomTypeUncheckedCreateNestedManyWithoutDestinationInput
+  services?: Prisma.AddonServiceUncheckedCreateNestedManyWithoutDestinationInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutDestinationInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutDestinationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutDestinationInput
+}
+
+export type DestinationCreateOrConnectWithoutOwnerInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput>
+}
+
+export type DestinationCreateManyOwnerInputEnvelope = {
+  data: Prisma.DestinationCreateManyOwnerInput | Prisma.DestinationCreateManyOwnerInput[]
+  skipDuplicates?: boolean
+}
+
+export type DestinationUpsertWithWhereUniqueWithoutOwnerInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  update: Prisma.XOR<Prisma.DestinationUpdateWithoutOwnerInput, Prisma.DestinationUncheckedUpdateWithoutOwnerInput>
+  create: Prisma.XOR<Prisma.DestinationCreateWithoutOwnerInput, Prisma.DestinationUncheckedCreateWithoutOwnerInput>
+}
+
+export type DestinationUpdateWithWhereUniqueWithoutOwnerInput = {
+  where: Prisma.DestinationWhereUniqueInput
+  data: Prisma.XOR<Prisma.DestinationUpdateWithoutOwnerInput, Prisma.DestinationUncheckedUpdateWithoutOwnerInput>
+}
+
+export type DestinationUpdateManyWithWhereWithoutOwnerInput = {
+  where: Prisma.DestinationScalarWhereInput
+  data: Prisma.XOR<Prisma.DestinationUpdateManyMutationInput, Prisma.DestinationUncheckedUpdateManyWithoutOwnerInput>
+}
+
+export type DestinationScalarWhereInput = {
+  AND?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+  OR?: Prisma.DestinationScalarWhereInput[]
+  NOT?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
+  id?: Prisma.IntFilter<"Destination"> | number
+  name?: Prisma.StringFilter<"Destination"> | string
+  slug?: Prisma.StringFilter<"Destination"> | string
+  description?: Prisma.StringNullableFilter<"Destination"> | string | null
+  location?: Prisma.StringFilter<"Destination"> | string
+  address?: Prisma.StringNullableFilter<"Destination"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
+  imageUrl?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Destination"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Destination"> | string | null
+  policy?: Prisma.StringNullableFilter<"Destination"> | string | null
+  isActive?: Prisma.BoolFilter<"Destination"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Destination"> | boolean
+  minPrice?: Prisma.IntFilter<"Destination"> | number
+  averageRating?: Prisma.FloatFilter<"Destination"> | number
+  reviewCount?: Prisma.IntFilter<"Destination"> | number
+  categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  ownerId?: Prisma.IntNullableFilter<"Destination"> | number | null
+  listingStatus?: Prisma.EnumListingStatusFilter<"Destination"> | $Enums.ListingStatus
+  listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
+}
+
 export type DestinationCreateWithoutCategoryInput = {
   name: string
   slug: string
@@ -1015,8 +1289,13 @@ export type DestinationCreateWithoutCategoryInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
   packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
@@ -1045,6 +1324,11 @@ export type DestinationUncheckedCreateWithoutCategoryInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1083,32 +1367,6 @@ export type DestinationUpdateManyWithWhereWithoutCategoryInput = {
   data: Prisma.XOR<Prisma.DestinationUpdateManyMutationInput, Prisma.DestinationUncheckedUpdateManyWithoutCategoryInput>
 }
 
-export type DestinationScalarWhereInput = {
-  AND?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
-  OR?: Prisma.DestinationScalarWhereInput[]
-  NOT?: Prisma.DestinationScalarWhereInput | Prisma.DestinationScalarWhereInput[]
-  id?: Prisma.IntFilter<"Destination"> | number
-  name?: Prisma.StringFilter<"Destination"> | string
-  slug?: Prisma.StringFilter<"Destination"> | string
-  description?: Prisma.StringNullableFilter<"Destination"> | string | null
-  location?: Prisma.StringFilter<"Destination"> | string
-  address?: Prisma.StringNullableFilter<"Destination"> | string | null
-  latitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
-  longitude?: Prisma.FloatNullableFilter<"Destination"> | number | null
-  imageUrl?: Prisma.StringNullableFilter<"Destination"> | string | null
-  contactPhone?: Prisma.StringNullableFilter<"Destination"> | string | null
-  contactEmail?: Prisma.StringNullableFilter<"Destination"> | string | null
-  policy?: Prisma.StringNullableFilter<"Destination"> | string | null
-  isActive?: Prisma.BoolFilter<"Destination"> | boolean
-  isFeatured?: Prisma.BoolFilter<"Destination"> | boolean
-  minPrice?: Prisma.IntFilter<"Destination"> | number
-  averageRating?: Prisma.FloatFilter<"Destination"> | number
-  reviewCount?: Prisma.IntFilter<"Destination"> | number
-  categoryId?: Prisma.IntNullableFilter<"Destination"> | number | null
-  createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
-}
-
 export type DestinationCreateWithoutFacilitiesInput = {
   name: string
   slug: string
@@ -1126,8 +1384,13 @@ export type DestinationCreateWithoutFacilitiesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
@@ -1157,6 +1420,11 @@ export type DestinationUncheckedCreateWithoutFacilitiesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1206,8 +1474,13 @@ export type DestinationCreateWithoutImagesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
   packages?: Prisma.PackageCreateNestedManyWithoutDestinationInput
@@ -1237,6 +1510,11 @@ export type DestinationUncheckedCreateWithoutImagesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
@@ -1281,8 +1559,13 @@ export type DestinationUpdateWithoutImagesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
   packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
@@ -1312,6 +1595,11 @@ export type DestinationUncheckedUpdateWithoutImagesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
@@ -1340,8 +1628,13 @@ export type DestinationCreateWithoutPackagesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -1371,6 +1664,11 @@ export type DestinationUncheckedCreateWithoutPackagesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1415,8 +1713,13 @@ export type DestinationUpdateWithoutPackagesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -1446,6 +1749,11 @@ export type DestinationUncheckedUpdateWithoutPackagesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1474,8 +1782,13 @@ export type DestinationCreateWithoutRoomTypesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -1505,6 +1818,11 @@ export type DestinationUncheckedCreateWithoutRoomTypesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1549,8 +1867,13 @@ export type DestinationUpdateWithoutRoomTypesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -1580,6 +1903,11 @@ export type DestinationUncheckedUpdateWithoutRoomTypesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1608,8 +1936,13 @@ export type DestinationCreateWithoutServicesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -1639,6 +1972,11 @@ export type DestinationUncheckedCreateWithoutServicesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1683,8 +2021,13 @@ export type DestinationUpdateWithoutServicesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -1714,6 +2057,11 @@ export type DestinationUncheckedUpdateWithoutServicesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1742,8 +2090,13 @@ export type DestinationCreateWithoutBookingsInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -1773,6 +2126,11 @@ export type DestinationUncheckedCreateWithoutBookingsInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1817,8 +2175,13 @@ export type DestinationUpdateWithoutBookingsInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -1848,6 +2211,11 @@ export type DestinationUncheckedUpdateWithoutBookingsInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1876,8 +2244,13 @@ export type DestinationCreateWithoutFavoritesInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -1907,6 +2280,11 @@ export type DestinationUncheckedCreateWithoutFavoritesInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1951,8 +2329,13 @@ export type DestinationUpdateWithoutFavoritesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -1982,6 +2365,11 @@ export type DestinationUncheckedUpdateWithoutFavoritesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2010,8 +2398,13 @@ export type DestinationCreateWithoutReviewsInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
   images?: Prisma.DestinationImageCreateNestedManyWithoutDestinationInput
   facilities?: Prisma.FacilityCreateNestedManyWithoutDestinationsInput
@@ -2041,6 +2434,11 @@ export type DestinationUncheckedCreateWithoutReviewsInput = {
   averageRating?: number
   reviewCount?: number
   categoryId?: number | null
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -2085,8 +2483,13 @@ export type DestinationUpdateWithoutReviewsInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
@@ -2116,6 +2519,11 @@ export type DestinationUncheckedUpdateWithoutReviewsInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2125,6 +2533,129 @@ export type DestinationUncheckedUpdateWithoutReviewsInput = {
   services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationCreateManyOwnerInput = {
+  id?: number
+  name: string
+  slug: string
+  description?: string | null
+  location: string
+  address?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  imageUrl?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
+  policy?: string | null
+  isActive?: boolean
+  isFeatured?: boolean
+  minPrice?: number
+  averageRating?: number
+  reviewCount?: number
+  categoryId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DestinationUpdateWithoutOwnerInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
+  images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateWithoutOwnerInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
+  facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
+  packages?: Prisma.PackageUncheckedUpdateManyWithoutDestinationNestedInput
+  roomTypes?: Prisma.RoomTypeUncheckedUpdateManyWithoutDestinationNestedInput
+  services?: Prisma.AddonServiceUncheckedUpdateManyWithoutDestinationNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutDestinationNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutDestinationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutDestinationNestedInput
+}
+
+export type DestinationUncheckedUpdateManyWithoutOwnerInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  minPrice?: Prisma.IntFieldUpdateOperationsInput | number
+  averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
+  reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DestinationCreateManyCategoryInput = {
@@ -2145,6 +2676,11 @@ export type DestinationCreateManyCategoryInput = {
   minPrice?: number
   averageRating?: number
   reviewCount?: number
+  ownerId?: number | null
+  listingStatus?: $Enums.ListingStatus
+  listingRejectReason?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2166,8 +2702,13 @@ export type DestinationUpdateWithoutCategoryInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   facilities?: Prisma.FacilityUpdateManyWithoutDestinationsNestedInput
   packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
@@ -2196,6 +2737,11 @@ export type DestinationUncheckedUpdateWithoutCategoryInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2226,6 +2772,11 @@ export type DestinationUncheckedUpdateManyWithoutCategoryInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2247,8 +2798,13 @@ export type DestinationUpdateWithoutFacilitiesInput = {
   minPrice?: Prisma.IntFieldUpdateOperationsInput | number
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
   images?: Prisma.DestinationImageUpdateManyWithoutDestinationNestedInput
   packages?: Prisma.PackageUpdateManyWithoutDestinationNestedInput
@@ -2278,6 +2834,11 @@ export type DestinationUncheckedUpdateWithoutFacilitiesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2308,6 +2869,11 @@ export type DestinationUncheckedUpdateManyWithoutFacilitiesInput = {
   averageRating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ownerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  listingStatus?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2425,8 +2991,14 @@ export type DestinationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   averageRating?: boolean
   reviewCount?: boolean
   categoryId?: boolean
+  ownerId?: boolean
+  listingStatus?: boolean
+  listingRejectReason?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  owner?: boolean | Prisma.Destination$ownerArgs<ExtArgs>
   category?: boolean | Prisma.Destination$categoryArgs<ExtArgs>
   images?: boolean | Prisma.Destination$imagesArgs<ExtArgs>
   facilities?: boolean | Prisma.Destination$facilitiesArgs<ExtArgs>
@@ -2460,12 +3032,18 @@ export type DestinationSelectScalar = {
   averageRating?: boolean
   reviewCount?: boolean
   categoryId?: boolean
+  ownerId?: boolean
+  listingStatus?: boolean
+  listingRejectReason?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "location" | "address" | "latitude" | "longitude" | "imageUrl" | "contactPhone" | "contactEmail" | "policy" | "isActive" | "isFeatured" | "minPrice" | "averageRating" | "reviewCount" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
+export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "location" | "address" | "latitude" | "longitude" | "imageUrl" | "contactPhone" | "contactEmail" | "policy" | "isActive" | "isFeatured" | "minPrice" | "averageRating" | "reviewCount" | "categoryId" | "ownerId" | "listingStatus" | "listingRejectReason" | "submittedAt" | "approvedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
 export type DestinationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  owner?: boolean | Prisma.Destination$ownerArgs<ExtArgs>
   category?: boolean | Prisma.Destination$categoryArgs<ExtArgs>
   images?: boolean | Prisma.Destination$imagesArgs<ExtArgs>
   facilities?: boolean | Prisma.Destination$facilitiesArgs<ExtArgs>
@@ -2481,6 +3059,7 @@ export type DestinationInclude<ExtArgs extends runtime.Types.Extensions.Internal
 export type $DestinationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Destination"
   objects: {
+    owner: Prisma.$UserPayload<ExtArgs> | null
     category: Prisma.$CategoryPayload<ExtArgs> | null
     images: Prisma.$DestinationImagePayload<ExtArgs>[]
     facilities: Prisma.$FacilityPayload<ExtArgs>[]
@@ -2510,6 +3089,11 @@ export type $DestinationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     averageRating: number
     reviewCount: number
     categoryId: number | null
+    ownerId: number | null
+    listingStatus: $Enums.ListingStatus
+    listingRejectReason: string | null
+    submittedAt: Date | null
+    approvedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["destination"]>
@@ -2852,6 +3436,7 @@ readonly fields: DestinationFieldRefs;
  */
 export interface Prisma__DestinationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  owner<T extends Prisma.Destination$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$ownerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.Destination$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   images<T extends Prisma.Destination$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DestinationImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   facilities<T extends Prisma.Destination$facilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Destination$facilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FacilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2908,6 +3493,11 @@ export interface DestinationFieldRefs {
   readonly averageRating: Prisma.FieldRef<"Destination", 'Float'>
   readonly reviewCount: Prisma.FieldRef<"Destination", 'Int'>
   readonly categoryId: Prisma.FieldRef<"Destination", 'Int'>
+  readonly ownerId: Prisma.FieldRef<"Destination", 'Int'>
+  readonly listingStatus: Prisma.FieldRef<"Destination", 'ListingStatus'>
+  readonly listingRejectReason: Prisma.FieldRef<"Destination", 'String'>
+  readonly submittedAt: Prisma.FieldRef<"Destination", 'DateTime'>
+  readonly approvedAt: Prisma.FieldRef<"Destination", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Destination", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Destination", 'DateTime'>
 }
@@ -3255,6 +3845,25 @@ export type DestinationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Destinations to delete.
    */
   limit?: number
+}
+
+/**
+ * Destination.owner
+ */
+export type Destination$ownerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

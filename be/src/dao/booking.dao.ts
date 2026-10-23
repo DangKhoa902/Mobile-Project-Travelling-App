@@ -3,7 +3,7 @@ import { prisma, type TransactionClient } from "../lib/prisma.js";
 import { HOLDING_STATUSES } from "../services/booking-rules.js";
 
 export const bookingListInclude = {
-  destination: { select: { id: true, name: true, slug: true, location: true, imageUrl: true } },
+  destination: { select: { id: true, name: true, slug: true, location: true, imageUrl: true, ownerId: true } },
   package: { select: { id: true, name: true } },
   roomType: { select: { id: true, name: true } },
   payment: { select: { method: true, status: true, paidAt: true } },
@@ -35,11 +35,13 @@ export const bookingDao = {
   },
 
   // Booking đang giữ phòng và có giao với khoảng [checkIn, checkOut).
-  findOverlapping(db: TransactionClient | typeof prisma, roomTypeId: number, checkIn: Date, checkOut: Date) {
+  // Booking PENDING đã quá hạn thanh toán không còn giữ phòng dù job tự hủy chưa chạy tới.
+  findOverlapping(db: TransactionClient | typeof prisma, roomTypeId: number, checkIn: Date, checkOut: Date, now = new Date()) {
     return db.booking.findMany({
       where: {
         roomTypeId,
         status: { in: HOLDING_STATUSES },
+        OR: [{ paymentDueAt: null }, { paymentDueAt: { gt: now } }, { payment: { status: "PAID" } }],
         checkInDate: { lt: checkOut },
         checkOutDate: { gt: checkIn },
       },

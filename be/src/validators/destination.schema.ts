@@ -41,7 +41,25 @@ export const destinationBodySchema = z.object({
   categoryId: z.number().int().positive().nullable().optional(),
   facilityIds: z.array(z.number().int().positive()).max(50).optional(),
   isActive: z.boolean().optional(),
+  // Chỉ ADMIN được đặt; bị bỏ qua khi chủ địa điểm gửi lên.
   isFeatured: z.boolean().optional(),
+  ownerId: z.number().int().positive().nullable().optional(),
+});
+
+export const reviewListingSchema = z
+  .object({
+    status: z.enum(["APPROVED", "REJECTED"]),
+    rejectReason: z.string().trim().min(3).max(500).optional(),
+  })
+  .refine((value) => value.status !== "REJECTED" || value.rejectReason, {
+    message: "Cần nhập lý do từ chối",
+    path: ["rejectReason"],
+  });
+
+export const manageDestinationsSchema = paginationSchema.extend({
+  listingStatus: z.enum(["DRAFT", "PENDING_REVIEW", "APPROVED", "REJECTED"]).optional(),
+  ownerId: z.coerce.number().int().positive().optional(),
+  q: z.string().trim().max(100).optional(),
 });
 
 export const updateDestinationSchema = destinationBodySchema.partial();

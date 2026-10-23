@@ -3,10 +3,13 @@ import { z } from "zod";
 import { idParamSchema, paginated, paginationSchema, toSkipTake } from "../lib/pagination.js";
 import { prisma } from "../lib/prisma.js";
 import { slugify } from "../lib/slug.js";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate, currentUser, requireRole } from "../middlewares/auth.js";
+import { assertCanManageDestination } from "../services/access.service.js";
 import { refreshDestinationMinPrice } from "../services/destination.service.js";
 
 const adminOnly = [authenticate, requireRole("ADMIN")];
+// Gói, phòng, dịch vụ: ADMIN quản lý mọi địa điểm, OWNER quản lý địa điểm của mình.
+const managers = [authenticate, requireRole("OWNER", "ADMIN")];
 const money = z.number().int().min(0).max(2_000_000_000);
 
 // ---------- Danh mục ----------
@@ -21,7 +24,7 @@ const categorySchema = z.object({
 categoryRouter.get("/", async (_request, response) => {
   const data = await prisma.category.findMany({
     orderBy: { name: "asc" },
-    include: { _count: { select: { destinations: { where: { isActive: true } } } } },
+    include: { _count: { select: { destinations: { where: { isActive: true, listingStatus: "APPROVED" } } } } },
   });
   response.json({ data });
 });
@@ -89,15 +92,18 @@ const packageSchema = packageBaseSchema.refine(
   "Số đêm không được lớn hơn số ngày",
 );
 
-packageRouter.post("/", ...adminOnly, async (request, response) => {
+packageRouter.post("/", ...managers, async (request, response) => {
   const input = packageSchema.parse(request.body);
+  await assertCanManageDestination(currentUser(request), input.destinationId);
   const data = await prisma.package.create({ data: input });
   await refreshDestinationMinPrice(input.destinationId);
   response.status(201).json({ data });
 });
 
-packageRouter.patch("/:id", ...adminOnly, async (request, response) => {
+packageRouter.patch("/:id", ...managers, async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
+  const existing = await prisma.package.findUniqueOrThrow({ where: { id }, select: { destinationId: true } });
+  await assertCanManageDestination(currentUser(request), existing.destinationId);
   const input = packageBaseSchema.omit({ destinationId: true }).partial().parse(request.body);
   const data = await prisma.package.update({ where: { id }, data: input });
   await refreshDestinationMinPrice(data.destinationId);
@@ -117,15 +123,18 @@ const roomTypeSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-roomTypeRouter.post("/", ...adminOnly, async (request, response) => {
+roomTypeRouter.post("/", ...managers, async (request, response) => {
   const input = roomTypeSchema.parse(request.body);
+  await assertCanManageDestination(currentUser(request), input.destinationId);
   const data = await prisma.roomType.create({ data: input });
   await refreshDestinationMinPrice(input.destinationId);
   response.status(201).json({ data });
 });
 
-roomTypeRouter.patch("/:id", ...adminOnly, async (request, response) => {
+roomTypeRouter.patch("/:id", ...managers, async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
+  const existing = await prisma.roomType.findUniqueOrThrow({ where: { id }, select: { destinationId: true } });
+  await assertCanManageDestination(currentUser(request), existing.destinationId);
   const data = await prisma.roomType.update({
     where: { id },
     data: roomTypeSchema.omit({ destinationId: true }).partial().parse(request.body),
@@ -146,12 +155,16 @@ const addonServiceSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-addonServiceRouter.post("/", ...adminOnly, async (request, response) => {
-  response.status(201).json({ data: await prisma.addonService.create({ data: addonServiceSchema.parse(request.body) }) });
+addonServiceRouter.post("/", ...managers, async (request, response) => {
+  const input = addonServiceSchema.parse(request.body);
+  await assertCanManageDestination(currentUser(request), input.destinationId);
+  response.status(201).json({ data: await prisma.addonService.create({ data: input }) });
 });
 
-addonServiceRouter.patch("/:id", ...adminOnly, async (request, response) => {
+addonServiceRouter.patch("/:id", ...managers, async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
+  const existing = await prisma.addonService.findUniqueOrThrow({ where: { id }, select: { destinationId: true } });
+  await assertCanManageDestination(currentUser(request), existing.destinationId);
   const data = await prisma.addonService.update({
     where: { id },
     data: addonServiceSchema.omit({ destinationId: true }).partial().parse(request.body),

@@ -1,15 +1,20 @@
-# Travel App Backend
+# Travelling App – Backend
 
-Node.js API built with Express, TypeScript, Prisma 7, and MariaDB.
+REST API cho Travelling App: Node.js, Express 5, TypeScript, Prisma 7, MariaDB.
 
-## Setup
+```bash
+npm install
+cp .env.example .env    # sửa DATABASE_URL, JWT_SECRET
+npm run db:deploy       # tạo bảng
+npm run db:seed         # dữ liệu demo
+npm run dev             # http://localhost:3000, GET /health kiểm tra DB
+npm test                # unit + integration test
+```
 
-1. Install dependencies with `npm install`.
-2. Copy `.env.example` to `.env` and set `DATABASE_URL` for your MariaDB database.
-3. Generate Prisma Client with `npm run db:generate`.
-4. Create/apply the development migration with `npm run db:migrate -- --name init`.
-5. Start the API with `npm run dev`.
+Tài liệu:
 
-The API listens on port `3000` by default (override with `PORT`). `GET /health` checks database connectivity.
-
-For a production build, run `npm run build` and then `npm start`.
+- Kiến trúc, cấu trúc file, quy ước, thêm chức năng, migration: [../docs/03-trien-khai/backend.md](../docs/03-trien-khai/backend.md)
+- Danh sách API: [../docs/02-thiet-ke/api.md](../docs/02-thiet-ke/api.md)
+- Cơ sở dữ liệu: [../docs/02-thiet-ke/co-so-du-lieu.md](../docs/02-thiet-ke/co-so-du-lieu.md)
+- Kiểm thử và Postman: [../docs/03-trien-khai/kiem-thu.md](../docs/03-trien-khai/kiem-thu.md)
+- Biến môi trường, Docker: [../docs/03-trien-khai/deploy.md](../docs/03-trien-khai/deploy.md)

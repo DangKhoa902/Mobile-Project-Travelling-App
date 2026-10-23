@@ -16,8 +16,9 @@ import {
   parseDateOnly,
   todayInVietnam,
 } from "./booking-rules.js";
+import { commissionRateFor, isOwner } from "./access.service.js";
 import { createNotification } from "./notification.service.js";
-import { calculateBookingPrice } from "./pricing.js";
+import { calculateBookingPrice, calculateCommission } from "./pricing.js";
 
 type Db = TransactionClient | typeof prisma;
 
@@ -52,7 +53,7 @@ export async function getAvailableRooms(db: Db, roomType: { id: number; totalRoo
 export async function checkAvailability(destinationId: number, roomTypeId: number, checkInValue: string, checkOutValue: string) {
   const { checkIn, checkOut, nights } = validateStayDates(checkInValue, checkOutValue);
   const roomType = await prisma.roomType.findFirst({
-    where: { id: roomTypeId, destinationId, isActive: true },
+    where: { id: roomTypeId, destinationId, isActive: true, destination: { isActive: true, listingStatus: "APPROVED" } },
     select: { id: true, name: true, totalRooms: true, pricePerNight: true, capacity: true },
   });
   if (!roomType) throw notFound("Loại phòng");
@@ -63,9 +64,10 @@ export async function checkAvailability(destinationId: number, roomTypeId: numbe
 async function buildQuote(db: Db, input: QuoteBookingInput) {
   const { checkIn, checkOut, nights } = validateStayDates(input.checkInDate, input.checkOutDate);
 
+  // Chỉ đặt được địa điểm đang hoạt động và tin đăng đã được duyệt.
   const pkg = await db.package.findFirst({
-    where: { id: input.packageId, isActive: true, destination: { isActive: true } },
-    include: { destination: { select: { id: true, name: true, slug: true, imageUrl: true, location: true } } },
+    where: { id: input.packageId, isActive: true, destination: { isActive: true, listingStatus: "APPROVED" } },
+    include: { destination: { select: { id: true, name: true, slug: true, imageUrl: true, location: true, ownerId: true } } },
   });
   if (!pkg) throw notFound("Gói dịch vụ");
 
@@ -175,6 +177,14 @@ export async function createBooking(user: AuthUser, input: CreateBookingInput) {
 
     if (quote.voucher) await tx.voucher.update({ where: { id: quote.voucher.id }, data: { usedCount: { increment: 1 } } });
 
+    const commission = calculateCommission(
+      quote.price.subtotal,
+      quote.price.discountAmount,
+      await commissionRateFor(quote.destination.ownerId, tx),
+    );
+    const paymentDueAt =
+      input.paymentMethod === "ONLINE_MOCK" ? new Date(Date.now() + env.PAYMENT_TIMEOUT_MINUTES * 60 * 1000) : null;
+
     const created = await tx.booking.create({
       data: {
         code: generateBookingCode(),
@@ -199,6 +209,8 @@ export async function createBooking(user: AuthUser, input: CreateBookingInput) {
         discountAmount: quote.price.discountAmount,
         taxAmount: quote.price.taxAmount,
         totalAmount: quote.price.totalAmount,
+        ...commission,
+        paymentDueAt,
         services: { create: quote.price.services },
         payment: { create: { method: input.paymentMethod, amount: quote.price.totalAmount } },
       },
@@ -211,12 +223,24 @@ export async function createBooking(user: AuthUser, input: CreateBookingInput) {
         title: "Đặt chỗ thành công",
         body:
           input.paymentMethod === "ONLINE_MOCK"
-            ? `Booking ${created.code} tại ${quote.destination.name} đã được tạo. Vui lòng thanh toán để xác nhận.`
+            ? `Booking ${created.code} tại ${quote.destination.name} đã được tạo. Vui lòng thanh toán trong ${env.PAYMENT_TIMEOUT_MINUTES} phút để giữ chỗ.`
             : `Booking ${created.code} tại ${quote.destination.name} đã được tạo và đang chờ xác nhận.`,
         data: { bookingId: created.id, code: created.code },
       },
       tx,
     );
+    if (quote.destination.ownerId) {
+      await createNotification(
+        {
+          userId: quote.destination.ownerId,
+          type: "BOOKING",
+          title: "Có booking mới",
+          body: `Booking ${created.code} tại ${quote.destination.name}: ${quote.nights} đêm từ ${input.checkInDate}, ${input.guests} khách.`,
+          data: { bookingId: created.id, code: created.code },
+        },
+        tx,
+      );
+    }
 
     return created;
   });
@@ -224,10 +248,19 @@ export async function createBooking(user: AuthUser, input: CreateBookingInput) {
   return bookingDao.findById(booking.id);
 }
 
+// Phạm vi mặc định: USER xem booking mình đặt; OWNER/STAFF/ADMIN xem booking mình quản lý.
+function scopeWhere(user: AuthUser, scope: ListBookingsInput["scope"]): Prisma.BookingWhereInput {
+  const effective = scope ?? (user.role === "USER" ? "mine" : "managed");
+  if (effective === "mine") return { userId: user.id };
+  if (isStaff(user)) return {};
+  if (isOwner(user)) return { destination: { ownerId: user.id } };
+  // BR-10: user thường chỉ thấy booking của chính mình.
+  return { userId: user.id };
+}
+
 export async function listBookings(user: AuthUser, query: ListBookingsInput) {
   const where: Prisma.BookingWhereInput = {
-    // BR-10: user thường chỉ thấy booking của chính mình.
-    ...(isStaff(user) ? {} : { userId: user.id }),
+    ...scopeWhere(user, query.scope),
     ...(query.status ? { status: query.status } : {}),
     ...(query.code ? { code: { contains: query.code } } : {}),
   };
@@ -236,10 +269,15 @@ export async function listBookings(user: AuthUser, query: ListBookingsInput) {
   return { data, total };
 }
 
+// Staff/Admin xử lý mọi booking; chủ địa điểm xử lý booking tại địa điểm của mình.
+function canManageBooking(user: AuthUser, booking: { destination: { ownerId: number | null } }) {
+  return isStaff(user) || (isOwner(user) && booking.destination.ownerId === user.id);
+}
+
 async function getAccessibleBooking(user: AuthUser, id: number, db: Db = prisma) {
   const booking = await bookingDao.findById(id, db);
   if (!booking) throw notFound("Booking");
-  if (!isStaff(user) && booking.userId !== user.id) throw notFound("Booking");
+  if (booking.userId !== user.id && !canManageBooking(user, booking)) throw notFound("Booking");
   return booking;
 }
 
@@ -248,8 +286,10 @@ export const getBooking = (user: AuthUser, id: number) => getAccessibleBooking(u
 export async function cancelBooking(user: AuthUser, id: number, reason?: string) {
   await prisma.$transaction(async (tx) => {
     const booking = await getAccessibleBooking(user, id, tx);
+    const cancelledByManager = booking.userId !== user.id && canManageBooking(user, booking);
 
-    if (isStaff(user)) {
+    if (cancelledByManager) {
+      if (!reason) throw badRequest("Cần nhập lý do khi hủy booking của khách", "CANCEL_REASON_REQUIRED");
       if (!canTransition(booking.status, "CANCELLED")) {
         throw conflict(`Không thể hủy booking ở trạng thái ${booking.status}`, "INVALID_STATUS");
       }
@@ -282,14 +322,30 @@ export async function cancelBooking(user: AuthUser, id: number, reason?: string)
       },
       tx,
     );
+    if (booking.destination.ownerId && booking.destination.ownerId !== user.id) {
+      await createNotification(
+        {
+          userId: booking.destination.ownerId,
+          type: "BOOKING",
+          title: "Booking đã bị hủy",
+          body: `Booking ${booking.code} tại ${booking.destination.name} đã bị hủy. Phòng đã được trả lại.`,
+          data: { bookingId: id, code: booking.code },
+        },
+        tx,
+      );
+    }
   });
   return bookingDao.findById(id);
 }
 
-export async function updateBookingStatus(id: number, status: Extract<BookingStatus, "CONFIRMED" | "COMPLETED">) {
+export async function updateBookingStatus(
+  user: AuthUser,
+  id: number,
+  status: Extract<BookingStatus, "CONFIRMED" | "COMPLETED">,
+) {
   await prisma.$transaction(async (tx) => {
     const booking = await bookingDao.findById(id, tx);
-    if (!booking) throw notFound("Booking");
+    if (!booking || !canManageBooking(user, booking)) throw notFound("Booking");
     if (!canTransition(booking.status, status)) {
       throw conflict(`Không thể chuyển booking từ ${booking.status} sang ${status}`, "INVALID_STATUS");
     }
@@ -330,7 +386,12 @@ export async function updateBookingStatus(id: number, status: Extract<BookingSta
 }
 
 // Thanh toán giả lập: không gọi cổng thanh toán thật, chỉ đổi trạng thái.
-export async function payBooking(user: AuthUser, id: number, simulateFailure: boolean) {
+// Khi tích hợp VNPay/MoMo, hàm này được thay bằng xử lý callback (IPN) của cổng.
+export async function payBooking(
+  user: AuthUser,
+  id: number,
+  { channel, simulateFailure }: { channel: string; simulateFailure: boolean },
+) {
   await prisma.$transaction(async (tx) => {
     const booking = await bookingDao.findById(id, tx);
     if (!booking || booking.userId !== user.id) throw notFound("Booking");
@@ -341,8 +402,11 @@ export async function payBooking(user: AuthUser, id: number, simulateFailure: bo
     if (booking.payment.status === "PAID") throw conflict("Booking đã được thanh toán", "ALREADY_PAID");
 
     const now = new Date();
+    if (booking.paymentDueAt && booking.paymentDueAt <= now) {
+      throw conflict("Đã quá hạn thanh toán, booking sẽ bị hủy. Vui lòng đặt lại.", "PAYMENT_EXPIRED");
+    }
     if (simulateFailure) {
-      await tx.payment.update({ where: { bookingId: id }, data: { status: "FAILED" } });
+      await tx.payment.update({ where: { bookingId: id }, data: { status: "FAILED", channel } });
       await createNotification(
         { userId: user.id, type: "PAYMENT", title: "Thanh toán thất bại", body: `Thanh toán cho booking ${booking.code} không thành công. Vui lòng thử lại.`, data: { bookingId: id } },
         tx,
@@ -352,9 +416,9 @@ export async function payBooking(user: AuthUser, id: number, simulateFailure: bo
 
     await tx.payment.update({
       where: { bookingId: id },
-      data: { status: "PAID", paidAt: now, transactionRef: `MOCK-${randomUUID()}` },
+      data: { status: "PAID", paidAt: now, channel, transactionRef: `MOCK-${randomUUID()}` },
     });
-    await tx.booking.update({ where: { id }, data: { status: "CONFIRMED", confirmedAt: now } });
+    await tx.booking.update({ where: { id }, data: { status: "CONFIRMED", confirmedAt: now, paymentDueAt: null } });
     await createNotification(
       {
         userId: user.id,
@@ -372,4 +436,42 @@ export async function payBooking(user: AuthUser, id: number, simulateFailure: bo
     throw new HttpError(402, "Thanh toán thất bại", "PAYMENT_FAILED", { bookingId: id });
   }
   return booking;
+}
+
+// Chạy định kỳ: hủy booking online quá hạn thanh toán để trả phòng và lượt voucher.
+export async function expireOverdueBookings(now = new Date()) {
+  const overdue = await prisma.booking.findMany({
+    where: { status: "PENDING", paymentDueAt: { lte: now }, payment: { status: { not: "PAID" } } },
+    select: { id: true },
+    take: 100,
+  });
+
+  let expired = 0;
+  for (const { id } of overdue) {
+    await prisma.$transaction(async (tx) => {
+      // Đọc lại trong transaction phòng khi khách vừa thanh toán xong.
+      const booking = await bookingDao.findById(id, tx);
+      if (!booking || booking.status !== "PENDING" || booking.payment?.status === "PAID") return;
+
+      await tx.booking.update({
+        where: { id },
+        data: { status: "CANCELLED", cancelledAt: now, cancelReason: "Quá hạn thanh toán" },
+      });
+      if (booking.voucherId) {
+        await tx.voucher.update({ where: { id: booking.voucherId }, data: { usedCount: { decrement: 1 } } });
+      }
+      await createNotification(
+        {
+          userId: booking.userId,
+          type: "PAYMENT",
+          title: "Booking đã hết hạn thanh toán",
+          body: `Booking ${booking.code} đã bị hủy do không thanh toán trong ${env.PAYMENT_TIMEOUT_MINUTES} phút.`,
+          data: { bookingId: id, code: booking.code },
+        },
+        tx,
+      );
+      expired += 1;
+    });
+  }
+  return expired;
 }

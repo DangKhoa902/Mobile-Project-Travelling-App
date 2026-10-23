@@ -1,4 +1,6 @@
-# 🌍 Travelling App
+# Công nghệ sử dụng
+
+> Tài liệu công nghệ ban đầu của nhóm. Điểm khác so với thực tế triển khai: kiểm thử dùng **Vitest** (API giống Jest) thay cho Jest; frontend dùng thêm **TanStack Query** cho dữ liệu từ API; backend dùng thêm **helmet** và **express-rate-limit**. Kiến trúc hiện tại: [../03-trien-khai/backend.md](../03-trien-khai/backend.md), [../03-trien-khai/frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile.md).
 
 > **Môn học:** Lập trình thiết bị di động
 > **Trạng thái:** 🚧 Đang trong quá trình phát triển

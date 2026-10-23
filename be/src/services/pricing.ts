@@ -48,6 +48,15 @@ export function calculateDiscount(subtotal: number, voucher: PricedVoucher | nul
   return Math.max(0, Math.min(capped, subtotal));
 }
 
+// Mô hình môi giới: sàn giữ hoa hồng, phần còn lại là doanh thu của chủ địa điểm.
+// Tính trên (tạm tính - giảm giá); thuế/phí do sàn thu hộ nên không chia.
+// Voucher là khuyến mãi của sàn nhưng vẫn trừ vào cơ sở tính để hai bên cùng chịu theo tỷ lệ.
+export function calculateCommission(subtotal: number, discountAmount: number, commissionRate: number) {
+  const base = Math.max(0, subtotal - discountAmount);
+  const commissionAmount = Math.round(base * commissionRate);
+  return { commissionRate, commissionAmount, ownerRevenue: base - commissionAmount };
+}
+
 // Tổng tiền = Giá gói + Giá phòng + Dịch vụ bổ sung - Giảm giá + Thuế/phí
 export function calculateBookingPrice(input: PricingInput): PriceBreakdown {
   const roomPrice = input.roomPricePerNight * input.nights * input.roomsCount;

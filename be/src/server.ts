@@ -1,14 +1,23 @@
 import { app } from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
+import { expireOverdueBookings } from "./services/booking.service.js";
 
 const server = app.listen(env.PORT, () => {
   console.log(`API server listening on port ${env.PORT} (${env.NODE_ENV})`);
 });
 
+// Mỗi phút hủy booking online quá hạn thanh toán. Chạy trong tiến trình API là đủ cho một instance;
+// khi chạy nhiều instance nên tách thành cron job riêng.
+const expiryTimer = setInterval(() => {
+  expireOverdueBookings().catch((error) => console.error("expireOverdueBookings failed", error));
+}, 60_000);
+expiryTimer.unref();
+
 async function shutdown(signal: string): Promise<void> {
   console.log(`${signal} received; shutting down`);
   // Nếu còn kết nối treo quá 10 giây thì thoát cưỡng bức để orchestrator không chờ mãi.
+  clearInterval(expiryTimer);
   setTimeout(() => process.exit(1), 10_000).unref();
   server.close(async () => {
     await prisma.$disconnect();

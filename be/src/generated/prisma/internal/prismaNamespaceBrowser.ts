@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  PartnerProfile: 'PartnerProfile',
   Category: 'Category',
   Facility: 'Facility',
   Destination: 'Destination',
@@ -103,6 +104,29 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const PartnerProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  businessName: 'businessName',
+  taxCode: 'taxCode',
+  businessAddress: 'businessAddress',
+  contactPhone: 'contactPhone',
+  description: 'description',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  status: 'status',
+  commissionRate: 'commissionRate',
+  rejectReason: 'rejectReason',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PartnerProfileScalarFieldEnum = (typeof PartnerProfileScalarFieldEnum)[keyof typeof PartnerProfileScalarFieldEnum]
+
+
 export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -143,6 +167,11 @@ export const DestinationScalarFieldEnum = {
   averageRating: 'averageRating',
   reviewCount: 'reviewCount',
   categoryId: 'categoryId',
+  ownerId: 'ownerId',
+  listingStatus: 'listingStatus',
+  listingRejectReason: 'listingRejectReason',
+  submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -254,6 +283,10 @@ export const BookingScalarFieldEnum = {
   discountAmount: 'discountAmount',
   taxAmount: 'taxAmount',
   totalAmount: 'totalAmount',
+  commissionRate: 'commissionRate',
+  commissionAmount: 'commissionAmount',
+  ownerRevenue: 'ownerRevenue',
+  paymentDueAt: 'paymentDueAt',
   confirmedAt: 'confirmedAt',
   completedAt: 'completedAt',
   cancelledAt: 'cancelledAt',
@@ -282,6 +315,7 @@ export const PaymentScalarFieldEnum = {
   bookingId: 'bookingId',
   method: 'method',
   status: 'status',
+  channel: 'channel',
   amount: 'amount',
   transactionRef: 'transactionRef',
   paidAt: 'paidAt',
@@ -396,6 +430,21 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const PartnerProfileOrderByRelevanceFieldEnum = {
+  businessName: 'businessName',
+  taxCode: 'taxCode',
+  businessAddress: 'businessAddress',
+  contactPhone: 'contactPhone',
+  description: 'description',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  rejectReason: 'rejectReason'
+} as const
+
+export type PartnerProfileOrderByRelevanceFieldEnum = (typeof PartnerProfileOrderByRelevanceFieldEnum)[keyof typeof PartnerProfileOrderByRelevanceFieldEnum]
+
+
 export const CategoryOrderByRelevanceFieldEnum = {
   name: 'name',
   slug: 'slug',
@@ -422,7 +471,8 @@ export const DestinationOrderByRelevanceFieldEnum = {
   imageUrl: 'imageUrl',
   contactPhone: 'contactPhone',
   contactEmail: 'contactEmail',
-  policy: 'policy'
+  policy: 'policy',
+  listingRejectReason: 'listingRejectReason'
 } as const
 
 export type DestinationOrderByRelevanceFieldEnum = (typeof DestinationOrderByRelevanceFieldEnum)[keyof typeof DestinationOrderByRelevanceFieldEnum]
@@ -497,6 +547,7 @@ export type BookingOrderByRelevanceFieldEnum = (typeof BookingOrderByRelevanceFi
 
 
 export const PaymentOrderByRelevanceFieldEnum = {
+  channel: 'channel',
   transactionRef: 'transactionRef'
 } as const
 

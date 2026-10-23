@@ -11,8 +11,25 @@ datasource db {
 
 enum Role {
   USER
+  OWNER
   STAFF
   ADMIN
+}
+
+// Hồ sơ đối tác (chủ địa điểm) do admin duyệt.
+enum PartnerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+// Trạng thái kiểm duyệt tin đăng địa điểm.
+enum ListingStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
 }
 
 enum UserStatus {
@@ -61,6 +78,7 @@ enum NotificationType {
   PAYMENT
   SUPPORT
   REVIEW
+  PARTNER
   SYSTEM
 }
 
@@ -84,12 +102,42 @@ model User {
 
   bookings              Booking[]
   favorites             Favorite[]
-  reviews               Review[]       @relation("ReviewAuthor")
-  moderatedReviews      Review[]       @relation("ReviewModerator")
+  reviews               Review[]         @relation("ReviewAuthor")
+  moderatedReviews      Review[]         @relation("ReviewModerator")
   notifications         Notification[]
-  conversations         Conversation[] @relation("ConversationCustomer")
-  assignedConversations Conversation[] @relation("ConversationStaff")
+  conversations         Conversation[]   @relation("ConversationCustomer")
+  assignedConversations Conversation[]   @relation("ConversationStaff")
   messages              Message[]
+  partnerProfile        PartnerProfile?  @relation("PartnerUser")
+  reviewedPartners      PartnerProfile[] @relation("PartnerReviewer")
+  ownedDestinations     Destination[]    @relation("DestinationOwner")
+}
+
+model PartnerProfile {
+  id                Int           @id @default(autoincrement())
+  userId            Int           @unique
+  businessName      String
+  taxCode           String?       @db.VarChar(20)
+  businessAddress   String        @db.VarChar(500)
+  contactPhone      String        @db.VarChar(20)
+  description       String?       @db.Text
+  // Tài khoản nhận tiền đối soát.
+  bankName          String?
+  bankAccountNumber String?       @db.VarChar(30)
+  bankAccountName   String?
+  status            PartnerStatus @default(PENDING)
+  // Tỷ lệ hoa hồng sàn thu trên (tạm tính - giảm giá). 0.15 = 15%.
+  commissionRate    Float         @default(0.15)
+  rejectReason      String?
+  reviewedById      Int?
+  reviewedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user       User  @relation("PartnerUser", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("PartnerReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status])
 }
 
 model Category {
@@ -112,27 +160,35 @@ model Facility {
 }
 
 model Destination {
-  id            Int      @id @default(autoincrement())
-  name          String
-  slug          String   @unique
-  description   String?  @db.Text
-  location      String
-  address       String?  @db.VarChar(500)
-  latitude      Float?
-  longitude     Float?
-  imageUrl      String?  @db.VarChar(500)
-  contactPhone  String?  @db.VarChar(20)
-  contactEmail  String?
-  policy        String?  @db.Text
-  isActive      Boolean  @default(true)
-  isFeatured    Boolean  @default(false)
+  id                  Int           @id @default(autoincrement())
+  name                String
+  slug                String        @unique
+  description         String?       @db.Text
+  location            String
+  address             String?       @db.VarChar(500)
+  latitude            Float?
+  longitude           Float?
+  imageUrl            String?       @db.VarChar(500)
+  contactPhone        String?       @db.VarChar(20)
+  contactEmail        String?
+  policy              String?       @db.Text
+  isActive            Boolean       @default(true)
+  isFeatured          Boolean       @default(false)
   // Giá "từ" thấp nhất, cập nhật khi gói thay đổi để lọc/sắp xếp nhanh.
-  minPrice      Int      @default(0)
-  averageRating Float    @default(0)
-  reviewCount   Int      @default(0)
-  categoryId    Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  minPrice            Int           @default(0)
+  averageRating       Float         @default(0)
+  reviewCount         Int           @default(0)
+  categoryId          Int?
+  // NULL = địa điểm do sàn tự quản lý.
+  ownerId             Int?
+  listingStatus       ListingStatus @default(APPROVED)
+  listingRejectReason String?
+  submittedAt         DateTime?
+  approvedAt          DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  owner User? @relation("DestinationOwner", fields: [ownerId], references: [id], onDelete: Restrict)
 
   category   Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   images     DestinationImage[]
@@ -147,6 +203,8 @@ model Destination {
   @@index([location])
   @@index([categoryId])
   @@index([isActive, isFeatured])
+  @@index([ownerId])
+  @@index([listingStatus])
 }
 
 model DestinationImage {
@@ -268,6 +326,14 @@ model Booking {
   taxAmount      Int @default(0)
   totalAmount    Int
 
+  // Hoa hồng môi giới chụp lại lúc đặt: commissionAmount + ownerRevenue = subtotal - discountAmount.
+  commissionRate   Float @default(0)
+  commissionAmount Int   @default(0)
+  ownerRevenue     Int   @default(0)
+
+  // Hạn thanh toán của booking thanh toán online; quá hạn sẽ tự hủy để trả phòng.
+  paymentDueAt DateTime?
+
   confirmedAt  DateTime?
   completedAt  DateTime?
   cancelledAt  DateTime?
@@ -288,6 +354,7 @@ model Booking {
   @@index([userId, status])
   @@index([roomTypeId, checkInDate, checkOutDate])
   @@index([status])
+  @@index([status, paymentDueAt])
 }
 
 model BookingService {
@@ -309,6 +376,8 @@ model Payment {
   bookingId      Int           @unique
   method         PaymentMethod
   status         PaymentStatus @default(UNPAID)
+  // Kênh khách chọn trên cổng giả lập: CARD, EWALLET, BANK_TRANSFER.
+  channel        String?       @db.VarChar(30)
   amount         Int
   transactionRef String?       @unique
   paidAt         DateTime?

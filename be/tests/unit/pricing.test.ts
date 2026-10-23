@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBookingPrice, calculateDiscount, serviceLineTotal } from "../../src/services/pricing.js";
+import { calculateBookingPrice, calculateCommission, calculateDiscount, serviceLineTotal } from "../../src/services/pricing.js";
 
 describe("calculateBookingPrice", () => {
   it("cộng giá gói + phòng + dịch vụ, trừ giảm giá, cộng thuế (ví dụ trong tài liệu nghiệp vụ)", () => {
@@ -61,5 +61,19 @@ describe("calculateDiscount", () => {
 
   it("trả 0 khi không có voucher", () => {
     expect(calculateDiscount(100_000, null)).toBe(0);
+  });
+});
+
+describe("calculateCommission", () => {
+  it("tính hoa hồng trên (tạm tính - giảm giá), phần còn lại là doanh thu chủ địa điểm", () => {
+    expect(calculateCommission(3_000_000, 200_000, 0.15)).toEqual({
+      commissionRate: 0.15,
+      commissionAmount: 420_000,
+      ownerRevenue: 2_380_000,
+    });
+  });
+
+  it("địa điểm của sàn (tỷ lệ 1) thì sàn giữ toàn bộ", () => {
+    expect(calculateCommission(1_000_000, 0, 1).ownerRevenue).toBe(0);
   });
 });

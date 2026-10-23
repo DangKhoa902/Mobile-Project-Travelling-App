@@ -1,93 +1,74 @@
-﻿# Lộ trình phát triển ứng dụng du lịch
+﻿# Lộ trình phát triển
 
-Tài liệu này ghi nhận trạng thái nhìn thấy trong repository và các mục tiêu phát triển tiếp theo. Các giai đoạn tương lai là kế hoạch, chưa được xem là tính năng đã hoàn thành.
+Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục tương ứng khi xong một việc (kèm ngày và bằng chứng trong repo). Chi tiết từng lần thay đổi: [nhat-ky-thay-doi.md](nhat-ky-thay-doi.md).
 
-## Tầm nhìn sản phẩm
+## Tổng quan
 
-Xây dựng ứng dụng du lịch chạy trên Android, iOS và web, giúp người dùng tìm cảm hứng, khám phá điểm đến và lên kế hoạch cho chuyến đi.
+| Giai đoạn | Nội dung | Trạng thái |
+|---|---|---|
+| 1 | Khởi tạo Expo + TypeScript + Expo Router + NativeWind | ✅ |
+| 2 | Giao diện khám phá ban đầu (dữ liệu tĩnh) | ✅ |
+| 3 | Backend nghiệp vụ: đặt chỗ, thanh toán giả lập, đánh giá, CSKH, thông báo | ✅ |
+| 4 | Mô hình môi giới: chủ địa điểm, duyệt tin, hoa hồng, dashboard, hạn thanh toán | ✅ |
+| 5 | Giao diện Web + Mobile theo đặc tả | 🔄 |
+| 6 | Kết nối giao diện với API, trạng thái tải/lỗi | ⬜ |
+| 7 | Kiểm thử đa nền tảng, build, triển khai | 🔄 (backend xong) |
 
-## Giai đoạn 1 — Khởi tạo nền tảng ứng dụng
+## Giai đoạn 3 – Backend nghiệp vụ (✅ 21/10/2026)
 
-**Mục tiêu:** Tạo frontend đa nền tảng có thể mở rộng.
+- Schema 17 bảng theo tài liệu nghiệp vụ; migration `business_domain`.
+- Xác thực JWT + bcrypt, phân quyền USER/STAFF/ADMIN, rate limit đăng nhập.
+- Tìm kiếm/lọc/sắp xếp địa điểm; yêu thích; báo giá; đặt chỗ chống overbooking; thanh toán giả lập; hủy theo chính sách; đánh giá + kiểm duyệt; chat CSKH; thông báo.
+- Dockerfile, docker-compose, seed, 26 test, Postman 83 request.
 
-**Đã đạt được:**
+## Giai đoạn 4 – Mô hình môi giới (✅ 24/10/2026)
 
-- Expo, React Native và TypeScript.
-- Expo Router với các route đặt trong `fe/src/app`.
-- Cấu hình chạy web và native trong cùng codebase.
-- Cấu trúc component, theme và cấu hình dự án nằm trong `fe`.
+- Actor chủ địa điểm (`OWNER`): hồ sơ đối tác, admin duyệt, tạm ngưng.
+- Tin đăng có kiểm duyệt (`DRAFT → PENDING_REVIEW → APPROVED/REJECTED`).
+- Hoa hồng chụp lại trên booking; chủ xử lý booking tại cơ sở mình.
+- Dashboard `GET /api/stats/overview` cho Admin và chủ địa điểm.
+- Thanh toán giả lập có hạn 15 phút, tự hủy, kênh thanh toán.
+- Đăng ký bắt buộc đồng ý điều khoản.
+- 32 test, Postman 133 request / 194 assertion.
 
-**Kết quả mong đợi:** Có nền tảng để phát triển các màn hình sản phẩm trên nhiều nền tảng.
+## Giai đoạn 5 – Giao diện Web + Mobile (🔄)
 
-## Giai đoạn 2 — Xây dựng trải nghiệm khám phá ban đầu
+Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile.md) mục 6 và thứ tự đợt trong [giao-dien.md](../02-thiet-ke/giao-dien.md) mục 6.
 
-**Mục tiêu:** Thay nội dung hướng dẫn mặc định bằng giao diện phù hợp với ứng dụng du lịch.
+| Việc | Trạng thái |
+|---|---|
+| Lớp gọi API, store đăng nhập, kiểu dữ liệu, `StateView` (bản tham khảo) | ✅ |
+| `babel.config.js` cho NativeWind | ✅ |
+| `_layout.tsx`: import `global.css`, `QueryClientProvider`, khôi phục đăng nhập | ⬜ |
+| Breakpoint + `useBreakpoint` + design system nhỏ | ⬜ |
+| 5 tab khách (native + web) | ⬜ |
+| Đợt 1–3: khám phá, chi tiết, đăng nhập, đặt chỗ, cổng thanh toán | ⬜ |
+| Đợt 4–6: đối tác, tin đăng, xử lý booking, dashboard | ⬜ |
+| Đợt 7–8: CSKH, hồ sơ, quản trị còn lại | ⬜ |
 
-**Đã đạt được:**
+**Tiêu chí hoàn thành:** chạy được luồng demo ở [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 4 trên Android và Web (375px, 1280px).
 
-- Trang chính có lời chào, ô tìm kiếm giao diện, banner cảm hứng và thẻ điểm đến mẫu.
-- Trang danh mục có gợi ý tuần và nhóm khám phá theo sở thích.
-- Tab web và native có nhãn tiếng Việt.
-- Theme sáng dùng tông màu thiên nhiên; cấu hình splash dùng màu nền của ứng dụng.
-- Loại bỏ nội dung giới thiệu Expo và badge Expo khỏi giao diện đang dùng.
+## Giai đoạn 7 – Kiểm thử, phát hành (🔄)
 
-**Giới hạn hiện tại:** Nội dung điểm đến đang là dữ liệu tĩnh minh họa; ô tìm kiếm và các nút/thẻ chưa kết nối tới dữ liệu hoặc luồng nghiệp vụ.
+| Việc | Trạng thái |
+|---|---|
+| Unit + integration test backend | ✅ |
+| Postman end-to-end | ✅ |
+| Build production backend | ✅ |
+| Build và chạy image Docker | ⬜ (Docker Desktop chưa bật) |
+| Triển khai lên VPS / Render có HTTPS | ⬜ |
+| `app.json`: `android.package`, `ios.bundleIdentifier`; `eas.json` | ⬜ |
+| Web build + deploy | ⬜ |
+| File `.apk` chạy trên điện thoại thật | ⬜ |
 
-## Giai đoạn 3 — Hoàn thiện thiết kế và điều hướng
+## Đề xuất sau đồ án (theo thứ tự giá trị)
 
-**Mục tiêu:** Chuyển giao diện ban đầu thành luồng sản phẩm nhất quán.
-
-**Các mục tiêu cần thực hiện:**
-
-- Chuẩn hóa design system: màu sắc, chữ, khoảng cách, trạng thái tương tác.
-- Hoàn thiện responsive layout cho điện thoại, máy tính bảng và trình duyệt desktop.
-- Xây dựng chi tiết điểm đến, tìm kiếm, lọc và điều hướng giữa các màn hình.
-- Bổ sung trạng thái tải, rỗng, lỗi và accessibility.
-- Thay emoji/đồ họa tạm bằng ảnh và tài nguyên thương hiệu phù hợp.
-
-**Tiêu chí hoàn thành đề xuất:** Người dùng có thể đi từ danh sách/gợi ý tới trang chi tiết điểm đến trên cả web và mobile; giao diện hoạt động tốt ở các kích thước màn hình mục tiêu.
-
-## Giai đoạn 4 — Dữ liệu và backend
-
-**Mục tiêu:** Phục vụ nội dung du lịch từ nguồn dữ liệu thực.
-
-**Trạng thái:** Chưa thấy backend được triển khai trong thư mục `be` tại thời điểm ghi tài liệu.
-
-**Các mục tiêu cần thực hiện:**
-
-- Chọn và ghi lại API/backend, cấu trúc dữ liệu điểm đến, địa điểm và chuyến đi.
-- Tích hợp gọi API, quản lý trạng thái tải/lỗi và cache phù hợp.
-- Lưu cấu hình nhạy cảm trong biến môi trường; không commit secret.
-- Xác định cách phân trang, tìm kiếm, lọc và xử lý dữ liệu thiếu.
-
-**Tiêu chí hoàn thành đề xuất:** Màn hình sản phẩm lấy dữ liệu qua API và trình bày được cả trạng thái thành công, rỗng, tải và lỗi.
-
-## Giai đoạn 5 — Tài khoản và lập kế hoạch chuyến đi
-
-**Mục tiêu:** Cá nhân hóa nội dung và cho phép người dùng quản lý chuyến đi.
-
-**Các mục tiêu cần thực hiện:**
-
-- Xác định yêu cầu đăng nhập, hồ sơ và quyền riêng tư.
-- Cho phép lưu điểm đến yêu thích.
-- Tạo, xem và chỉnh sửa hành trình.
-- Đồng bộ dữ liệu người dùng giữa các thiết bị nếu backend hỗ trợ.
-
-**Tiêu chí hoàn thành đề xuất:** Người dùng có thể lưu địa điểm và quản lý hành trình của mình qua các phiên sử dụng.
-
-## Giai đoạn 6 — Kiểm thử, phát hành và vận hành
-
-**Mục tiêu:** Tăng độ tin cậy và chuẩn bị phát hành.
-
-**Các mục tiêu cần thực hiện:**
-
-- Thiết lập lint, typecheck và kiểm thử phù hợp với cấu trúc dự án.
-- Kiểm tra các luồng chính trên web và thiết bị/emulator Android; kiểm tra iOS khi có môi trường.
-- Kiểm tra cấu hình build, icon, splash, quyền truy cập, hiệu năng và accessibility.
-- Viết hướng dẫn phát hành, theo dõi lỗi và quy trình cập nhật.
-
-**Tiêu chí hoàn thành đề xuất:** Quy trình build có thể lặp lại; các luồng chính được kiểm tra trên nền tảng mục tiêu; có hướng dẫn phát hành và xử lý lỗi.
-
-## Cập nhật tiến độ
-
-Khi một mục tiêu được hoàn thành, cập nhật mục tương ứng với ngày, thay đổi cụ thể và bằng chứng trong repository. Giữ rõ sự khác biệt giữa phần đã triển khai và phần còn là kế hoạch.
+1. **Đối soát và chuyển tiền cho đối tác** theo kỳ (bảng `Payout`), trang đối soát cho admin và chủ.
+2. **Cổng thanh toán thật** (VNPay/MoMo sandbox): thay `payBooking` bằng tạo URL + xử lý IPN – xem [thanh-toan-gia-lap.md](../01-dac-ta/thanh-toan-gia-lap.md) mục 7.
+3. **Tải ảnh lên** (Cloudinary/S3) cho avatar và tin đăng.
+4. **Quên mật khẩu, xác thực email** khi đăng ký.
+5. **Push notification** qua Expo cho booking mới (chủ) và xác nhận (khách).
+6. **Chủ địa điểm trả lời đánh giá**; nhật ký thao tác quản trị.
+7. **Giá theo mùa / ngày lễ**, đóng phòng theo ngày.
+8. **Tìm kiếm không dấu** ("da lat" → "Đà Lạt").
+9. **Chat thời gian thực** bằng WebSocket.
