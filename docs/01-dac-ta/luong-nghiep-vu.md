@@ -30,30 +30,45 @@ Giao diện nên **dựa vào `code`** để quyết định xử lý (chuyển 
 | 429 | Gửi quá nhiều lần | "Vui lòng thử lại sau" |
 | 0 / timeout | Mất mạng, server tắt | "Không kết nối được máy chủ" + nút Thử lại |
 
-### 1.3. Token đăng nhập
+### 1.3. Token đăng nhập (access + refresh)
+
+Đăng nhập trả **access token** (sống 15 phút, gửi kèm mọi request) và **refresh token** (30 ngày, chỉ dùng để lấy cặp token mới). Refresh token **xoay vòng**: mỗi lần dùng thì token cũ bị thu hồi.
 
 ```mermaid
 sequenceDiagram
     participant App
     participant Store as Auth store
     participant API
-    App->>Store: Mở app → đọc token đã lưu
-    alt có token
-        Store->>API: GET /api/auth/me
+    App->>Store: Mở app → đọc refreshToken đã lưu
+    alt có refreshToken
+        Store->>API: POST /api/auth/refresh { refreshToken }
         alt 200
-            API-->>Store: user → trạng thái "đã đăng nhập"
-        else 401 / 403
+            API-->>Store: accessToken + refreshToken mới → lưu lại → "đã đăng nhập"
+        else 401
             Store->>Store: Xóa token → "khách"
         end
-    else không có token
+    else không có
         Store->>Store: "khách"
     end
-    Note over App,API: Mọi request sau đó gửi kèm Authorization: Bearer <token>
+    App->>API: Request có Authorization: Bearer accessToken
+    alt 401 (access token hết hạn)
+        App->>API: POST /api/auth/refresh (một lần, các request khác chờ)
+        API-->>App: Cặp token mới
+        App->>API: Gửi lại request ban đầu
+    end
 ```
 
+| Tình huống | Kết quả |
+|---|---|
+| `/refresh` trả `REFRESH_TOKEN_ROTATED` | Có request khác vừa làm mới trước: lấy token mới nhất trong store rồi thử lại, **không** đăng xuất |
+| `/refresh` trả `REFRESH_TOKEN_REUSED` / `EXPIRED` / `INVALID_REFRESH_TOKEN` | Đăng xuất. `REUSED` nghĩa là token cũ bị dùng lại → backend đã thu hồi mọi phiên của tài khoản (BR-21) |
+| Đổi mật khẩu | Response trả phiên mới cho thiết bị này; các thiết bị khác bị đăng xuất |
+| Đặt lại mật khẩu, bị admin khóa | Mọi thiết bị bị đăng xuất |
+
+- **Chỉ làm mới một lần cùng lúc:** nhiều request cùng nhận 401 thì chỉ request đầu gọi `/refresh`, các request còn lại chờ kết quả đó (tránh tự gây `ROTATED`).
 - Lưu token: `expo-secure-store` trên Android/iOS; `localStorage` trên web.
-- Token có hạn 7 ngày (`JWT_EXPIRES_IN`). Hết hạn → API trả 401 → đăng xuất.
-- Khi đăng xuất phải xóa cả cache dữ liệu cá nhân (booking, yêu thích, thông báo) để người đăng nhập sau không thấy dữ liệu người trước.
+- Đăng xuất: gọi `POST /api/auth/logout { refreshToken }` và `DELETE /api/devices { token }` (push), rồi xóa token và cache dữ liệu cá nhân (booking, yêu thích, thông báo) để người đăng nhập sau không thấy dữ liệu người trước.
+- Access token đã cấp vẫn dùng được tới khi hết 15 phút dù phiên bị thu hồi; tài khoản bị khóa thì bị chặn ngay vì backend kiểm tra trạng thái ở mỗi request.
 
 ### 1.4. Làm mới dữ liệu sau khi thay đổi
 
@@ -110,6 +125,34 @@ flowchart TD
 **Backend kiểm tra khi đăng ký:** dữ liệu hợp lệ (trường bắt buộc: họ tên, email, mật khẩu, đồng ý điều khoản – xem [tai-khoan-va-dang-ky.md](tai-khoan-va-dang-ky.md)) → email chưa tồn tại (409 `EMAIL_TAKEN`) → hash mật khẩu bằng bcrypt → tạo tài khoản role `USER` → trả token để đăng nhập luôn.
 
 **Giới hạn:** đăng nhập/đăng ký tối đa 20 lần mỗi 15 phút cho một IP (429).
+
+### 3.1. Xác thực email và quên mật khẩu
+
+```mermaid
+sequenceDiagram
+    actor U as Người dùng
+    participant App
+    participant API
+    participant Mail as Hộp thư
+    U->>App: Đăng ký (A2)
+    App->>API: POST /auth/register
+    API-->>Mail: Email "Xác thực email" (link 24 giờ)
+    U->>Mail: Bấm link → mở App URL /verify-email?token=...
+    App->>API: POST /auth/verify-email { token }
+    API-->>App: user.emailVerifiedAt có giá trị
+    Note over U,API: Quên mật khẩu
+    U->>App: A3 nhập email
+    App->>API: POST /auth/forgot-password { email }
+    API-->>App: Luôn: "Nếu email đã đăng ký, bạn sẽ nhận được link..."
+    API-->>Mail: Email "Đặt lại mật khẩu" (link 30 phút, chỉ khi email tồn tại)
+    U->>Mail: Bấm link → /reset-password?token=...
+    App->>API: POST /auth/reset-password { token, newPassword }
+    API-->>App: 204 → mọi thiết bị đăng xuất → chuyển A1
+```
+
+- Email chưa xác thực vẫn dùng app bình thường; chỉ **nộp hồ sơ đối tác** bị chặn (403 `EMAIL_NOT_VERIFIED`, BR-22). T5 nên hiện dải "Xác thực email" + nút **Gửi lại** (`POST /auth/resend-verification`).
+- Link email trỏ về `APP_URL` (giao diện web). App mobile mở link qua deep link `travellingapp://verify-email?token=...` nếu cấu hình `APP_URL` theo scheme của app.
+- Khi dev (`EMAIL_TRANSPORT=console`), email in ra log của API và response có `devVerificationToken` / `devResetToken`.
 
 ## 4. Luồng yêu thích (mục 7)
 
@@ -426,6 +469,42 @@ stateDiagram-v2
 
 Admin `PATCH /partners/{id}/status { status: "SUSPENDED", reason }` → role về `USER`, mọi địa điểm của đối tác bị ẩn (`isActive = false`), chủ không vào được trang quản lý nữa. Mở lại (`APPROVED`) trả quyền `OWNER`; chủ tự bật lại từng địa điểm.
 
+### 9.4. Giá theo mùa
+
+Chủ địa điểm thêm giá mùa cho từng loại phòng ở O3 (tab Phòng → Giá theo mùa): tên, từ ngày, đến ngày (gồm cả hai ngày), giá/đêm. Hai khoảng không được trùng ngày (409 `RATE_OVERLAP`).
+
+Khi báo giá, mỗi đêm trong khoảng ở lấy giá mùa nếu rơi vào một khoảng, ngược lại lấy giá gốc. Response `/bookings/quote` có `nightlyRoomPrices`:
+
+```json
+[
+  { "date": "2027-02-03", "price": 500000, "rateName": null },
+  { "date": "2027-02-04", "price": 800000, "rateName": "Tết Nguyên đán 2027" }
+]
+```
+
+B1/B4 nên hiện dòng "Phòng: 1 đêm thường + 1 đêm Tết" khi có `rateName`.
+
+### 9.5. Đối soát và chuyển tiền cho chủ địa điểm
+
+```mermaid
+stateDiagram-v2
+    [*] --> ChuaDoiSoat: Booking COMPLETED + đã thu tiền
+    ChuaDoiSoat --> PENDING: Admin lập kỳ (M14)
+    PENDING --> ChuaDoiSoat: Admin hủy kỳ
+    PENDING --> PAID: Admin xác nhận đã chuyển khoản + mã giao dịch
+    PAID --> [*]
+```
+
+| Bước | Ai | API |
+|---|---|---|
+| Xem tiền chưa đối soát | Chủ (O8) | `GET /payouts/unsettled` |
+| Xem trước kỳ, mọi chủ | Admin (M14) | `GET /payouts/preview?periodStart=&periodEnd=` |
+| Lập kỳ cho một chủ | Admin | `POST /payouts { ownerId, periodStart, periodEnd }` → chủ nhận thông báo |
+| Chuyển khoản ngoài hệ thống (Internet Banking), rồi xác nhận | Admin | `PATCH /payouts/:id/pay { transferRef }` → chủ nhận thông báo |
+| Xem kỳ và từng booking | Chủ (O8), Admin | `GET /payouts`, `GET /payouts/:id` |
+
+Kỳ tính theo **ngày hoàn thành** booking và phải đã kết thúc (thường lập theo tháng: 01 → cuối tháng trước). Đồ án không tự chuyển tiền; admin chuyển khoản thủ công rồi ghi mã giao dịch.
+
 ## 10. Luồng dashboard
 
 Một API duy nhất, dữ liệu tự giới hạn theo vai trò:
@@ -465,10 +544,11 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 | Hồ sơ đối tác mới; tin đăng chờ duyệt | Mọi Admin | `PARTNER` | `partnerProfileId` → M12; `destinationId` → M13 |
 | Hồ sơ đối tác được duyệt / từ chối / tạm ngưng / mở lại | Người nộp | `PARTNER` | → P4 hoặc O1 |
 | Tin đăng được duyệt / bị từ chối | Chủ địa điểm | `PARTNER` | `destinationId` → O4 |
+| Có kỳ đối soát mới / đã chuyển tiền | Chủ địa điểm | `PARTNER` | `payoutId` → O8 |
 
 **Badge chưa đọc:** gọi `GET /api/notifications/unread-count` khi mở app, khi quay lại app từ nền và sau mỗi thao tác booking. Hiển thị trên tab T4.
 
-**Push notification** (điện thoại báo kể cả khi app đóng) chưa có; xem mục 13.
+**Push notification:** mọi thông báo trên được gửi push tới thiết bị đã đăng ký (`POST /api/devices`) khi `PUSH_ENABLED=true`. App xin quyền thông báo bằng `expo-notifications`, lấy Expo push token rồi đăng ký sau khi đăng nhập; chạm vào push thì đọc `data` và mở trang như khi chạm thông báo trong T4.
 
 ## 12. Bảng mã lỗi nghiệp vụ
 
@@ -511,6 +591,17 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 | `INVALID_OWNER` | 400 | Admin gán chủ không phải OWNER | Chọn lại chủ |
 | `USE_PARTNER_API` | 400 | Đổi role tài khoản OWNER ở trang người dùng | Dẫn sang trang đối tác |
 | `INVALID_RANGE` | 400 | Khoảng ngày thống kê sai / > 366 ngày | Báo lỗi ở bộ chọn ngày |
+| `INVALID_REFRESH_TOKEN` / `REFRESH_TOKEN_EXPIRED` / `REFRESH_TOKEN_REUSED` | 401 | Refresh token sai, hết hạn, hoặc token cũ bị dùng lại | Đăng xuất → A1 |
+| `REFRESH_TOKEN_ROTATED` | 401 | Hai request làm mới cùng lúc | Dùng token mới nhất trong store, thử lại |
+| `INVALID_TOKEN` | 400 | Link xác thực / đặt lại mật khẩu sai, hết hạn hoặc đã dùng | "Link đã hết hạn" + nút gửi lại |
+| `ALREADY_VERIFIED` | 409 | Gửi lại email khi đã xác thực | Ẩn dải xác thực |
+| `EMAIL_NOT_VERIFIED` | 403 | Nộp hồ sơ đối tác khi chưa xác thực email | Mở dải xác thực email ở P4 |
+| `RATE_OVERLAP` | 409 | Giá mùa trùng ngày khoảng khác | Báo trùng, giữ form |
+| `NOTHING_TO_PAY` | 409 | Lập kỳ đối soát khi không có booking | Thông báo ở M14 |
+| `INVALID_PAYOUT_STATUS` / `PAYOUT_CONFLICT` | 409 | Chuyển / hủy kỳ sai trạng thái; dữ liệu vừa đổi | Tải lại kỳ |
+| `FILE_REQUIRED` / `INVALID_FILE_TYPE` / `INVALID_UPLOAD` | 400 | Thiếu file, không phải JPEG/PNG/WebP | Báo dưới nút chọn ảnh |
+| `FILE_TOO_LARGE` | 413 | Ảnh quá `UPLOAD_MAX_MB` (5 MB) | Nén ảnh trước khi tải (`expo-image-manipulator`) |
+| `INVALID_IMAGE` | 400 | Ảnh đánh giá không phải do mình tải lên | Tải lại ảnh |
 | `DUPLICATE` | 409 | Trùng dữ liệu duy nhất (slug, mã voucher...) | Báo trùng ở form quản trị |
 | `REFERENCE_CONFLICT` | 409 | Xóa dữ liệu đang được dùng | Gợi ý "Ngừng hoạt động" thay vì xóa |
 | `TOO_MANY_REQUESTS` | 429 | Quá nhiều lần đăng nhập/đăng ký | Chờ rồi thử lại |
@@ -518,19 +609,12 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 
 ## 13. API còn thiếu cho giao diện đầy đủ
 
-Các chức năng dưới đây xuất hiện trong [giao-dien.md](../02-thiet-ke/giao-dien.md) nhưng backend chưa có.
+Đã bổ sung ngày 25/10/2026: quên mật khẩu + xác thực email, tải ảnh, push notification, refresh token, đối soát, giá mùa, nhật ký quản trị, tìm không dấu. Còn lại:
 
 | Chức năng | Trang | Đề xuất |
 |---|---|---|
-| Quên mật khẩu | A1 | `POST /auth/forgot-password`, `POST /auth/reset-password` + bảng token đặt lại + gửi email |
-| Tải ảnh lên (avatar, ảnh địa điểm) | P1, O3, M8 | `POST /uploads` lưu lên Cloudinary/S3, trả URL |
 | Phân bố số sao | D3 | Thêm `ratingBreakdown` vào `GET /destinations/:id/reviews` |
 | Lọc booking nhiều trạng thái | T3, O6 | Cho `status=PENDING,CONFIRMED` |
-| Đối soát, chuyển tiền cho chủ địa điểm | O1, M12 | Bảng `Payout` theo kỳ + trang đối soát |
 | Chủ địa điểm trả lời đánh giá | O4 | Cột `ownerReply` trong `Review` |
-| Xuất báo cáo CSV | M1, O1 | `GET /stats/export?format=csv` |
-| Push notification | T4 | Bảng `DeviceToken` + Expo Push API |
+| Xuất báo cáo CSV | M1, O1, M14 | `GET /stats/export?format=csv` |
 | Chat thời gian thực | C2, M6 | WebSocket (Socket.IO) thay cho polling |
-| Đăng nhập lâu dài an toàn | — | Refresh token |
-
-Đã bổ sung so với bản trước: thống kê dashboard (`/stats/overview`), xem cả gói/phòng đã tắt (`/manage/destinations/:id`), tự hủy booking quá hạn thanh toán.

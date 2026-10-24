@@ -1,5 +1,6 @@
 import type { Prisma } from "../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
+import { toSearchText } from "../lib/search-text.js";
 import type { ListDestinationsInput } from "../validators/destination.schema.js";
 
 export const destinationSummarySelect = {
@@ -51,15 +52,9 @@ export function buildDestinationWhere(query: ListDestinationsInput, canSeeInacti
     ...(query.facilityIds?.length
       ? { AND: query.facilityIds.map((id) => ({ facilities: { some: { id } } })) }
       : {}),
-    ...(query.q
-      ? {
-          OR: [
-            { name: { contains: query.q } },
-            { location: { contains: query.q } },
-            { address: { contains: query.q } },
-            { category: { name: { contains: query.q } } },
-          ],
-        }
+    // So trên cột không dấu: "da lat", "Đà Lạt", "DA LAT" đều ra cùng kết quả.
+    ...(query.q && toSearchText(query.q)
+      ? { OR: [{ searchText: { contains: toSearchText(query.q) } }, { name: { contains: query.q } }] }
       : {}),
   };
 }
@@ -75,7 +70,19 @@ export const destinationDao = {
   findByIdOrSlug(idOrSlug: string) {
     const id = Number(idOrSlug);
     const where: Prisma.DestinationWhereUniqueInput = Number.isInteger(id) && id > 0 ? { id } : { slug: idOrSlug };
-    return prisma.destination.findUnique({ where, include: destinationDetailInclude });
+    const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`);
+    return prisma.destination.findUnique({
+      where,
+      include: {
+        ...destinationDetailInclude,
+        // Kèm giá mùa chưa kết thúc để hiện "Giá Tết: 1.800.000đ/đêm".
+        roomTypes: {
+          where: { isActive: true },
+          orderBy: { pricePerNight: "asc" },
+          include: { rates: { where: { endDate: { gte: today } }, orderBy: { startDate: "asc" } } },
+        },
+      },
+    });
   },
 
   // Bản đầy đủ cho trang quản lý: gồm cả gói/phòng/dịch vụ đang tắt và thông tin kiểm duyệt.
@@ -118,4 +125,5 @@ export const reviewPublicSelect = {
   createdAt: true,
   updatedAt: true,
   user: { select: { id: true, name: true, avatarUrl: true } },
+  images: { orderBy: { sortOrder: "asc" }, select: { id: true, url: true } },
 } as const satisfies Prisma.ReviewSelect;

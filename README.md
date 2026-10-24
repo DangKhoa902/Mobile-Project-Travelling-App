@@ -10,9 +10,9 @@ Sàn môi giới dịch vụ du lịch đa nền tảng (Android, iOS, Web). Ch�
 |---|---|
 | Khách vãng lai | Khám phá, tìm kiếm, lọc, xem chi tiết, xem báo giá |
 | Khách hàng | Yêu thích, đặt chỗ, thanh toán giả lập, hủy theo chính sách, đánh giá, chat CSKH, thông báo, đăng ký làm đối tác |
-| Chủ địa điểm | Đăng và quản lý địa điểm, gói, phòng, giá; gửi duyệt; xác nhận booking; dashboard doanh thu |
+| Chủ địa điểm | Đăng và quản lý địa điểm, gói, phòng, giá theo mùa; gửi duyệt; xác nhận booking; dashboard doanh thu; xem đối soát |
 | Nhân viên CSKH | Xử lý booking, kiểm duyệt đánh giá, trả lời chat |
-| Quản trị viên | Duyệt đối tác và tin đăng, hoa hồng, danh mục, voucher, người dùng, dashboard toàn sàn |
+| Quản trị viên | Duyệt đối tác và tin đăng, hoa hồng, đối soát chuyển tiền, danh mục, voucher, người dùng, nhật ký, dashboard toàn sàn |
 
 ## Công nghệ
 
@@ -59,8 +59,8 @@ Chi tiết cài đặt, biến môi trường, Docker và build: [docs/03-trien-
 
 ```bash
 cd be
-npm test                                                           # 32 unit + integration test
-postman collection run postman/travelling-app.postman_collection.json   # 133 request end-to-end (cần API đang chạy)
+npm test                                                           # 46 unit + integration test
+postman collection run postman/travelling-app.postman_collection.json   # 196 request end-to-end (cần API đang chạy)
 ```
 
 ## Tài liệu

@@ -42,6 +42,7 @@ export type UserMinAggregateOutputType = {
   phone: string | null
   dateOfBirth: Date | null
   avatarUrl: string | null
+  emailVerifiedAt: Date | null
   role: $Enums.Role | null
   status: $Enums.UserStatus | null
   createdAt: Date | null
@@ -56,6 +57,7 @@ export type UserMaxAggregateOutputType = {
   phone: string | null
   dateOfBirth: Date | null
   avatarUrl: string | null
+  emailVerifiedAt: Date | null
   role: $Enums.Role | null
   status: $Enums.UserStatus | null
   createdAt: Date | null
@@ -70,6 +72,7 @@ export type UserCountAggregateOutputType = {
   phone: number
   dateOfBirth: number
   avatarUrl: number
+  emailVerifiedAt: number
   role: number
   status: number
   createdAt: number
@@ -94,6 +97,7 @@ export type UserMinAggregateInputType = {
   phone?: true
   dateOfBirth?: true
   avatarUrl?: true
+  emailVerifiedAt?: true
   role?: true
   status?: true
   createdAt?: true
@@ -108,6 +112,7 @@ export type UserMaxAggregateInputType = {
   phone?: true
   dateOfBirth?: true
   avatarUrl?: true
+  emailVerifiedAt?: true
   role?: true
   status?: true
   createdAt?: true
@@ -122,6 +127,7 @@ export type UserCountAggregateInputType = {
   phone?: true
   dateOfBirth?: true
   avatarUrl?: true
+  emailVerifiedAt?: true
   role?: true
   status?: true
   createdAt?: true
@@ -223,6 +229,7 @@ export type UserGroupByOutputType = {
   phone: string | null
   dateOfBirth: Date | null
   avatarUrl: string | null
+  emailVerifiedAt: Date | null
   role: $Enums.Role
   status: $Enums.UserStatus
   createdAt: Date
@@ -260,6 +267,7 @@ export type UserWhereInput = {
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   dateOfBirth?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -275,6 +283,13 @@ export type UserWhereInput = {
   partnerProfile?: Prisma.XOR<Prisma.PartnerProfileNullableScalarRelationFilter, Prisma.PartnerProfileWhereInput> | null
   reviewedPartners?: Prisma.PartnerProfileListRelationFilter
   ownedDestinations?: Prisma.DestinationListRelationFilter
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  verificationTokens?: Prisma.VerificationTokenListRelationFilter
+  deviceTokens?: Prisma.DeviceTokenListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
+  payouts?: Prisma.PayoutListRelationFilter
+  createdPayouts?: Prisma.PayoutListRelationFilter
+  uploads?: Prisma.UploadListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -285,6 +300,7 @@ export type UserOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -300,6 +316,13 @@ export type UserOrderByWithRelationInput = {
   partnerProfile?: Prisma.PartnerProfileOrderByWithRelationInput
   reviewedPartners?: Prisma.PartnerProfileOrderByRelationAggregateInput
   ownedDestinations?: Prisma.DestinationOrderByRelationAggregateInput
+  refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
+  verificationTokens?: Prisma.VerificationTokenOrderByRelationAggregateInput
+  deviceTokens?: Prisma.DeviceTokenOrderByRelationAggregateInput
+  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  payouts?: Prisma.PayoutOrderByRelationAggregateInput
+  createdPayouts?: Prisma.PayoutOrderByRelationAggregateInput
+  uploads?: Prisma.UploadOrderByRelationAggregateInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
@@ -314,6 +337,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   dateOfBirth?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -329,6 +353,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   partnerProfile?: Prisma.XOR<Prisma.PartnerProfileNullableScalarRelationFilter, Prisma.PartnerProfileWhereInput> | null
   reviewedPartners?: Prisma.PartnerProfileListRelationFilter
   ownedDestinations?: Prisma.DestinationListRelationFilter
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  verificationTokens?: Prisma.VerificationTokenListRelationFilter
+  deviceTokens?: Prisma.DeviceTokenListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
+  payouts?: Prisma.PayoutListRelationFilter
+  createdPayouts?: Prisma.PayoutListRelationFilter
+  uploads?: Prisma.UploadListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -339,6 +370,7 @@ export type UserOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -361,6 +393,7 @@ export type UserScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   dateOfBirth?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -374,6 +407,7 @@ export type UserCreateInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -389,6 +423,13 @@ export type UserCreateInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -399,6 +440,7 @@ export type UserUncheckedCreateInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -414,6 +456,13 @@ export type UserUncheckedCreateInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -423,6 +472,7 @@ export type UserUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -438,6 +488,13 @@ export type UserUpdateInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -448,6 +505,7 @@ export type UserUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -463,6 +521,13 @@ export type UserUncheckedUpdateInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -473,6 +538,7 @@ export type UserCreateManyInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -486,6 +552,7 @@ export type UserUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -500,6 +567,7 @@ export type UserUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -520,6 +588,7 @@ export type UserCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -538,6 +607,7 @@ export type UserMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -552,6 +622,7 @@ export type UserMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -602,6 +673,108 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UserCreateNestedOneWithoutRefreshTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefreshTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRefreshTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefreshTokensInput
+  upsert?: Prisma.UserUpsertWithoutRefreshTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.UserUpdateWithoutRefreshTokensInput>, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type UserCreateNestedOneWithoutVerificationTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVerificationTokensInput, Prisma.UserUncheckedCreateWithoutVerificationTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVerificationTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutVerificationTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVerificationTokensInput, Prisma.UserUncheckedCreateWithoutVerificationTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVerificationTokensInput
+  upsert?: Prisma.UserUpsertWithoutVerificationTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVerificationTokensInput, Prisma.UserUpdateWithoutVerificationTokensInput>, Prisma.UserUncheckedUpdateWithoutVerificationTokensInput>
+}
+
+export type UserCreateNestedOneWithoutDeviceTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeviceTokensInput, Prisma.UserUncheckedCreateWithoutDeviceTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeviceTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDeviceTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeviceTokensInput, Prisma.UserUncheckedCreateWithoutDeviceTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeviceTokensInput
+  upsert?: Prisma.UserUpsertWithoutDeviceTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeviceTokensInput, Prisma.UserUpdateWithoutDeviceTokensInput>, Prisma.UserUncheckedUpdateWithoutDeviceTokensInput>
+}
+
+export type UserCreateNestedOneWithoutAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
+  upsert?: Prisma.UserUpsertWithoutAuditLogsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type UserCreateNestedOneWithoutPayoutsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPayoutsInput, Prisma.UserUncheckedCreateWithoutPayoutsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayoutsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutCreatedPayoutsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPayoutsInput, Prisma.UserUncheckedCreateWithoutCreatedPayoutsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPayoutsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPayoutsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPayoutsInput, Prisma.UserUncheckedCreateWithoutPayoutsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayoutsInput
+  upsert?: Prisma.UserUpsertWithoutPayoutsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPayoutsInput, Prisma.UserUpdateWithoutPayoutsInput>, Prisma.UserUncheckedUpdateWithoutPayoutsInput>
+}
+
+export type UserUpdateOneWithoutCreatedPayoutsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPayoutsInput, Prisma.UserUncheckedCreateWithoutCreatedPayoutsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPayoutsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedPayoutsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedPayoutsInput, Prisma.UserUpdateWithoutCreatedPayoutsInput>, Prisma.UserUncheckedUpdateWithoutCreatedPayoutsInput>
+}
+
+export type UserCreateNestedOneWithoutUploadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadsInput, Prisma.UserUncheckedCreateWithoutUploadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUploadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUploadsInput, Prisma.UserUncheckedCreateWithoutUploadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUploadsInput
+  upsert?: Prisma.UserUpsertWithoutUploadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUploadsInput, Prisma.UserUpdateWithoutUploadsInput>, Prisma.UserUncheckedUpdateWithoutUploadsInput>
 }
 
 export type UserCreateNestedOneWithoutPartnerProfileInput = {
@@ -766,6 +939,1000 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateWithoutRefreshTokensInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutRefreshTokensInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutRefreshTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+}
+
+export type UserUpsertWithoutRefreshTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRefreshTokensInput, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRefreshTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRefreshTokensInput, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type UserUpdateWithoutRefreshTokensInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRefreshTokensInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutVerificationTokensInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutVerificationTokensInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutVerificationTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVerificationTokensInput, Prisma.UserUncheckedCreateWithoutVerificationTokensInput>
+}
+
+export type UserUpsertWithoutVerificationTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutVerificationTokensInput, Prisma.UserUncheckedUpdateWithoutVerificationTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutVerificationTokensInput, Prisma.UserUncheckedCreateWithoutVerificationTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutVerificationTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutVerificationTokensInput, Prisma.UserUncheckedUpdateWithoutVerificationTokensInput>
+}
+
+export type UserUpdateWithoutVerificationTokensInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutVerificationTokensInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeviceTokensInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeviceTokensInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeviceTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeviceTokensInput, Prisma.UserUncheckedCreateWithoutDeviceTokensInput>
+}
+
+export type UserUpsertWithoutDeviceTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeviceTokensInput, Prisma.UserUncheckedUpdateWithoutDeviceTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeviceTokensInput, Prisma.UserUncheckedCreateWithoutDeviceTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeviceTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeviceTokensInput, Prisma.UserUncheckedUpdateWithoutDeviceTokensInput>
+}
+
+export type UserUpdateWithoutDeviceTokensInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeviceTokensInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAuditLogsInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAuditLogsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAuditLogsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+}
+
+export type UserUpsertWithoutAuditLogsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type UserUpdateWithoutAuditLogsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAuditLogsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPayoutsInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPayoutsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPayoutsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPayoutsInput, Prisma.UserUncheckedCreateWithoutPayoutsInput>
+}
+
+export type UserCreateWithoutCreatedPayoutsInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedPayoutsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedPayoutsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPayoutsInput, Prisma.UserUncheckedCreateWithoutCreatedPayoutsInput>
+}
+
+export type UserUpsertWithoutPayoutsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPayoutsInput, Prisma.UserUncheckedUpdateWithoutPayoutsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPayoutsInput, Prisma.UserUncheckedCreateWithoutPayoutsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPayoutsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPayoutsInput, Prisma.UserUncheckedUpdateWithoutPayoutsInput>
+}
+
+export type UserUpdateWithoutPayoutsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPayoutsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutCreatedPayoutsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPayoutsInput, Prisma.UserUncheckedUpdateWithoutCreatedPayoutsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPayoutsInput, Prisma.UserUncheckedCreateWithoutCreatedPayoutsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedPayoutsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPayoutsInput, Prisma.UserUncheckedUpdateWithoutCreatedPayoutsInput>
+}
+
+export type UserUpdateWithoutCreatedPayoutsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedPayoutsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUploadsInput = {
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutUploadsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  phone?: string | null
+  dateOfBirth?: Date | string | null
+  avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
+  role?: $Enums.Role
+  status?: $Enums.UserStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  moderatedReviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutModeratedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  assignedConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutStaffInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutUploadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadsInput, Prisma.UserUncheckedCreateWithoutUploadsInput>
+}
+
+export type UserUpsertWithoutUploadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUploadsInput, Prisma.UserUncheckedUpdateWithoutUploadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUploadsInput, Prisma.UserUncheckedCreateWithoutUploadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUploadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUploadsInput, Prisma.UserUncheckedUpdateWithoutUploadsInput>
+}
+
+export type UserUpdateWithoutUploadsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUploadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  moderatedReviews?: Prisma.ReviewUncheckedUpdateManyWithoutModeratedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  assignedConversations?: Prisma.ConversationUncheckedUpdateManyWithoutStaffNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
+  reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
 export type UserCreateWithoutPartnerProfileInput = {
   name: string
   email: string
@@ -773,6 +1940,7 @@ export type UserCreateWithoutPartnerProfileInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -787,6 +1955,13 @@ export type UserCreateWithoutPartnerProfileInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPartnerProfileInput = {
@@ -797,6 +1972,7 @@ export type UserUncheckedCreateWithoutPartnerProfileInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -811,6 +1987,13 @@ export type UserUncheckedCreateWithoutPartnerProfileInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPartnerProfileInput = {
@@ -825,6 +2008,7 @@ export type UserCreateWithoutReviewedPartnersInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -839,6 +2023,13 @@ export type UserCreateWithoutReviewedPartnersInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewedPartnersInput = {
@@ -849,6 +2040,7 @@ export type UserUncheckedCreateWithoutReviewedPartnersInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -863,6 +2055,13 @@ export type UserUncheckedCreateWithoutReviewedPartnersInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewedPartnersInput = {
@@ -888,6 +2087,7 @@ export type UserUpdateWithoutPartnerProfileInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -902,6 +2102,13 @@ export type UserUpdateWithoutPartnerProfileInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPartnerProfileInput = {
@@ -912,6 +2119,7 @@ export type UserUncheckedUpdateWithoutPartnerProfileInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -926,6 +2134,13 @@ export type UserUncheckedUpdateWithoutPartnerProfileInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReviewedPartnersInput = {
@@ -946,6 +2161,7 @@ export type UserUpdateWithoutReviewedPartnersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -960,6 +2176,13 @@ export type UserUpdateWithoutReviewedPartnersInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewedPartnersInput = {
@@ -970,6 +2193,7 @@ export type UserUncheckedUpdateWithoutReviewedPartnersInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -984,6 +2208,13 @@ export type UserUncheckedUpdateWithoutReviewedPartnersInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOwnedDestinationsInput = {
@@ -993,6 +2224,7 @@ export type UserCreateWithoutOwnedDestinationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1007,6 +2239,13 @@ export type UserCreateWithoutOwnedDestinationsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedDestinationsInput = {
@@ -1017,6 +2256,7 @@ export type UserUncheckedCreateWithoutOwnedDestinationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1031,6 +2271,13 @@ export type UserUncheckedCreateWithoutOwnedDestinationsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedDestinationsInput = {
@@ -1056,6 +2303,7 @@ export type UserUpdateWithoutOwnedDestinationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1070,6 +2318,13 @@ export type UserUpdateWithoutOwnedDestinationsInput = {
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedDestinationsInput = {
@@ -1080,6 +2335,7 @@ export type UserUncheckedUpdateWithoutOwnedDestinationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1094,6 +2350,13 @@ export type UserUncheckedUpdateWithoutOwnedDestinationsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBookingsInput = {
@@ -1103,6 +2366,7 @@ export type UserCreateWithoutBookingsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1117,6 +2381,13 @@ export type UserCreateWithoutBookingsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBookingsInput = {
@@ -1127,6 +2398,7 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1141,6 +2413,13 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBookingsInput = {
@@ -1166,6 +2445,7 @@ export type UserUpdateWithoutBookingsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1180,6 +2460,13 @@ export type UserUpdateWithoutBookingsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBookingsInput = {
@@ -1190,6 +2477,7 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1204,6 +2492,13 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFavoritesInput = {
@@ -1213,6 +2508,7 @@ export type UserCreateWithoutFavoritesInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1227,6 +2523,13 @@ export type UserCreateWithoutFavoritesInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFavoritesInput = {
@@ -1237,6 +2540,7 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1251,6 +2555,13 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFavoritesInput = {
@@ -1276,6 +2587,7 @@ export type UserUpdateWithoutFavoritesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1290,6 +2602,13 @@ export type UserUpdateWithoutFavoritesInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFavoritesInput = {
@@ -1300,6 +2619,7 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1314,6 +2634,13 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -1323,6 +2650,7 @@ export type UserCreateWithoutReviewsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1337,6 +2665,13 @@ export type UserCreateWithoutReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -1347,6 +2682,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1361,6 +2697,13 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -1375,6 +2718,7 @@ export type UserCreateWithoutModeratedReviewsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1389,6 +2733,13 @@ export type UserCreateWithoutModeratedReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutModeratedReviewsInput = {
@@ -1399,6 +2750,7 @@ export type UserUncheckedCreateWithoutModeratedReviewsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1413,6 +2765,13 @@ export type UserUncheckedCreateWithoutModeratedReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutModeratedReviewsInput = {
@@ -1438,6 +2797,7 @@ export type UserUpdateWithoutReviewsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1452,6 +2812,13 @@ export type UserUpdateWithoutReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -1462,6 +2829,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1476,6 +2844,13 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutModeratedReviewsInput = {
@@ -1496,6 +2871,7 @@ export type UserUpdateWithoutModeratedReviewsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1510,6 +2886,13 @@ export type UserUpdateWithoutModeratedReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutModeratedReviewsInput = {
@@ -1520,6 +2903,7 @@ export type UserUncheckedUpdateWithoutModeratedReviewsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1534,6 +2918,13 @@ export type UserUncheckedUpdateWithoutModeratedReviewsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutConversationsInput = {
@@ -1543,6 +2934,7 @@ export type UserCreateWithoutConversationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1557,6 +2949,13 @@ export type UserCreateWithoutConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConversationsInput = {
@@ -1567,6 +2966,7 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1581,6 +2981,13 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConversationsInput = {
@@ -1595,6 +3002,7 @@ export type UserCreateWithoutAssignedConversationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1609,6 +3017,13 @@ export type UserCreateWithoutAssignedConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAssignedConversationsInput = {
@@ -1619,6 +3034,7 @@ export type UserUncheckedCreateWithoutAssignedConversationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1633,6 +3049,13 @@ export type UserUncheckedCreateWithoutAssignedConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAssignedConversationsInput = {
@@ -1658,6 +3081,7 @@ export type UserUpdateWithoutConversationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1672,6 +3096,13 @@ export type UserUpdateWithoutConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -1682,6 +3113,7 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1696,6 +3128,13 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAssignedConversationsInput = {
@@ -1716,6 +3155,7 @@ export type UserUpdateWithoutAssignedConversationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1730,6 +3170,13 @@ export type UserUpdateWithoutAssignedConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssignedConversationsInput = {
@@ -1740,6 +3187,7 @@ export type UserUncheckedUpdateWithoutAssignedConversationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1754,6 +3202,13 @@ export type UserUncheckedUpdateWithoutAssignedConversationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -1763,6 +3218,7 @@ export type UserCreateWithoutMessagesInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1777,6 +3233,13 @@ export type UserCreateWithoutMessagesInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -1787,6 +3250,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1801,6 +3265,13 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -1826,6 +3297,7 @@ export type UserUpdateWithoutMessagesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1840,6 +3312,13 @@ export type UserUpdateWithoutMessagesInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -1850,6 +3329,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1864,6 +3344,13 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1873,6 +3360,7 @@ export type UserCreateWithoutNotificationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1887,6 +3375,13 @@ export type UserCreateWithoutNotificationsInput = {
   partnerProfile?: Prisma.PartnerProfileCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1897,6 +3392,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   phone?: string | null
   dateOfBirth?: Date | string | null
   avatarUrl?: string | null
+  emailVerifiedAt?: Date | string | null
   role?: $Enums.Role
   status?: $Enums.UserStatus
   createdAt?: Date | string
@@ -1911,6 +3407,13 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedCreateNestedOneWithoutUserInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedCreateNestedManyWithoutReviewedByInput
   ownedDestinations?: Prisma.DestinationUncheckedCreateNestedManyWithoutOwnerInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  payouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutOwnerInput
+  createdPayouts?: Prisma.PayoutUncheckedCreateNestedManyWithoutCreatedByInput
+  uploads?: Prisma.UploadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1936,6 +3439,7 @@ export type UserUpdateWithoutNotificationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1950,6 +3454,13 @@ export type UserUpdateWithoutNotificationsInput = {
   partnerProfile?: Prisma.PartnerProfileUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1960,6 +3471,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1974,6 +3486,13 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   partnerProfile?: Prisma.PartnerProfileUncheckedUpdateOneWithoutUserNestedInput
   reviewedPartners?: Prisma.PartnerProfileUncheckedUpdateManyWithoutReviewedByNestedInput
   ownedDestinations?: Prisma.DestinationUncheckedUpdateManyWithoutOwnerNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  payouts?: Prisma.PayoutUncheckedUpdateManyWithoutOwnerNestedInput
+  createdPayouts?: Prisma.PayoutUncheckedUpdateManyWithoutCreatedByNestedInput
+  uploads?: Prisma.UploadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1992,6 +3511,13 @@ export type UserCountOutputType = {
   messages: number
   reviewedPartners: number
   ownedDestinations: number
+  refreshTokens: number
+  verificationTokens: number
+  deviceTokens: number
+  auditLogs: number
+  payouts: number
+  createdPayouts: number
+  uploads: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2005,6 +3531,13 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   messages?: boolean | UserCountOutputTypeCountMessagesArgs
   reviewedPartners?: boolean | UserCountOutputTypeCountReviewedPartnersArgs
   ownedDestinations?: boolean | UserCountOutputTypeCountOwnedDestinationsArgs
+  refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
+  verificationTokens?: boolean | UserCountOutputTypeCountVerificationTokensArgs
+  deviceTokens?: boolean | UserCountOutputTypeCountDeviceTokensArgs
+  auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  payouts?: boolean | UserCountOutputTypeCountPayoutsArgs
+  createdPayouts?: boolean | UserCountOutputTypeCountCreatedPayoutsArgs
+  uploads?: boolean | UserCountOutputTypeCountUploadsArgs
 }
 
 /**
@@ -2087,6 +3620,55 @@ export type UserCountOutputTypeCountOwnedDestinationsArgs<ExtArgs extends runtim
   where?: Prisma.DestinationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefreshTokenWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountVerificationTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationTokenWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeviceTokenWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayoutWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayoutWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUploadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UploadWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2096,6 +3678,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phone?: boolean
   dateOfBirth?: boolean
   avatarUrl?: boolean
+  emailVerifiedAt?: boolean
   role?: boolean
   status?: boolean
   createdAt?: boolean
@@ -2111,6 +3694,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   partnerProfile?: boolean | Prisma.User$partnerProfileArgs<ExtArgs>
   reviewedPartners?: boolean | Prisma.User$reviewedPartnersArgs<ExtArgs>
   ownedDestinations?: boolean | Prisma.User$ownedDestinationsArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+  verificationTokens?: boolean | Prisma.User$verificationTokensArgs<ExtArgs>
+  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  payouts?: boolean | Prisma.User$payoutsArgs<ExtArgs>
+  createdPayouts?: boolean | Prisma.User$createdPayoutsArgs<ExtArgs>
+  uploads?: boolean | Prisma.User$uploadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2124,13 +3714,14 @@ export type UserSelectScalar = {
   phone?: boolean
   dateOfBirth?: boolean
   avatarUrl?: boolean
+  emailVerifiedAt?: boolean
   role?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone" | "dateOfBirth" | "avatarUrl" | "role" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone" | "dateOfBirth" | "avatarUrl" | "emailVerifiedAt" | "role" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
   favorites?: boolean | Prisma.User$favoritesArgs<ExtArgs>
@@ -2143,6 +3734,13 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   partnerProfile?: boolean | Prisma.User$partnerProfileArgs<ExtArgs>
   reviewedPartners?: boolean | Prisma.User$reviewedPartnersArgs<ExtArgs>
   ownedDestinations?: boolean | Prisma.User$ownedDestinationsArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+  verificationTokens?: boolean | Prisma.User$verificationTokensArgs<ExtArgs>
+  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  payouts?: boolean | Prisma.User$payoutsArgs<ExtArgs>
+  createdPayouts?: boolean | Prisma.User$createdPayoutsArgs<ExtArgs>
+  uploads?: boolean | Prisma.User$uploadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -2160,6 +3758,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     partnerProfile: Prisma.$PartnerProfilePayload<ExtArgs> | null
     reviewedPartners: Prisma.$PartnerProfilePayload<ExtArgs>[]
     ownedDestinations: Prisma.$DestinationPayload<ExtArgs>[]
+    refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+    verificationTokens: Prisma.$VerificationTokenPayload<ExtArgs>[]
+    deviceTokens: Prisma.$DeviceTokenPayload<ExtArgs>[]
+    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    payouts: Prisma.$PayoutPayload<ExtArgs>[]
+    createdPayouts: Prisma.$PayoutPayload<ExtArgs>[]
+    uploads: Prisma.$UploadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2169,6 +3774,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     phone: string | null
     dateOfBirth: Date | null
     avatarUrl: string | null
+    emailVerifiedAt: Date | null
     role: $Enums.Role
     status: $Enums.UserStatus
     createdAt: Date
@@ -2524,6 +4130,13 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   partnerProfile<T extends Prisma.User$partnerProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$partnerProfileArgs<ExtArgs>>): Prisma.Prisma__PartnerProfileClient<runtime.Types.Result.GetResult<Prisma.$PartnerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reviewedPartners<T extends Prisma.User$reviewedPartnersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewedPartnersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PartnerProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ownedDestinations<T extends Prisma.User$ownedDestinationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedDestinationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DestinationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationTokens<T extends Prisma.User$verificationTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$verificationTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deviceTokens<T extends Prisma.User$deviceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deviceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeviceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payouts<T extends Prisma.User$payoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$payoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdPayouts<T extends Prisma.User$createdPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  uploads<T extends Prisma.User$uploadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2560,6 +4173,7 @@ export interface UserFieldRefs {
   readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly dateOfBirth: Prisma.FieldRef<"User", 'DateTime'>
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
+  readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -3168,6 +4782,174 @@ export type User$ownedDestinationsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.DestinationScalarFieldEnum | Prisma.DestinationScalarFieldEnum[]
+}
+
+/**
+ * User.refreshTokens
+ */
+export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RefreshToken
+   */
+  select?: Prisma.RefreshTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RefreshToken
+   */
+  omit?: Prisma.RefreshTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RefreshTokenInclude<ExtArgs> | null
+  where?: Prisma.RefreshTokenWhereInput
+  orderBy?: Prisma.RefreshTokenOrderByWithRelationInput | Prisma.RefreshTokenOrderByWithRelationInput[]
+  cursor?: Prisma.RefreshTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+}
+
+/**
+ * User.verificationTokens
+ */
+export type User$verificationTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationToken
+   */
+  select?: Prisma.VerificationTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationToken
+   */
+  omit?: Prisma.VerificationTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationTokenInclude<ExtArgs> | null
+  where?: Prisma.VerificationTokenWhereInput
+  orderBy?: Prisma.VerificationTokenOrderByWithRelationInput | Prisma.VerificationTokenOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationTokenScalarFieldEnum | Prisma.VerificationTokenScalarFieldEnum[]
+}
+
+/**
+ * User.deviceTokens
+ */
+export type User$deviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeviceToken
+   */
+  select?: Prisma.DeviceTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeviceToken
+   */
+  omit?: Prisma.DeviceTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeviceTokenInclude<ExtArgs> | null
+  where?: Prisma.DeviceTokenWhereInput
+  orderBy?: Prisma.DeviceTokenOrderByWithRelationInput | Prisma.DeviceTokenOrderByWithRelationInput[]
+  cursor?: Prisma.DeviceTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeviceTokenScalarFieldEnum | Prisma.DeviceTokenScalarFieldEnum[]
+}
+
+/**
+ * User.auditLogs
+ */
+export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditLog
+   */
+  select?: Prisma.AuditLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditLog
+   */
+  omit?: Prisma.AuditLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditLogInclude<ExtArgs> | null
+  where?: Prisma.AuditLogWhereInput
+  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
+  cursor?: Prisma.AuditLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.payouts
+ */
+export type User$payoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payout
+   */
+  select?: Prisma.PayoutSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payout
+   */
+  omit?: Prisma.PayoutOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayoutInclude<ExtArgs> | null
+  where?: Prisma.PayoutWhereInput
+  orderBy?: Prisma.PayoutOrderByWithRelationInput | Prisma.PayoutOrderByWithRelationInput[]
+  cursor?: Prisma.PayoutWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayoutScalarFieldEnum | Prisma.PayoutScalarFieldEnum[]
+}
+
+/**
+ * User.createdPayouts
+ */
+export type User$createdPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payout
+   */
+  select?: Prisma.PayoutSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payout
+   */
+  omit?: Prisma.PayoutOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayoutInclude<ExtArgs> | null
+  where?: Prisma.PayoutWhereInput
+  orderBy?: Prisma.PayoutOrderByWithRelationInput | Prisma.PayoutOrderByWithRelationInput[]
+  cursor?: Prisma.PayoutWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayoutScalarFieldEnum | Prisma.PayoutScalarFieldEnum[]
+}
+
+/**
+ * User.uploads
+ */
+export type User$uploadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Upload
+   */
+  select?: Prisma.UploadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Upload
+   */
+  omit?: Prisma.UploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UploadInclude<ExtArgs> | null
+  where?: Prisma.UploadWhereInput
+  orderBy?: Prisma.UploadOrderByWithRelationInput | Prisma.UploadOrderByWithRelationInput[]
+  cursor?: Prisma.UploadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UploadScalarFieldEnum | Prisma.UploadScalarFieldEnum[]
 }
 
 /**

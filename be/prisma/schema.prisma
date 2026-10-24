@@ -82,35 +82,175 @@ enum NotificationType {
   SYSTEM
 }
 
+enum PayoutStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
 enum ConversationStatus {
   OPEN
   CLOSED
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  name        String
-  email       String     @unique
-  password    String
-  phone       String?    @db.VarChar(20)
-  dateOfBirth DateTime?  @db.Date
-  avatarUrl   String?    @db.VarChar(500)
-  role        Role       @default(USER)
-  status      UserStatus @default(ACTIVE)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id              Int        @id @default(autoincrement())
+  name            String
+  email           String     @unique
+  password        String
+  phone           String?    @db.VarChar(20)
+  dateOfBirth     DateTime?  @db.Date
+  avatarUrl       String?    @db.VarChar(500)
+  // NULL = chưa xác thực email.
+  emailVerifiedAt DateTime?
+  role            Role       @default(USER)
+  status          UserStatus @default(ACTIVE)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
   bookings              Booking[]
   favorites             Favorite[]
-  reviews               Review[]         @relation("ReviewAuthor")
-  moderatedReviews      Review[]         @relation("ReviewModerator")
+  reviews               Review[]            @relation("ReviewAuthor")
+  moderatedReviews      Review[]            @relation("ReviewModerator")
   notifications         Notification[]
-  conversations         Conversation[]   @relation("ConversationCustomer")
-  assignedConversations Conversation[]   @relation("ConversationStaff")
+  conversations         Conversation[]      @relation("ConversationCustomer")
+  assignedConversations Conversation[]      @relation("ConversationStaff")
   messages              Message[]
-  partnerProfile        PartnerProfile?  @relation("PartnerUser")
-  reviewedPartners      PartnerProfile[] @relation("PartnerReviewer")
-  ownedDestinations     Destination[]    @relation("DestinationOwner")
+  partnerProfile        PartnerProfile?     @relation("PartnerUser")
+  reviewedPartners      PartnerProfile[]    @relation("PartnerReviewer")
+  ownedDestinations     Destination[]       @relation("DestinationOwner")
+  refreshTokens         RefreshToken[]
+  verificationTokens    VerificationToken[]
+  deviceTokens          DeviceToken[]
+  auditLogs             AuditLog[]
+  payouts               Payout[]            @relation("PayoutOwner")
+  createdPayouts        Payout[]            @relation("PayoutCreator")
+  uploads               Upload[]
+}
+
+// Refresh token xoay vòng: mỗi lần dùng sẽ bị thu hồi và thay bằng token mới.
+model RefreshToken {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  // Chỉ lưu SHA-256 của token, không lưu token gốc.
+  tokenHash    String    @unique @db.Char(64)
+  deviceName   String?   @db.VarChar(100)
+  userAgent    String?   @db.VarChar(255)
+  ip           String?   @db.VarChar(64)
+  expiresAt    DateTime
+  lastUsedAt   DateTime?
+  revokedAt    DateTime?
+  replacedById Int?
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+}
+
+// Token một lần cho xác thực email và đặt lại mật khẩu.
+model VerificationToken {
+  id        Int                   @id @default(autoincrement())
+  userId    Int
+  type      VerificationTokenType
+  tokenHash String                @unique @db.Char(64)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime              @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+// Expo push token của từng thiết bị đã đăng nhập.
+model DeviceToken {
+  id         Int            @id @default(autoincrement())
+  userId     Int
+  token      String         @unique @db.VarChar(255)
+  platform   DevicePlatform
+  createdAt  DateTime       @default(now())
+  lastSeenAt DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Nhật ký thao tác quản trị: ai làm gì, trên đối tượng nào, giá trị trước/sau.
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  actorId   Int?
+  action    String   @db.VarChar(64)
+  entity    String   @db.VarChar(64)
+  entityId  String?  @db.VarChar(64)
+  before    Json?
+  after     Json?
+  ip        String?  @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+}
+
+// Kỳ đối soát: gom doanh thu của chủ địa điểm từ các booking đã hoàn thành để chuyển khoản.
+model Payout {
+  id                Int          @id @default(autoincrement())
+  ownerId           Int
+  periodStart       DateTime     @db.Date
+  periodEnd         DateTime     @db.Date
+  bookingCount      Int
+  grossAmount       Int
+  commissionAmount  Int
+  amount            Int
+  status            PayoutStatus @default(PENDING)
+  // Tài khoản nhận tiền chụp lại lúc lập kỳ.
+  bankName          String?
+  bankAccountNumber String?      @db.VarChar(30)
+  bankAccountName   String?
+  transferRef       String?      @db.VarChar(100)
+  note              String?      @db.Text
+  paidAt            DateTime?
+  cancelledAt       DateTime?
+  createdById       Int?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  owner     User      @relation("PayoutOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  createdBy User?     @relation("PayoutCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  bookings  Booking[]
+
+  @@index([ownerId, status])
+}
+
+// File người dùng tải lên (ảnh đại diện, ảnh địa điểm, ảnh đánh giá).
+model Upload {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  key       String   @unique @db.VarChar(255)
+  url       String   @db.VarChar(500)
+  mimeType  String   @db.VarChar(50)
+  size      Int
+  purpose   String   @db.VarChar(20)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model PartnerProfile {
@@ -185,6 +325,8 @@ model Destination {
   listingRejectReason String?
   submittedAt         DateTime?
   approvedAt          DateTime?
+  // Tên + khu vực + địa chỉ + danh mục, viết thường, bỏ dấu: "da lat pine hill resort da lat ...".
+  searchText          String        @default("") @db.VarChar(1000)
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 
@@ -255,8 +397,25 @@ model RoomType {
 
   destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
   bookings    Booking[]
+  rates       RoomRate[]
 
   @@index([destinationId])
+}
+
+// Giá theo mùa / ngày lễ: ghi đè pricePerNight cho các đêm trong [startDate, endDate] (gồm cả hai ngày).
+model RoomRate {
+  id            Int      @id @default(autoincrement())
+  roomTypeId    Int
+  name          String   @db.VarChar(100)
+  startDate     DateTime @db.Date
+  endDate       DateTime @db.Date
+  pricePerNight Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@index([roomTypeId, startDate, endDate])
 }
 
 model AddonService {
@@ -334,6 +493,9 @@ model Booking {
   // Hạn thanh toán của booking thanh toán online; quá hạn sẽ tự hủy để trả phòng.
   paymentDueAt DateTime?
 
+  // Kỳ đối soát đã gom booking này; NULL = chưa chuyển tiền cho chủ.
+  payoutId Int?
+
   confirmedAt  DateTime?
   completedAt  DateTime?
   cancelledAt  DateTime?
@@ -347,6 +509,7 @@ model Booking {
   package     Package          @relation(fields: [packageId], references: [id])
   roomType    RoomType         @relation(fields: [roomTypeId], references: [id])
   voucher     Voucher?         @relation(fields: [voucherId], references: [id])
+  payout      Payout?          @relation(fields: [payoutId], references: [id], onDelete: SetNull)
   services    BookingService[]
   payment     Payment?
   review      Review?
@@ -355,6 +518,7 @@ model Booking {
   @@index([roomTypeId, checkInDate, checkOutDate])
   @@index([status])
   @@index([status, paymentDueAt])
+  @@index([payoutId])
 }
 
 model BookingService {
@@ -415,13 +579,25 @@ model Review {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
-  user        User        @relation("ReviewAuthor", fields: [userId], references: [id], onDelete: Cascade)
-  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
-  booking     Booking     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  moderatedBy User?       @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+  user        User          @relation("ReviewAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination   @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  booking     Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  moderatedBy User?         @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+  images      ReviewImage[]
 
   @@index([destinationId, status])
   @@index([status])
+}
+
+model ReviewImage {
+  id        Int    @id @default(autoincrement())
+  reviewId  Int
+  url       String @db.VarChar(500)
+  sortOrder Int    @default(0)
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
 }
 
 model Conversation {
@@ -465,9 +641,12 @@ model Notification {
   body      String           @db.Text
   data      Json?
   isRead    Boolean          @default(false)
+  // Đã xử lý gửi push (gửi xong hoặc người nhận không có thiết bị). NULL = đang chờ gửi.
+  pushedAt  DateTime?
   createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead])
+  @@index([pushedAt, createdAt])
 }

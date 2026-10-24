@@ -17,8 +17,9 @@ import {
   todayInVietnam,
 } from "./booking-rules.js";
 import { commissionRateFor, isOwner } from "./access.service.js";
+import { audit } from "./audit.service.js";
 import { createNotification } from "./notification.service.js";
-import { calculateBookingPrice, calculateCommission } from "./pricing.js";
+import { calculateBookingPrice, calculateCommission, nightlyRoomPrices } from "./pricing.js";
 
 type Db = TransactionClient | typeof prisma;
 
@@ -112,9 +113,17 @@ async function buildQuote(db: Db, input: QuoteBookingInput) {
     }
   }
 
+  // Giá mùa áp cho các đêm trong khoảng ở (đêm cuối = ngày trả phòng - 1).
+  const rates = await db.roomRate.findMany({
+    where: { roomTypeId: roomType.id, startDate: { lt: checkOut }, endDate: { gte: checkIn } },
+  });
+  const nightly = nightlyRoomPrices(roomType.pricePerNight, rates, checkIn, nights);
+  const roomNightlyPrices = nightly.map((night) => night.price);
+
   const priceWithoutVoucher = calculateBookingPrice({
     packagePrice: pkg.price,
     roomPricePerNight: roomType.pricePerNight,
+    roomNightlyPrices,
     nights,
     roomsCount: input.roomsCount,
     guests: input.guests,
@@ -131,6 +140,7 @@ async function buildQuote(db: Db, input: QuoteBookingInput) {
     ? calculateBookingPrice({
         packagePrice: pkg.price,
         roomPricePerNight: roomType.pricePerNight,
+        roomNightlyPrices,
         nights,
         roomsCount: input.roomsCount,
         guests: input.guests,
@@ -151,6 +161,8 @@ async function buildQuote(db: Db, input: QuoteBookingInput) {
     checkIn,
     checkOut,
     nights,
+    // Giá phòng từng đêm, có tên mùa nếu áp giá mùa (để hiển thị trên hóa đơn).
+    nightlyRoomPrices: nightly,
     guests: input.guests,
     roomsCount: input.roomsCount,
     availableRooms,
@@ -303,6 +315,9 @@ export async function cancelBooking(user: AuthUser, id: number, reason?: string)
       where: { id },
       data: { status: "CANCELLED", cancelledAt: now, cancelReason: reason },
     });
+    if (cancelledByManager) {
+      await audit({ actorId: user.id, action: "booking.cancel", entity: "Booking", entityId: id, before: { status: booking.status }, after: { status: "CANCELLED", reason } }, tx);
+    }
     if (booking.payment?.status === "PAID") {
       await tx.payment.update({ where: { bookingId: id }, data: { status: "REFUNDED", refundedAt: now } });
     }
@@ -357,11 +372,13 @@ export async function updateBookingStatus(
         throw conflict("Booking chưa được thanh toán", "PAYMENT_REQUIRED");
       }
       await tx.booking.update({ where: { id }, data: { status, confirmedAt: now } });
+      await audit({ actorId: user.id, action: "booking.confirm", entity: "Booking", entityId: id, before: { status: booking.status }, after: { status } }, tx);
     } else {
       if (todayInVietnam(now) < booking.checkInDate) {
         throw conflict("Chỉ hoàn thành booking từ ngày nhận phòng trở đi", "INVALID_STATUS");
       }
       await tx.booking.update({ where: { id }, data: { status, completedAt: now } });
+      await audit({ actorId: user.id, action: "booking.complete", entity: "Booking", entityId: id, before: { status: booking.status }, after: { status } }, tx);
       // Khách thanh toán tại nơi lưu trú: ghi nhận đã thu tiền khi hoàn thành.
       if (booking.payment && booking.payment.status === "UNPAID") {
         await tx.payment.update({ where: { bookingId: id }, data: { status: "PAID", paidAt: now } });

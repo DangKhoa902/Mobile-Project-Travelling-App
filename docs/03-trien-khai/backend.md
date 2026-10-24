@@ -37,18 +37,21 @@ be/
 ├── .env.example                      Mẫu biến môi trường (xem deploy.md)
 ├── prisma.config.ts                  Prisma CLI: schema, migrations, seed
 ├── prisma/
-│   ├── schema.prisma                 18 model, 12 enum
+│   ├── schema.prisma                 26 model, 15 enum
 │   ├── migrations/                   SQL migration (đã sửa tên bảng PascalCase)
-│   └── seed.ts                       Dữ liệu demo, chạy lại an toàn
-├── postman/                          Collection kiểm thử end-to-end
+│   ├── seed.ts                       Dữ liệu demo, chạy lại an toàn
+│   └── backfill-search.ts            Tính lại Destination.searchText (npm run db:backfill)
+├── postman/                          Collection kiểm thử end-to-end + fixtures/ (ảnh mẫu cho test upload)
+├── uploads/                          Ảnh tải lên khi STORAGE_DRIVER=local (không commit)
 ├── tests/
-│   ├── unit/                         pricing, booking-rules
+│   ├── unit/                         pricing, booking-rules, giá mùa, tìm không dấu, nhận dạng ảnh
 │   └── integration/                  Supertest: quyền, validation (không cần DB)
 └── src/
-    ├── server.ts                     Listen, job hủy booking quá hạn, tắt an toàn
+    ├── server.ts                     Listen, job hủy booking quá hạn, job gửi push, tắt an toàn
     ├── app.ts                        Middleware chung + mount router
     ├── config/env.ts                 Đọc và kiểm tra biến môi trường bằng Zod
-    ├── lib/                          prisma, http-error, pagination, slug
+    ├── lib/                          prisma, http-error, pagination, slug, crypto (token + SHA-256),
+    │                                 search-text (bỏ dấu), storage (local / S3), destination-search
     ├── middlewares/
     │   ├── auth.ts                   authenticate, optionalAuth, requireRole, signAccessToken
     │   └── error-handler.ts          HttpError / ZodError / Prisma error → JSON
@@ -63,6 +66,12 @@ be/
     │   ├── destination.service.ts    Tạo/sửa tin, gửi duyệt, duyệt, giá từ, rating
     │   ├── review.service.ts         Đánh giá, kiểm duyệt
     │   ├── notification.service.ts   createNotification, notifyRoles
+    │   ├── session.service.ts        Phiên đăng nhập: cấp, xoay vòng, thu hồi refresh token
+    │   ├── verification.service.ts   Link xác thực email / đặt lại mật khẩu
+    │   ├── mail.service.ts           Gửi email (console hoặc SMTP)
+    │   ├── push.service.ts           Gửi push qua Expo (outbox)
+    │   ├── payout.service.ts         Đối soát: xem trước, lập kỳ, chuyển, hủy
+    │   ├── audit.service.ts          Ghi nhật ký quản trị
     │   └── stats.service.ts          Dashboard
     ├── routes/
     │   ├── auth.routes.ts            /api/auth
@@ -76,7 +85,11 @@ be/
     │   ├── review.routes.ts          /api/reviews
     │   ├── notification.routes.ts    /api/notifications
     │   ├── conversation.routes.ts    /api/conversations
-    │   └── stats.routes.ts           /api/stats
+    │   ├── stats.routes.ts           /api/stats
+    │   ├── payout.routes.ts          /api/payouts
+    │   ├── audit.routes.ts           /api/audit-logs
+    │   ├── device.routes.ts          /api/devices
+    │   └── upload.routes.ts          /api/uploads (+ ảnh phục vụ ở /uploads)
     └── generated/prisma/             Prisma Client sinh tự động – không sửa tay
 ```
 
@@ -164,7 +177,26 @@ Không sửa migration đã được chia sẻ cho nhóm hoặc đã chạy ở 
 
 ## 7. Job nền
 
-`server.ts` chạy `expireOverdueBookings()` mỗi 60 giây để hủy booking thanh toán online quá hạn (BR-19). Job không chạy trong test (test chỉ import `app.ts`). Khi chạy nhiều instance API, chuyển job sang một tiến trình cron riêng để không chạy trùng.
+| Job | Chu kỳ | Việc |
+|---|---|---|
+| `expireOverdueBookings()` | 60 giây | Hủy booking thanh toán online quá hạn (BR-19) |
+| `dispatchPendingPush()` | 15 giây, chỉ khi `PUSH_ENABLED=true` | Đọc `Notification` có `pushedAt = NULL`, gửi tới Expo Push API, xóa token thiết bị đã gỡ app |
+
+Job không chạy trong test (test chỉ import `app.ts`). Khi chạy nhiều instance API, chuyển job sang một tiến trình cron riêng để không chạy trùng.
+
+## 7b. Ghi nhật ký quản trị
+
+Mọi thao tác quản trị mới phải gọi `audit()` trong cùng transaction:
+
+```ts
+await audit({ actorId: user.id, action: "voucher.update", entity: "Voucher", entityId: id, before, after: data, ip: requestIp(request) }, tx);
+```
+
+`action` theo dạng `<đối tượng>.<hành động>`; danh sách đang dùng ở BR-25 ([quy-tac-nghiep-vu.md](../01-dac-ta/quy-tac-nghiep-vu.md)).
+
+## 7c. Lưu file
+
+`lib/storage.ts` có hai driver chọn bằng `STORAGE_DRIVER`: `local` (ghi vào `UPLOAD_DIR`, Express phục vụ ở `/uploads`) và `s3` (S3, Cloudflare R2, MinIO qua `@aws-sdk/client-s3`). Route chỉ gọi `saveImage` / `deleteImage`, không biết file nằm ở đâu. Kiểm tra loại file bằng chữ ký byte (`detectImageType`), không tin `Content-Type` hay đuôi file.
 
 ## 8. Lệnh npm
 
@@ -176,5 +208,6 @@ Không sửa migration đã được chia sẻ cho nhóm hoặc đã chạy ở 
 | `npm run build` | `prisma generate` + biên dịch vào `dist/` |
 | `npm start` | Chạy bản đã build |
 | `npm run db:*` | Xem mục 6 |
+| `npm run db:backfill` | Tính lại `searchText` cho mọi địa điểm (sau migration `platform_extensions`) |
 
 Kiểm thử chi tiết: [kiem-thu.md](kiem-thu.md). Triển khai: [deploy.md](deploy.md).

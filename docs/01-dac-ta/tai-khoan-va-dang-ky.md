@@ -97,3 +97,19 @@ Lỗi định dạng trả 400 `VALIDATION_ERROR` với `details[].path` là tê
 | `listingStatus` | *Tự sinh* = `DRAFT` | |
 
 **Điều kiện gửi duyệt** (`POST /api/destinations/:id/submit`): có ít nhất **1 gói dịch vụ** và **1 loại phòng** đang mở bán (400 `LISTING_INCOMPLETE` nếu thiếu).
+
+## 6. Xác thực email, quên mật khẩu, phiên đăng nhập
+
+| Thao tác | Trường | Bắt buộc | Quy tắc |
+|---|---|---|---|
+| Xác thực email (A5) | `token` | **Bắt buộc** | Lấy từ link trong email; hiệu lực 24 giờ, dùng một lần |
+| Gửi lại email xác thực | — | | Phải đăng nhập; 409 nếu đã xác thực |
+| Quên mật khẩu (A3) | `email` | **Bắt buộc** | Định dạng email. Luôn trả cùng thông báo, kể cả email chưa đăng ký |
+| Đặt mật khẩu mới (A4) | `token` | **Bắt buộc** | Từ link email; hiệu lực 30 phút, dùng một lần |
+| | `newPassword` | **Bắt buộc** | Cùng quy tắc mật khẩu khi đăng ký |
+| Đăng nhập | `deviceName` | Tùy chọn | Tối đa 100 ký tự, hiện ở danh sách thiết bị (P5) |
+| Làm mới phiên | `refreshToken` | **Bắt buộc** | Chuỗi nhận được khi đăng nhập / làm mới lần trước |
+
+- **Email chưa xác thực** vẫn đăng nhập, đặt chỗ, đánh giá bình thường; chỉ không nộp được hồ sơ đối tác.
+- Tài khoản tạo trước ngày 25/10/2026 và tài khoản demo được coi là đã xác thực.
+- Đặt lại mật khẩu thành công cũng đánh dấu email đã xác thực (đã mở được link trong hộp thư) và đăng xuất mọi thiết bị.

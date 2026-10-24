@@ -7,12 +7,12 @@ docs/
 ├── 01-dac-ta/                  HỆ THỐNG LÀM GÌ
 │   ├── tong-quan.md            Mục tiêu, mô hình môi giới, 5 actor, use case, phạm vi
 │   ├── tai-khoan-va-dang-ky.md Trường bắt buộc / tùy chọn: đăng ký, hồ sơ, đối tác, tin đăng
-│   ├── quy-tac-nghiep-vu.md    BR-01 → BR-20 và chỗ code thực thi
+│   ├── quy-tac-nghiep-vu.md    BR-01 → BR-27 và chỗ code thực thi
 │   ├── luong-nghiep-vu.md      Luồng chi tiết + sơ đồ + bảng mã lỗi
 │   └── thanh-toan-gia-lap.md   Cổng thanh toán giả lập, hạn 15 phút, hoàn tiền
 │
 ├── 02-thiet-ke/                THIẾT KẾ
-│   ├── co-so-du-lieu.md        ERD, 19 bảng, enum, index, công thức giá và hoa hồng
+│   ├── co-so-du-lieu.md        ERD, 27 bảng, enum, index, công thức giá và hoa hồng
 │   ├── api.md                  Toàn bộ endpoint theo module và quyền
 │   └── giao-dien.md            Sitemap + đặc tả từng trang (khách, chủ địa điểm, admin)
 │

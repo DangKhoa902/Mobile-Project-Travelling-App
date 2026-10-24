@@ -34,7 +34,7 @@ describe("API guards", () => {
     expect(response.body.code).toBe("INVALID_JSON");
   });
 
-  it.each(["/api/bookings", "/api/favorites", "/api/notifications", "/api/users", "/api/auth/me", "/api/partners/me", "/api/manage/destinations", "/api/stats/overview"])(
+  it.each(["/api/bookings", "/api/favorites", "/api/notifications", "/api/users", "/api/auth/me", "/api/partners/me", "/api/manage/destinations", "/api/stats/overview", "/api/payouts", "/api/audit-logs", "/api/devices", "/api/auth/sessions"])(
     "%s yêu cầu đăng nhập",
     async (path) => {
       const response = await request(app).get(path);
@@ -48,6 +48,16 @@ describe("API guards", () => {
       .send({ name: "Khách", email: "a@example.com", password: "Secret123" });
     expect(response.status).toBe(400);
     expect(response.body.details.map((issue: { path: string }) => issue.path)).toContain("acceptTerms");
+  });
+
+  it("tải ảnh khi chưa đăng nhập trả 401", async () => {
+    const response = await request(app).post("/api/uploads").attach("file", Buffer.from([0xff, 0xd8, 0xff]), "a.jpg");
+    expect(response.status).toBe(401);
+  });
+
+  it("refresh token sai định dạng trả 400", async () => {
+    const response = await request(app).post("/api/auth/refresh").send({ refreshToken: "ngan" });
+    expect(response.status).toBe(400);
   });
 
   it("token giả bị từ chối", async () => {

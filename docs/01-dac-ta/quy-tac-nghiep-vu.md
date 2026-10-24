@@ -1,6 +1,6 @@
 # Quy tắc nghiệp vụ
 
-BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thêm chủ địa điểm, hoa hồng, hạn thanh toán và dashboard. Cột **Thực thi tại** chỉ chỗ code đảm bảo quy tắc, để khi sửa biết phải sửa ở đâu.
+BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thêm chủ địa điểm, hoa hồng, hạn thanh toán và dashboard; BR-21 → BR-27 khi thêm phiên đăng nhập, email, giá mùa, đối soát, nhật ký, ảnh, tìm không dấu. Cột **Thực thi tại** chỉ chỗ code đảm bảo quy tắc, để khi sửa biết phải sửa ở đâu.
 
 ## Tài khoản và phân quyền
 
@@ -35,6 +35,18 @@ BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thê
 | BR-19 | Booking thanh toán online phải được thanh toán trong **15 phút** (cấu hình `PAYMENT_TIMEOUT_MINUTES`). Quá hạn: không còn giữ phòng, không thanh toán được nữa, và tự hủy. | `paymentDueAt`; `findOverlapping`; `payBooking` → 409 `PAYMENT_EXPIRED`; job `expireOverdueBookings` |
 | BR-20 | Chủ địa điểm hoặc Staff hủy booking của khách **phải ghi lý do**; khách và chủ đều được thông báo. | `cancelBooking` → 400 `CANCEL_REASON_REQUIRED` |
 | — | Giá, hoa hồng, thuế được **chụp lại trên booking** lúc đặt; sửa bảng giá hay tỷ lệ hoa hồng sau đó không làm đổi booking cũ. | Các cột giá + `commissionRate/Amount`, `ownerRevenue` của `Booking` |
+
+## Đối soát, giá mùa, tài khoản (bổ sung 25/10/2026)
+
+| Mã | Quy tắc | Thực thi tại |
+|---|---|---|
+| BR-21 | Access token sống 15 phút; refresh token 30 ngày, **xoay vòng** mỗi lần dùng. Dùng lại token đã xoay (sau 30 giây) = nghi bị đánh cắp → thu hồi mọi phiên của tài khoản. Đổi / đặt lại mật khẩu hoặc bị khóa → thu hồi mọi phiên. | `session.service.ts`, `user.routes.ts` |
+| BR-22 | Phải xác thực email trước khi nộp hồ sơ đối tác. Link xác thực hiệu lực 24 giờ, link đặt lại mật khẩu 30 phút, dùng một lần; tạo link mới thì link cũ hết hiệu lực. "Quên mật khẩu" luôn trả cùng một thông báo dù email có tồn tại hay không. | `verification.service.ts`, `partner.routes.ts` |
+| BR-23 | Giá mùa ghi đè giá phòng cho từng đêm trong khoảng (gồm ngày đầu và cuối); các khoảng của một loại phòng không chồng ngày. Giá chụp lại trên booking như cũ. | `nightlyRoomPrices` (`pricing.ts`), `catalog.routes.ts` |
+| BR-24 | Đối soát chỉ gom booking `COMPLETED`, đã thu tiền, chưa thuộc kỳ nào, hoàn thành trong kỳ đã kết thúc. Một booking thuộc tối đa một kỳ. Chỉ hủy được kỳ chưa chuyển tiền; kỳ đã chuyển không sửa. Chủ phải có tài khoản ngân hàng. | `payout.service.ts` |
+| BR-25 | Ghi nhật ký cho: khóa/mở tài khoản, đổi quyền, duyệt/từ chối/tạm ngưng đối tác, đổi hoa hồng, duyệt/từ chối tin đăng và đánh giá, chủ/staff xác nhận/hoàn thành/hủy booking, đổi giá gói/phòng, tạo/sửa/xóa giá mùa, tạo/sửa voucher, lập/chuyển/hủy kỳ đối soát. Chỉ ADMIN xem nhật ký. | `audit.service.ts` |
+| BR-26 | Ảnh chỉ nhận JPEG/PNG/WebP (kiểm tra chữ ký file, không tin đuôi file), tối đa 5 MB. Ảnh địa điểm chỉ chủ địa điểm/admin tải. Ảnh đính kèm đánh giá (tối đa 5) phải do chính người viết tải lên. | `storage.ts`, `upload.routes.ts`, `review.service.ts` |
+| BR-27 | Tìm kiếm không phân biệt dấu và hoa/thường trên tên, khu vực, địa chỉ, danh mục. | `Destination.searchText`, `destination.dao.ts` |
 
 ## Đánh giá
 

@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { z } from "zod";
 import type { Prisma } from "../generated/prisma/client.js";
-import { badRequest, conflict, notFound } from "../lib/http-error.js";
+import { badRequest, conflict, HttpError, notFound } from "../lib/http-error.js";
 import { idParamSchema, paginated, paginationSchema, toSkipTake } from "../lib/pagination.js";
 import { prisma } from "../lib/prisma.js";
 import { authenticate, currentUser, requireRole } from "../middlewares/auth.js";
+import { audit, requestIp } from "../services/audit.service.js";
 import { createNotification, notifyRoles } from "../services/notification.service.js";
 import { phoneSchema } from "../validators/booking.schema.js";
 
@@ -51,6 +52,9 @@ partnerRouter.post("/apply", async (request, response) => {
   const user = currentUser(request);
   const { acceptPartnerTerms: _accepted, ...input } = applySchema.parse(request.body);
   if (user.role !== "USER") throw conflict("Chỉ tài khoản khách hàng mới nộp hồ sơ đối tác", "INVALID_ROLE");
+  // Đối tác nhận tiền từ sàn nên phải chứng minh sở hữu email trước.
+  const account = await prisma.user.findUniqueOrThrow({ where: { id: user.id }, select: { emailVerifiedAt: true } });
+  if (!account.emailVerifiedAt) throw new HttpError(403, "Vui lòng xác thực email trước khi nộp hồ sơ đối tác", "EMAIL_NOT_VERIFIED");
 
   const existing = await prisma.partnerProfile.findUnique({ where: { userId: user.id } });
   if (existing && existing.status !== "REJECTED") {
@@ -156,6 +160,7 @@ partnerRouter.patch("/:id/review", requireRole("ADMIN"), async (request, respons
       include: profileInclude,
     });
     if (input.status === "APPROVED") await tx.user.update({ where: { id: profile.userId }, data: { role: "OWNER" } });
+    await audit({ actorId: admin.id, action: input.status === "APPROVED" ? "partner.approve" : "partner.reject", entity: "PartnerProfile", entityId: id, before: { status: profile.status, commissionRate: profile.commissionRate }, after: { status: result.status, commissionRate: result.commissionRate, rejectReason: input.rejectReason }, ip: requestIp(request) }, tx);
     await createNotification(
       {
         userId: profile.userId,
@@ -188,6 +193,7 @@ partnerRouter.patch("/:id/status", requireRole("ADMIN"), async (request, respons
 
   const updated = await prisma.$transaction(async (tx) => {
     const result = await tx.partnerProfile.update({ where: { id }, data: { status }, include: profileInclude });
+    await audit({ actorId: currentUser(request).id, action: status === "SUSPENDED" ? "partner.suspend" : "partner.reinstate", entity: "PartnerProfile", entityId: id, before: { status: profile.status }, after: { status, reason }, ip: requestIp(request) }, tx);
     await tx.user.update({ where: { id: profile.userId }, data: { role: status === "SUSPENDED" ? "USER" : "OWNER" } });
     if (status === "SUSPENDED") {
       await tx.destination.updateMany({ where: { ownerId: profile.userId }, data: { isActive: false } });
@@ -214,5 +220,9 @@ partnerRouter.patch("/:id/status", requireRole("ADMIN"), async (request, respons
 partnerRouter.patch("/:id/commission", requireRole("ADMIN"), async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
   const { commissionRate } = z.object({ commissionRate: z.number().min(0).max(0.5) }).parse(request.body);
-  response.json({ data: await prisma.partnerProfile.update({ where: { id }, data: { commissionRate } }) });
+  const before = await prisma.partnerProfile.findUnique({ where: { id }, select: { commissionRate: true } });
+  if (!before) throw notFound("hồ sơ đối tác");
+  const data = await prisma.partnerProfile.update({ where: { id }, data: { commissionRate } });
+  await audit({ actorId: currentUser(request).id, action: "partner.commission_change", entity: "PartnerProfile", entityId: id, before, after: { commissionRate }, ip: requestIp(request) });
+  response.json({ data });
 });

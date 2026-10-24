@@ -8,15 +8,16 @@ Tài liệu này mô tả cơ sở dữ liệu đề xuất cho Travelling App, 
 
 ## 1. Tổng quan
 
-Cơ sở dữ liệu gồm 19 bảng (18 model và bảng nối `_DestinationToFacility`), chia thành 5 nhóm:
+Cơ sở dữ liệu gồm 27 bảng (26 model và bảng nối `_DestinationToFacility`), chia thành 6 nhóm:
 
 | Nhóm | Bảng | Mục đích |
 |---|---|---|
-| Tài khoản và đối tác | `User`, `PartnerProfile` | Khách hàng, chủ địa điểm, nhân viên CSKH, quản trị viên (phân biệt bằng `role`); hồ sơ đối tác của chủ địa điểm |
+| Tài khoản và đối tác | `User`, `PartnerProfile`, `RefreshToken`, `VerificationToken`, `DeviceToken` | Người dùng 4 vai trò; hồ sơ đối tác; phiên đăng nhập; token xác thực email / đặt lại mật khẩu; thiết bị nhận push |
 | Danh mục và nội dung | `Category`, `Facility`, `Destination`, `DestinationImage`, `_DestinationToFacility` | Địa điểm du lịch, danh mục, tiện ích, ảnh |
-| Sản phẩm đặt chỗ | `Package`, `RoomType`, `AddonService`, `Voucher` | Gói dịch vụ, loại phòng, dịch vụ bổ sung, mã giảm giá |
-| Giao dịch | `Booking`, `BookingService`, `Payment` | Đơn đặt chỗ, dịch vụ đã chọn, thanh toán |
-| Tương tác | `Favorite`, `Review`, `Conversation`, `Message`, `Notification` | Yêu thích, đánh giá, chat CSKH, thông báo |
+| Sản phẩm đặt chỗ | `Package`, `RoomType`, `RoomRate`, `AddonService`, `Voucher` | Gói dịch vụ, loại phòng, giá theo mùa, dịch vụ bổ sung, mã giảm giá |
+| Giao dịch | `Booking`, `BookingService`, `Payment`, `Payout` | Đơn đặt chỗ, dịch vụ đã chọn, thanh toán, kỳ đối soát chuyển tiền cho chủ |
+| Tương tác | `Favorite`, `Review`, `ReviewImage`, `Conversation`, `Message`, `Notification` | Yêu thích, đánh giá + ảnh, chat CSKH, thông báo |
+| Vận hành | `AuditLog`, `Upload` | Nhật ký thao tác quản trị; file người dùng tải lên |
 
 ## 2. Sơ đồ quan hệ (ERD)
 
@@ -33,6 +34,15 @@ erDiagram
     User ||--o| PartnerProfile : "hồ sơ đối tác"
     User |o--o{ PartnerProfile : "duyệt (admin)"
     User |o--o{ Destination : "sở hữu (owner)"
+    User ||--o{ RefreshToken : "phiên đăng nhập"
+    User ||--o{ VerificationToken : "link email"
+    User ||--o{ DeviceToken : "thiết bị"
+    User |o--o{ AuditLog : "thực hiện"
+    User ||--o{ Payout : "nhận tiền (owner)"
+    User ||--o{ Upload : "tải lên"
+    RoomType ||--o{ RoomRate : "giá mùa"
+    Payout |o--o{ Booking : "gom"
+    Review ||--o{ ReviewImage : "ảnh"
 
     Category |o--o{ Destination : "phân loại"
     Destination }o--o{ Facility : "có tiện ích"
@@ -84,6 +94,9 @@ Booking
 | `Role` | `USER`, `OWNER`, `STAFF`, `ADMIN` | `User.role` |
 | `PartnerStatus` | `PENDING`, `APPROVED`, `REJECTED`, `SUSPENDED` | `PartnerProfile.status` |
 | `ListingStatus` | `DRAFT`, `PENDING_REVIEW`, `APPROVED`, `REJECTED` | `Destination.listingStatus` |
+| `PayoutStatus` | `PENDING`, `PAID`, `CANCELLED` | `Payout.status` |
+| `VerificationTokenType` | `EMAIL_VERIFY`, `PASSWORD_RESET` | `VerificationToken.type` |
+| `DevicePlatform` | `IOS`, `ANDROID`, `WEB` | `DeviceToken.platform` |
 | `UserStatus` | `ACTIVE`, `LOCKED` | `User.status` |
 | `BookingStatus` | `PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED` | `Booking.status` |
 | `PaymentMethod` | `ONLINE_MOCK` (thanh toán online giả lập), `PAY_AT_PROPERTY` (trả tại nơi lưu trú) | `Payment.method` |
@@ -107,6 +120,7 @@ Ký hiệu: **PK** khóa chính, **FK** khóa ngoại, **UQ** duy nhất, **?** 
 | `id` | INT | PK | |
 | `name` | VARCHAR(191) | | Họ tên |
 | `email` | VARCHAR(191) | UQ | Lưu chữ thường; dùng để đăng nhập |
+| `emailVerifiedAt` | DATETIME? | | `NULL` = chưa xác thực email; bắt buộc trước khi nộp hồ sơ đối tác |
 | `password` | VARCHAR(191) | | Hash bcrypt, không bao giờ trả ra API (BR-09) |
 | `phone` | VARCHAR(20)? | | |
 | `dateOfBirth` | DATE? | | |
@@ -133,6 +147,23 @@ Một bảng cho cả bốn vai trò vì mọi người dùng chung cơ chế đ
 | `rejectReason` | VARCHAR? | | |
 | `reviewedById` | INT? | FK → `User`, SET NULL | Admin đã duyệt |
 | `reviewedAt` | DATETIME? | | |
+
+### 4.1c. Phiên đăng nhập và token email
+
+`RefreshToken` – mỗi dòng là một phiên trên một thiết bị:
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| `userId` | INT, FK → `User` CASCADE | |
+| `tokenHash` | CHAR(64), UQ | SHA-256 của refresh token; token gốc chỉ client giữ |
+| `deviceName`, `userAgent`, `ip` | VARCHAR? | Hiển thị ở danh sách phiên |
+| `expiresAt` | DATETIME | Tạo + `REFRESH_TOKEN_TTL_DAYS` (30 ngày) |
+| `lastUsedAt`, `revokedAt` | DATETIME? | `revokedAt` khác NULL = đã thu hồi (đăng xuất, đổi mật khẩu, bị khóa, đã xoay) |
+| `replacedById` | INT? | Token mới thay thế khi xoay vòng |
+
+`VerificationToken` – link một lần trong email: `type` (`EMAIL_VERIFY` 24 giờ, `PASSWORD_RESET` 30 phút), `tokenHash` UQ, `expiresAt`, `usedAt`. Tạo token mới thì token cũ cùng loại hết hiệu lực.
+
+`DeviceToken` – Expo push token: `token` UQ, `platform`, `lastSeenAt`. Một token chỉ thuộc một tài khoản; đăng nhập tài khoản khác trên cùng máy thì token chuyển sang tài khoản đó.
 
 Tách hồ sơ đối tác khỏi `User` vì chỉ một phần nhỏ người dùng là chủ địa điểm; tránh thêm nhiều cột NULL vào bảng `User`. Không lưu số CCCD/CMND (dữ liệu nhạy cảm, đồ án không cần).
 
@@ -176,6 +207,7 @@ Tiện ích chỉ để **hiển thị và lọc**. Tiện ích nào thu thêm t
 | `listingStatus` | ENUM `ListingStatus` | mặc định `APPROVED`, INDEX | Chủ tạo → `DRAFT`; admin tạo → `APPROVED` |
 | `listingRejectReason` | VARCHAR? | | Lý do admin từ chối tin |
 | `submittedAt`, `approvedAt` | DATETIME? | | Mốc gửi duyệt / được duyệt |
+| `searchText` | VARCHAR(1000) | mặc định `''` | **Dữ liệu dẫn xuất:** tên + khu vực + địa chỉ + danh mục, viết thường, bỏ dấu, dùng để tìm "da lat" ra "Đà Lạt" |
 | `isActive` | BOOLEAN | mặc định `true` | Tạm ngưng / mở nhận khách. Khách chỉ thấy khi `isActive = true` **và** `listingStatus = APPROVED` (BR-15) |
 | `isFeatured` | BOOLEAN | mặc định `false` | Địa điểm nổi bật trên trang chủ |
 | `minPrice` | INT | mặc định 0 | **Dữ liệu dẫn xuất:** "Giá từ" |
@@ -222,6 +254,8 @@ Tiện ích chỉ để **hiển thị và lọc**. Tiện ích nào thu thêm t
 | `pricePerNight` | INT | | VNĐ/đêm/phòng |
 | `totalRooms` | INT | | Tổng số phòng loại này |
 | `isActive` | BOOLEAN | mặc định `true` | |
+
+**Giá theo mùa – `RoomRate`:** `roomTypeId` (FK CASCADE), `name` ("Tết Nguyên đán 2027"), `startDate`, `endDate` (DATE, gồm cả hai ngày), `pricePerNight`. Các khoảng của cùng loại phòng **không được chồng ngày** (409 `RATE_OVERLAP`), nên mỗi đêm khớp tối đa một giá mùa; đêm không khớp dùng `RoomType.pricePerNight`. "Giá từ" (`minPrice`) vẫn tính theo giá gốc.
 
 **Không lưu cột "số phòng còn trống".** Số phòng trống thay đổi theo ngày nên được tính khi cần (mục 6.2). Lưu một con số cố định sẽ sai khi khách đặt các khoảng ngày khác nhau.
 
@@ -281,6 +315,7 @@ Tiện ích chỉ để **hiển thị và lọc**. Tiện ích nào thu thêm t
 | `commissionRate` | DOUBLE | mặc định 0 | Tỷ lệ hoa hồng chụp lại lúc đặt (1 = địa điểm của sàn) |
 | `commissionAmount` | INT | mặc định 0 | Hoa hồng sàn = round((subtotal − discount) × rate) |
 | `ownerRevenue` | INT | mặc định 0 | Doanh thu chủ = (subtotal − discount) − commissionAmount |
+| `payoutId` | INT? | FK → `Payout`, SET NULL, INDEX | Kỳ đối soát đã gom booking này; `NULL` = chưa chuyển tiền cho chủ |
 | `paymentDueAt` | DATETIME? | INDEX `(status, paymentDueAt)` | Hạn thanh toán online (tạo + 15 phút); `NULL` với trả tại nơi ở hoặc đã thanh toán (BR-19) |
 | `confirmedAt`, `completedAt`, `cancelledAt` | DATETIME? | | Mốc thời gian theo trạng thái |
 | `cancelReason` | TEXT? | | |
@@ -313,6 +348,20 @@ Các khóa ngoại dùng `RESTRICT`: không thể xóa địa điểm, gói ho�
 | `transactionRef` | VARCHAR? | UQ | Mã giao dịch; giả lập dạng `MOCK-<uuid>` |
 | `paidAt`, `refundedAt` | DATETIME? | | |
 
+### 4.12b. `Payout` – Kỳ đối soát
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| `ownerId` | INT, FK → `User` RESTRICT | Chủ địa điểm nhận tiền |
+| `periodStart`, `periodEnd` | DATE | Kỳ theo ngày **hoàn thành** booking (giờ Việt Nam), phải đã kết thúc |
+| `bookingCount`, `grossAmount`, `commissionAmount`, `amount` | INT | Số booking; tổng khách trả; hoa hồng sàn; **số tiền chuyển cho chủ** = Σ `ownerRevenue` |
+| `status` | ENUM `PayoutStatus` | `PENDING` → `PAID`, hoặc `PENDING` → `CANCELLED` |
+| `bankName`, `bankAccountNumber`, `bankAccountName` | VARCHAR? | Chụp lại tài khoản lúc lập kỳ |
+| `transferRef`, `paidAt`, `cancelledAt`, `note` | | Mã chuyển khoản khi admin xác nhận |
+| `createdById` | INT? FK → `User` SET NULL | Admin lập kỳ |
+
+Booking vào kỳ khi: `COMPLETED`, thanh toán `PAID`, chưa thuộc kỳ nào (`payoutId` NULL), hoàn thành trong kỳ. Gắn `payoutId` có điều kiện `payoutId IS NULL` trong cùng transaction, nên hai admin bấm cùng lúc không chi trùng. Hủy kỳ `PENDING` thì trả booking về chưa đối soát.
+
 ### 4.13. `Favorite` – Yêu thích
 
 | Cột | Kiểu | Ràng buộc |
@@ -337,6 +386,8 @@ Khóa chính ghép `(userId, destinationId)` đảm bảo **BR-03** ở mức da
 | `moderatedById` | INT? | FK → `User`, SET NULL | Nhân viên duyệt |
 | `moderatedAt` | DATETIME? | | |
 | `rejectReason` | VARCHAR? | | Bắt buộc khi từ chối |
+
+`ReviewImage(reviewId, url, sortOrder)`: tối đa 5 ảnh mỗi đánh giá; URL phải là file chính người viết đã tải lên (`Upload` purpose `review`).
 
 Review gắn với `bookingId` thay vì chỉ `destinationId`. Như vậy chỉ khách có booking mới tạo được review, và backend kiểm tra booking đó đã `COMPLETED` (**BR-02**).
 
@@ -377,7 +428,25 @@ Review gắn với `bookingId` thay vì chỉ `destinationId`. Như vậy chỉ 
 | `data` | JSON? | | Ví dụ `{"bookingId": 12, "code": "TA261021-..."}` để app mở đúng màn hình |
 | `isRead` | BOOLEAN | mặc định `false` | Đã đọc / chưa đọc |
 
+Cột `pushedAt` (DATETIME?): `NULL` = chưa xử lý gửi push. Đây là **outbox**: thông báo ghi cùng transaction nghiệp vụ, job gửi push đọc các dòng `pushedAt IS NULL` sau khi đã commit, gửi xong thì đánh dấu. Thông báo quá 24 giờ không gửi dồn.
+
 Thông báo được tạo **trong cùng transaction** với sự kiện nghiệp vụ (tạo booking, thanh toán, hủy, xác nhận, staff trả lời, duyệt review), nên không xảy ra trường hợp đổi trạng thái thành công mà mất thông báo.
+
+### 4.17. `AuditLog` – Nhật ký quản trị
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| `actorId` | INT? FK → `User` SET NULL | Người thực hiện |
+| `action` | VARCHAR(64) | Dạng `<đối tượng>.<hành động>`: `user.lock`, `partner.approve`, `listing.reject`, `payout.pay`, `room_rate.update`... |
+| `entity`, `entityId` | VARCHAR(64) | Bảng và khóa của đối tượng bị tác động |
+| `before`, `after` | JSON? | Giá trị trước / sau (chỉ các trường thay đổi chính) |
+| `ip` | VARCHAR(64)? | |
+
+Ghi trong cùng transaction với thao tác. Danh sách hành động được ghi: [../01-dac-ta/quy-tac-nghiep-vu.md](../01-dac-ta/quy-tac-nghiep-vu.md) BR-25.
+
+### 4.18. `Upload` – File tải lên
+
+`userId` (FK CASCADE), `key` UQ (đường dẫn trong kho, ví dụ `review/2026-10/Xy3k.png`), `url`, `mimeType`, `size`, `purpose` (`avatar` · `destination` · `review`). File nằm ở thư mục `uploads/` của API (`STORAGE_DRIVER=local`) hoặc S3 / Cloudflare R2 / MinIO (`s3`); DB chỉ lưu URL.
 
 ## 5. Index
 
@@ -387,6 +456,13 @@ Thông báo được tạo **trong cùng transaction** với sự kiện nghiệ
 | `Destination` | `slug` (UQ), `location`, `categoryId`, `(isActive, isFeatured)`, `ownerId`, `listingStatus` | Chi tiết theo slug, lọc khu vực/danh mục, trang chủ, tin của chủ, hàng chờ duyệt tin |
 | `Booking` | `code` (UQ), `(userId, status)`, `(roomTypeId, checkInDate, checkOutDate)`, `status`, `(status, paymentDueAt)` | Lịch sử đặt, **kiểm tra phòng trống**, màn hình quản lý, **job tự hủy quá hạn** |
 | `PartnerProfile` | `userId` (UQ), `status` | Hồ sơ của tôi, hàng chờ duyệt đối tác |
+| `Booking` | `payoutId` | Booking của một kỳ đối soát |
+| `RoomRate` | `(roomTypeId, startDate, endDate)` | Giá mùa giao với khoảng ở |
+| `RefreshToken` | `tokenHash` (UQ), `(userId, revokedAt)` | Làm mới token; danh sách / thu hồi phiên |
+| `VerificationToken` | `tokenHash` (UQ), `(userId, type)` | Dùng link; vô hiệu link cũ |
+| `Notification` | `(pushedAt, createdAt)` | Job gửi push |
+| `AuditLog` | `(entity, entityId)`, `actorId`, `createdAt` | Lọc nhật ký |
+| `Payout` | `(ownerId, status)` | Kỳ của chủ, kỳ chờ chuyển |
 | `Review` | `bookingId` (UQ), `(destinationId, status)`, `status` | Review đã duyệt của địa điểm, hàng chờ kiểm duyệt |
 | `Conversation` | `customerId`, `(status, lastMessageAt)` | Hộp thư khách, hàng đợi CSKH |
 | `Message` | `(conversationId, createdAt)` | Tải tin nhắn theo thứ tự |
@@ -414,7 +490,7 @@ Thông báo được tạo **trong cùng transaction** với sự kiện nghiệ
 | BR-15, BR-16 Chỉ hiển thị tin đã duyệt | `Destination.listingStatus`, `isActive` |
 | BR-19 Hạn thanh toán online | `Booking.paymentDueAt` |
 
-Danh sách đầy đủ BR-01 → BR-20: [../01-dac-ta/quy-tac-nghiep-vu.md](../01-dac-ta/quy-tac-nghiep-vu.md).
+Danh sách đầy đủ BR-01 → BR-27: [../01-dac-ta/quy-tac-nghiep-vu.md](../01-dac-ta/quy-tac-nghiep-vu.md).
 
 ### 6.2. Kiểm tra phòng trống (BR-04)
 
@@ -506,6 +582,10 @@ ownerRevenue     = (subtotal - discount) - commissionAmount
 | `Payment` tách khỏi `Booking` (1-1) | Dễ mở rộng sang nhiều lần thanh toán hoặc cổng thật (VNPay, MoMo) mà không đổi bảng Booking |
 | `Destination.ownerId` cho phép NULL | Giữ được địa điểm do sàn tự kinh doanh và dữ liệu cũ trước khi có actor chủ địa điểm |
 | `listingStatus` mặc định `APPROVED` | Migration thêm cột không làm ẩn các địa điểm đã có; chủ tạo mới thì backend đặt `DRAFT` |
+| Tìm không dấu bằng cột `searchText` + `LIKE`, không dùng FULLTEXT | Tiếng Việt nhiều âm tiết 2 ký tự ("da", "hồ"); FULLTEXT của InnoDB bỏ từ ngắn hơn 3 ký tự nên "da lat" không ra kết quả. Dữ liệu đồ án nhỏ, `LIKE` đủ nhanh |
+| Refresh token và link email chỉ lưu SHA-256 | Lộ DB cũng không dùng lại được token |
+| Push gửi qua outbox (`Notification.pushedAt`) | Lỗi mạng tới Expo không làm hỏng thao tác chính; gửi lại được ở lần chạy sau |
+| Ảnh lưu ngoài DB, DB chỉ giữ URL | DB nhẹ; đổi kho (local → S3/R2) không đổi dữ liệu |
 | Thống kê tính trực tiếp từ `Booking`, không lưu bảng tổng hợp | Dữ liệu đồ án nhỏ, truy vấn nhanh nhờ index; khi lớn có thể thêm bảng tổng hợp theo ngày |
 
 ## 8. Migration và môi trường
@@ -514,9 +594,10 @@ ownerRevenue     = (subtotal - discount) - commissionAmount
 |---|---|
 | `20261004083101_init` | 3 bảng ban đầu: `User`, `Destination`, `Booking` |
 | `20261021090000_business_domain` | Danh mục, tiện ích, gói, phòng, dịch vụ, voucher, booking đầy đủ, thanh toán, yêu thích, đánh giá, chat, thông báo |
+| `20261025090000_platform_extensions` | Đối soát (`Payout`), giá mùa (`RoomRate`), refresh token, token email, thiết bị push + `Notification.pushedAt`, nhật ký, `Upload` + `ReviewImage`, `Destination.searchText`, `User.emailVerifiedAt`. Tài khoản có sẵn được coi là đã xác thực email; thông báo cũ không gửi push |
 | `20261024090000_partner_owner_dashboard` | Role `OWNER`, bảng `PartnerProfile`, `Destination.ownerId` + kiểm duyệt tin, hoa hồng trên `Booking`, `paymentDueAt`, `Payment.channel`, loại thông báo `PARTNER` |
 
-**Lưu ý khi tạo migration trên Windows:** MariaDB trên Windows mặc định `lower_case_table_names=1`, nên SQL do Prisma sinh ra có thể viết tên bảng thành chữ thường (`` `booking` ``). Trên Linux/Docker, tên bảng phân biệt hoa thường và migration đó sẽ lỗi khi deploy. Sau khi tạo migration, kiểm tra và sửa lại tên bảng đúng PascalCase (`` `Booking` ``) trước khi commit. Hai migration `business_domain` và `partner_owner_dashboard` đã được sửa theo cách này.
+**Lưu ý khi tạo migration trên Windows:** MariaDB trên Windows mặc định `lower_case_table_names=1`, nên SQL do Prisma sinh ra có thể viết tên bảng thành chữ thường (`` `booking` ``). Trên Linux/Docker, tên bảng phân biệt hoa thường và migration đó sẽ lỗi khi deploy. Sau khi tạo migration, kiểm tra và sửa lại tên bảng đúng PascalCase (`` `Booking` ``) trước khi commit. Ba migration `business_domain`, `partner_owner_dashboard`, `platform_extensions` đã được sửa theo cách này. Sau migration `platform_extensions` chạy `npm run db:backfill` một lần để tính `searchText` cho địa điểm có sẵn.
 
 Lệnh thường dùng (chạy trong `be/`):
 
@@ -529,17 +610,10 @@ npm run db:studio                            # xem dữ liệu
 
 ## 9. Đề xuất mở rộng
 
-Các mục dưới đây chưa có trong schema; nên làm theo thứ tự ưu tiên:
+Đã triển khai ngày 25/10/2026: đối soát (`Payout`), giá mùa (`RoomRate`), refresh token, xác thực email + quên mật khẩu, push notification, nhật ký quản trị, tìm kiếm không dấu, ảnh tải lên + ảnh đánh giá. Còn lại:
 
-1. **Đối soát và chuyển tiền cho chủ địa điểm:** bảng `Payout(ownerId, periodStart, periodEnd, amount, status, paidAt)` gom `ownerRevenue` theo kỳ.
-2. **Giá theo mùa / ngày lễ:** bảng `RoomRate(roomTypeId, date, price)` hoặc `(roomTypeId, startDate, endDate, price)` ghi đè `pricePerNight` vào Tết, lễ 30/4.
-3. **Đóng phòng theo ngày:** bảng `RoomBlock(roomTypeId, date, blockedRooms)` cho bảo trì hoặc bán qua kênh khác.
-4. **Phí hủy thay vì chặn hủy:** thêm `Package.cancellationFeePercent` và `Payment.refundAmount` để hủy muộn vẫn được, nhưng hoàn một phần.
-5. **Cổng thanh toán thật:** bảng `PaymentTransaction(paymentId, provider, providerRef, status, rawPayload, createdAt)` lưu từng lần gọi và callback từ VNPay/MoMo.
-6. **Đăng nhập lâu dài an toàn:** bảng `RefreshToken(userId, tokenHash, expiresAt, revokedAt, deviceName)` cho access token ngắn hạn + refresh token, thu hồi theo thiết bị.
-7. **Quên mật khẩu / xác thực email:** bảng `VerificationToken(userId, type, tokenHash, expiresAt, usedAt)`.
-8. **Push notification:** bảng `DeviceToken(userId, expoPushToken, platform)` để gửi thông báo qua Expo Push.
-9. **Nhật ký quản trị:** bảng `AuditLog(actorId, action, entity, entityId, before, after, createdAt)` ghi lại thao tác khóa tài khoản, đổi giá, duyệt review, duyệt đối tác, đổi hoa hồng.
-12. **Chủ địa điểm trả lời đánh giá:** cột `Review.ownerReply`, `ownerRepliedAt`.
-10. **Tìm kiếm không dấu:** thêm cột `searchText` (tên + địa chỉ đã bỏ dấu) với FULLTEXT index, để "da lat" tìm ra "Đà Lạt".
-11. **Ảnh do người dùng tải lên:** lưu file ở object storage (S3, Cloudinary) và chỉ lưu URL trong DB; thêm `ReviewImage(reviewId, url)` nếu cho phép đăng ảnh trong review.
+1. **Đóng phòng theo ngày:** bảng `RoomBlock(roomTypeId, date, blockedRooms)` cho bảo trì hoặc bán qua kênh khác.
+2. **Phí hủy thay vì chặn hủy:** thêm `Package.cancellationFeePercent` và `Payment.refundAmount` để hủy muộn vẫn được, nhưng hoàn một phần.
+3. **Cổng thanh toán thật:** bảng `PaymentTransaction(paymentId, provider, providerRef, status, rawPayload, createdAt)` lưu từng lần gọi và callback từ VNPay/MoMo.
+4. **Chủ địa điểm trả lời đánh giá:** cột `Review.ownerReply`, `ownerRepliedAt`.
+5. **Dọn file mồ côi:** job xóa `Upload` không được tham chiếu sau 24 giờ.

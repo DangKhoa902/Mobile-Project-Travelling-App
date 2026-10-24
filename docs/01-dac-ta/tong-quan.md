@@ -89,7 +89,7 @@ stateDiagram-v2
 | UC-U5 | Đánh giá sau chuyến đi; sửa/xóa đánh giá |
 | UC-U6 | Chat với CSKH |
 | UC-U7 | Xem thông báo |
-| UC-U8 | Quản lý hồ sơ, đổi mật khẩu |
+| UC-U8 | Quản lý hồ sơ (ảnh đại diện), đổi mật khẩu, xác thực email, quên mật khẩu, quản lý thiết bị đăng nhập, nhận push |
 | UC-U9 | **Nộp hồ sơ trở thành đối tác** |
 
 ### Owner
@@ -103,6 +103,8 @@ stateDiagram-v2
 | UC-O5 | Tạm ngưng / mở lại nhận khách cho địa điểm (`isActive`) |
 | UC-O6 | Xem và xử lý booking tại địa điểm mình: xác nhận, hoàn thành, hủy (kèm lý do) |
 | UC-O7 | Dashboard: doanh thu, hoa hồng, booking, tin đăng, rating của cơ sở mình |
+| UC-O8 | Đặt giá theo mùa / ngày lễ cho từng loại phòng |
+| UC-O9 | Xem tiền chưa đối soát và các kỳ sàn đã chuyển |
 
 ### Staff
 
@@ -123,6 +125,8 @@ stateDiagram-v2
 | UC-A4 | Quản lý danh mục, tiện ích, voucher |
 | UC-A5 | Khóa/mở tài khoản, đổi vai trò (trừ OWNER, đi qua hồ sơ đối tác) |
 | UC-A6 | **Dashboard toàn sàn** |
+| UC-A7 | Đối soát: lập kỳ, xác nhận đã chuyển khoản cho chủ địa điểm |
+| UC-A8 | Xem nhật ký thao tác quản trị |
 
 ## 5. Phạm vi đồ án
 
@@ -130,18 +134,18 @@ stateDiagram-v2
 
 **Ngoài phạm vi (ghi nhận để phát triển sau):**
 
-- Cổng thanh toán thật (VNPay, MoMo) và chuyển tiền tự động cho chủ địa điểm.
-- Gửi email (xác thực tài khoản, quên mật khẩu), push notification.
-- Tải ảnh lên (hiện nhập URL ảnh).
+- Cổng thanh toán thật (VNPay, MoMo) và chuyển tiền **tự động** cho chủ địa điểm (đồ án có đối soát, admin chuyển khoản thủ công rồi ghi mã giao dịch).
 - Chat thời gian thực (hiện dùng polling).
-- Giá theo mùa, chủ địa điểm trả lời đánh giá.
+- Chủ địa điểm trả lời đánh giá, đóng phòng theo ngày, phí hủy một phần.
+
+Email (xác thực, quên mật khẩu), push notification, tải ảnh và giá theo mùa đã có từ 25/10/2026.
 
 ## 6. Tài liệu liên quan
 
 | Nội dung | Tài liệu |
 |---|---|
 | Đăng ký tài khoản và hồ sơ đối tác: trường bắt buộc/tùy chọn | [tai-khoan-va-dang-ky.md](tai-khoan-va-dang-ky.md) |
-| Quy tắc nghiệp vụ BR-01 → BR-20 | [quy-tac-nghiep-vu.md](quy-tac-nghiep-vu.md) |
+| Quy tắc nghiệp vụ BR-01 → BR-27 | [quy-tac-nghiep-vu.md](quy-tac-nghiep-vu.md) |
 | Luồng nghiệp vụ chi tiết | [luong-nghiep-vu.md](luong-nghiep-vu.md) |
 | Thanh toán giả lập | [thanh-toan-gia-lap.md](thanh-toan-gia-lap.md) |
 | Cơ sở dữ liệu | [../02-thiet-ke/co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md) |

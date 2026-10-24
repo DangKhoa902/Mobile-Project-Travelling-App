@@ -15,15 +15,41 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 
 ## Xác thực – `/api/auth`
 
-| Method | Path | Quyền | Body / Query | Mô tả |
+| Method | Path | Quyền | Body | Mô tả |
 |---|---|---|---|---|
-| POST | `/register` | Công khai | `name`, `email`, `password`, `acceptTerms: true`, `phone?`, `dateOfBirth?` | Đăng ký, trả `{ user, token }` |
-| POST | `/login` | Công khai | `email`, `password` | Đăng nhập, trả `{ user, token }` |
-| GET | `/me` | Đăng nhập | | Hồ sơ của tôi |
+| POST | `/register` | Công khai | `name`, `email`, `password`, `acceptTerms: true`, `phone?`, `dateOfBirth?` | Đăng ký, gửi email xác thực, trả phiên (bảng dưới) |
+| POST | `/login` | Công khai | `email`, `password`, `deviceName?` | Đăng nhập, trả phiên |
+| POST | `/refresh` | Công khai | `refreshToken`, `deviceName?` | Đổi refresh token lấy cặp token mới (token cũ bị thu hồi) |
+| POST | `/logout` | Công khai | `refreshToken` | Thu hồi phiên này (204) |
+| POST | `/logout-all` | Đăng nhập | | Thu hồi mọi phiên (204) |
+| GET | `/sessions` | Đăng nhập | | Phiên đang hoạt động: thiết bị, IP, lần dùng cuối |
+| DELETE | `/sessions/:id` | Đăng nhập (của mình) | | Đăng xuất một thiết bị (204) |
+| POST | `/verify-email` | Công khai | `token` | Xác thực email từ link trong email |
+| POST | `/resend-verification` | Đăng nhập | | Gửi lại email xác thực (409 nếu đã xác thực) |
+| POST | `/forgot-password` | Công khai | `email` | Gửi link đặt lại mật khẩu; luôn trả cùng thông báo |
+| POST | `/reset-password` | Công khai | `token`, `newPassword` | Đặt mật khẩu mới, thu hồi mọi phiên (204) |
+| GET | `/me` | Đăng nhập | | Hồ sơ của tôi (có `emailVerifiedAt`) |
 | PATCH | `/me` | Đăng nhập | `name?`, `phone?`, `dateOfBirth?`, `avatarUrl?` | Sửa hồ sơ |
-| PATCH | `/me/password` | Đăng nhập | `currentPassword`, `newPassword` | Đổi mật khẩu (204) |
+| PATCH | `/me/password` | Đăng nhập | `currentPassword`, `newPassword` | Đổi mật khẩu; thu hồi mọi phiên, trả phiên mới cho thiết bị này |
 
-`/register` và `/login` giới hạn 20 lần / 15 phút / IP. Trường bắt buộc: [../01-dac-ta/tai-khoan-va-dang-ky.md](../01-dac-ta/tai-khoan-va-dang-ky.md).
+**Phiên** (response của register, login, refresh, đổi mật khẩu):
+
+```json
+{
+  "user": { "id": 1, "email": "...", "role": "USER", "emailVerifiedAt": null },
+  "accessToken": "eyJ...",
+  "token": "eyJ...",
+  "refreshToken": "4f9K...",
+  "refreshTokenExpiresAt": "2026-11-24T09:00:00.000Z",
+  "sessionId": 42
+}
+```
+
+- `accessToken` hết hạn sau `JWT_EXPIRES_IN` (15 phút); `token` là tên cũ của cùng giá trị. Gửi trong header `Authorization: Bearer <accessToken>`.
+- Khi API trả 401, gọi `/refresh` một lần rồi thử lại request; `/refresh` cũng lỗi thì đăng xuất. Luồng chi tiết: [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 1.3.
+- Khi `EMAIL_TRANSPORT=console` (dev, demo), response kèm `devVerificationToken` / `devResetToken` để thử luồng không cần hộp thư. Production không có.
+
+`/register`, `/login`, `/forgot-password`, `/reset-password`, `/resend-verification` giới hạn 20 lần / 15 phút / IP. Trường bắt buộc: [tai-khoan-va-dang-ky.md](../01-dac-ta/tai-khoan-va-dang-ky.md).
 
 ## Khám phá – danh mục, tiện ích, địa điểm
 
@@ -31,10 +57,11 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 |---|---|---|---|---|
 | GET | `/api/categories` | Công khai | | Danh mục + số địa điểm công khai |
 | GET | `/api/facilities` | Công khai | | Tiện ích |
-| GET | `/api/destinations` | Công khai | `q`, `categoryId`, `location`, `minPrice`, `maxPrice`, `minRating`, `facilityIds=1,2`, `featured`, `sort` (`newest`·`popular`·`rating`·`price_asc`·`price_desc`·`name`), `page`, `limit`; Staff/Admin: `includeInactive=true` | Tìm kiếm, lọc, phân trang. Chỉ tin đã duyệt và đang hoạt động |
-| GET | `/api/destinations/:idOrSlug` | Công khai (token tùy chọn) | | Chi tiết + `latestReviews` + `isFavorite`. Tin chưa duyệt: chỉ chủ và Staff/Admin xem |
+| GET | `/api/destinations` | Công khai | `q` (không phân biệt dấu: `da lat` = `Đà Lạt`), `categoryId`, `location`, `minPrice`, `maxPrice`, `minRating`, `facilityIds=1,2`, `featured`, `sort` (`newest`·`popular`·`rating`·`price_asc`·`price_desc`·`name`), `page`, `limit`; Staff/Admin: `includeInactive=true` | Tìm kiếm, lọc, phân trang. Chỉ tin đã duyệt và đang hoạt động |
+| GET | `/api/destinations/:idOrSlug` | Công khai (token tùy chọn) | | Chi tiết + `latestReviews` (kèm `images`) + `isFavorite`; mỗi loại phòng có `rates` (giá mùa chưa kết thúc). Tin chưa duyệt: chỉ chủ và Staff/Admin xem |
 | GET | `/api/destinations/:id/reviews` | Công khai | `page`, `limit` | Đánh giá đã duyệt |
 | GET | `/api/destinations/:id/availability` | Công khai | `roomTypeId`, `checkInDate`, `checkOutDate` | Số phòng còn trống |
+| GET | `/api/room-types/:id/rates` | Công khai | | Giá mùa chưa kết thúc của loại phòng |
 
 ## Yêu thích – `/api/favorites`
 
@@ -48,7 +75,7 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 
 | Method | Path | Quyền | Body / Query | Mô tả |
 |---|---|---|---|---|
-| POST | `/quote` | Công khai | `packageId`, `roomTypeId`, `checkInDate`, `checkOutDate`, `guests`, `roomsCount`, `services[]?`, `voucherCode?` | Báo giá, không tạo dữ liệu |
+| POST | `/quote` | Công khai | `packageId`, `roomTypeId`, `checkInDate`, `checkOutDate`, `guests`, `roomsCount`, `services[]?`, `voucherCode?` | Báo giá, không tạo dữ liệu; `nightlyRoomPrices[]` = giá từng đêm `{ date, price, rateName }` |
 | POST | `/` | Đăng nhập | Như `/quote` + `contactName`, `contactPhone`, `contactEmail`, `note?`, `paymentMethod` (`ONLINE_MOCK`·`PAY_AT_PROPERTY`) | Tạo booking `PENDING`; online có `paymentDueAt` |
 | GET | `/` | Đăng nhập | `scope` (`mine`·`managed`), `status`, `code`, `page`, `limit` | USER: của mình. OWNER mặc định `managed` = booking tại địa điểm mình. STAFF/ADMIN mặc định `managed` = tất cả |
 | GET | `/:id` | Đăng nhập (của mình / quản lý) | | Chi tiết, gồm hoa hồng và thanh toán |
@@ -60,9 +87,9 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 
 | Method | Path | Quyền | Body / Query | Mô tả |
 |---|---|---|---|---|
-| POST | `/` | Đăng nhập | `bookingId`, `rating` (1–5), `comment?` | Đánh giá booking đã hoàn thành |
+| POST | `/` | Đăng nhập | `bookingId`, `rating` (1–5), `comment?`, `imageUrls?` (≤ 5, từ `/api/uploads`) | Đánh giá booking đã hoàn thành |
 | GET | `/mine` | Đăng nhập | `page`, `limit` | Đánh giá của tôi, mọi trạng thái |
-| PATCH | `/:id` | Tác giả | `rating?`, `comment?` | Sửa → chờ duyệt lại |
+| PATCH | `/:id` | Tác giả | `rating?`, `comment?`, `imageUrls?` (gửi = thay toàn bộ ảnh) | Sửa → chờ duyệt lại |
 | DELETE | `/:id` | Tác giả | | Xóa (204) |
 | GET | `/moderation` | STAFF, ADMIN | `status` (mặc định `PENDING`) | Hàng chờ kiểm duyệt |
 | PATCH | `/:id/moderation` | STAFF, ADMIN | `status` (`APPROVED`·`REJECTED`), `rejectReason?` | Duyệt / từ chối |
@@ -90,7 +117,7 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 
 | Method | Path | Quyền | Body / Query | Mô tả |
 |---|---|---|---|---|
-| POST | `/apply` | USER | `businessName`, `businessAddress`, `contactPhone`, `acceptPartnerTerms: true`, `taxCode?`, `description?`, `bankName?`, `bankAccountNumber?`, `bankAccountName?` | Nộp / nộp lại hồ sơ |
+| POST | `/apply` | USER (đã xác thực email) | `businessName`, `businessAddress`, `contactPhone`, `acceptPartnerTerms: true`, `taxCode?`, `description?`, `bankName?`, `bankAccountNumber?`, `bankAccountName?` | Nộp / nộp lại hồ sơ |
 | GET | `/me` | Đăng nhập | | Hồ sơ của tôi (404 nếu chưa nộp) |
 | PATCH | `/me` | Đăng nhập | Các trường hồ sơ và ngân hàng | Cập nhật |
 | GET | `/` | ADMIN | `status`, `q`, `page` | Danh sách hồ sơ |
@@ -112,10 +139,49 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 | DELETE | `/api/destinations/:id` | OWNER (tin chưa duyệt của mình), ADMIN | | Xóa (409 nếu đã có booking) |
 | POST / PATCH | `/api/packages`, `/api/packages/:id` | OWNER (của mình), ADMIN | `destinationId`, `name`, `durationDays`, `durationNights`, `price`, `inclusions?`, `freeCancellationHours?`, `isActive?` | Gói dịch vụ |
 | POST / PATCH | `/api/room-types`, `/api/room-types/:id` | OWNER (của mình), ADMIN | `destinationId`, `name`, `capacity`, `pricePerNight`, `totalRooms`, `isActive?` | Loại phòng |
+| POST | `/api/room-types/:id/rates` | OWNER (của mình), ADMIN | `name`, `startDate`, `endDate` (gồm cả hai ngày), `pricePerNight` | Thêm giá mùa (409 `RATE_OVERLAP` nếu trùng ngày) |
+| PATCH / DELETE | `/api/room-types/:id/rates/:rateId` | OWNER (của mình), ADMIN | Như trên (một phần) | Sửa / xóa giá mùa |
 | POST / PATCH | `/api/addon-services`, `/api/addon-services/:id` | OWNER (của mình), ADMIN | `destinationId`, `name`, `price`, `pricingUnit?`, `isActive?` | Dịch vụ bổ sung |
 | POST / PATCH / DELETE | `/api/categories`, `/api/categories/:id` | ADMIN | `name`, `slug?`, `iconName?` | Danh mục |
 | POST / PATCH / DELETE | `/api/facilities`, `/api/facilities/:id` | ADMIN | `name`, `iconName?` | Tiện ích |
 | GET / POST / PATCH | `/api/vouchers`, `/api/vouchers/:id` | ADMIN | `code`, `discountType`, `value`, `startsAt`, `endsAt`, ... | Voucher |
+
+## Đối soát – `/api/payouts`
+
+| Method | Path | Quyền | Body / Query | Mô tả |
+|---|---|---|---|---|
+| GET | `/` | OWNER (của mình), ADMIN | `status`, `ownerId` (admin), `page` | Danh sách kỳ đối soát |
+| GET | `/unsettled` | OWNER | | Doanh thu đã hoàn thành chưa vào kỳ nào: `{ bookingCount, grossAmount, commissionAmount, amount }` |
+| GET | `/preview` | ADMIN | `periodStart`, `periodEnd` | Số tiền từng chủ trong kỳ, trước khi lập |
+| POST | `/` | ADMIN | `ownerId`, `periodStart`, `periodEnd`, `note?` | Lập kỳ, gắn booking (409 `NOTHING_TO_PAY` nếu không có) |
+| GET | `/:id` | OWNER (của mình), ADMIN | | Chi tiết kỳ + danh sách booking và doanh thu từng booking |
+| PATCH | `/:id/pay` | ADMIN | `transferRef` | Xác nhận đã chuyển khoản → `PAID`, báo cho chủ |
+| PATCH | `/:id/cancel` | ADMIN | `reason?` | Hủy kỳ chưa chuyển, trả booking về chưa đối soát |
+
+## Tải ảnh – `/api/uploads`
+
+| Method | Path | Quyền | Body | Mô tả |
+|---|---|---|---|---|
+| POST | `/` | Đăng nhập (`destination`: OWNER, ADMIN) | `multipart/form-data`: `file` (JPEG/PNG/WebP ≤ 5 MB), `purpose` (`avatar`·`destination`·`review`) | Trả `{ id, url, mimeType, size }`; dùng `url` cho `avatarUrl`, `imageUrl`/`images` của địa điểm, `imageUrls` của đánh giá |
+| DELETE | `/:id` | Người tải lên | | Xóa file (204) |
+
+Với `STORAGE_DRIVER=local`, ảnh được phục vụ ở `GET /uploads/<key>` (cache 1 năm).
+
+## Thiết bị nhận push – `/api/devices`
+
+| Method | Path | Quyền | Body | Mô tả |
+|---|---|---|---|---|
+| POST | `/` | Đăng nhập | `token` (`ExponentPushToken[...]`), `platform` (`IOS`·`ANDROID`·`WEB`) | Đăng ký / cập nhật thiết bị; gọi sau đăng nhập và mỗi lần mở app |
+| DELETE | `/` | Đăng nhập | `token` | Gỡ khi đăng xuất (204) |
+| GET | `/` | Đăng nhập | | Thiết bị của tôi |
+
+Mọi thông báo trong `/api/notifications` được gửi push tới các thiết bị đã đăng ký khi `PUSH_ENABLED=true`; `data` của push giống `data` của thông báo (thêm `notificationId`) để app mở đúng trang.
+
+## Nhật ký quản trị – `/api/audit-logs`
+
+| Method | Path | Quyền | Query | Mô tả |
+|---|---|---|---|---|
+| GET | `/` | ADMIN | `actorId`, `entity`, `entityId`, `action` (lọc theo tiền tố, ví dụ `partner.`), `from`, `to`, `page` | Nhật ký mới nhất trước, kèm `actor` |
 
 ## Người dùng – `/api/users`
 
@@ -124,7 +190,7 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 | GET | `/` | STAFF, ADMIN | `q`, `role`, `status`, `page` | Danh sách (không có mật khẩu) |
 | GET | `/:id` | STAFF, ADMIN | | Chi tiết + số booking, review |
 | GET | `/:id/bookings` | STAFF, ADMIN | `page` | Lịch sử đặt của user |
-| PATCH | `/:id/status` | ADMIN | `status` (`ACTIVE`·`LOCKED`) | Khóa / mở |
+| PATCH | `/:id/status` | ADMIN | `status` (`ACTIVE`·`LOCKED`) | Khóa / mở; khóa thì thu hồi mọi phiên |
 | PATCH | `/:id/role` | ADMIN | `role` (`USER`·`STAFF`·`ADMIN`) | Đổi vai trò; không áp cho OWNER |
 
 ## Thống kê – `/api/stats`
@@ -161,4 +227,4 @@ Cấu trúc response (rút gọn):
 }
 ```
 
-Với OWNER, thay `users` bằng `listings` (số tin theo trạng thái), `rating` và `pending: { bookingsToConfirm, upcomingCheckIns }`. Số trong ví dụ là minh họa.
+Với OWNER, thay `users` bằng `listings` (số tin theo trạng thái), `rating`, `pending: { bookingsToConfirm, upcomingCheckIns }` và `payouts: { unsettledAmount, unsettledBookings, pendingPayoutAmount, pendingPayouts }`. Số trong ví dụ là minh họa.

@@ -3,6 +3,7 @@ import { badRequest } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
 import type { AuthUser } from "../middlewares/auth.js";
 import { parseDateOnly, todayInVietnam } from "./booking-rules.js";
+import { unsettledSummary } from "./payout.service.js";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const VIETNAM_OFFSET_MS = 7 * 60 * 60 * 1000;
@@ -158,7 +159,7 @@ async function platformExtras(start: Date, end: Date) {
 }
 
 async function ownerExtras(ownerId: number) {
-  const [listings, bookingsToConfirm, upcomingCheckIns, rating] = await Promise.all([
+  const [listings, bookingsToConfirm, upcomingCheckIns, rating, unsettled, pendingPayouts] = await Promise.all([
     prisma.destination.groupBy({ by: ["listingStatus"], where: { ownerId }, _count: { _all: true } }),
     prisma.booking.count({ where: { destination: { ownerId }, status: "PENDING", payment: { method: "PAY_AT_PROPERTY" } } }),
     prisma.booking.count({
@@ -169,6 +170,8 @@ async function ownerExtras(ownerId: number) {
       },
     }),
     prisma.review.aggregate({ where: { destination: { ownerId }, status: "APPROVED" }, _avg: { rating: true }, _count: { _all: true } }),
+    unsettledSummary(ownerId),
+    prisma.payout.aggregate({ where: { ownerId, status: "PENDING" }, _sum: { amount: true }, _count: { _all: true } }),
   ]);
   const listingCounts = { DRAFT: 0, PENDING_REVIEW: 0, APPROVED: 0, REJECTED: 0 };
   for (const row of listings) listingCounts[row.listingStatus] = row._count._all;
@@ -176,5 +179,12 @@ async function ownerExtras(ownerId: number) {
     listings: listingCounts,
     rating: { average: Math.round((rating._avg.rating ?? 0) * 10) / 10, reviews: rating._count._all },
     pending: { bookingsToConfirm, upcomingCheckIns },
+    // Tiền của chủ: chưa vào kỳ đối soát / đã lập kỳ nhưng sàn chưa chuyển.
+    payouts: {
+      unsettledAmount: unsettled.amount,
+      unsettledBookings: unsettled.bookingCount,
+      pendingPayoutAmount: pendingPayouts._sum.amount ?? 0,
+      pendingPayouts: pendingPayouts._count._all,
+    },
   };
 }

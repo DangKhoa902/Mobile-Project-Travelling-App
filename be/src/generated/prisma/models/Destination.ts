@@ -72,6 +72,7 @@ export type DestinationMinAggregateOutputType = {
   listingRejectReason: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  searchText: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -100,6 +101,7 @@ export type DestinationMaxAggregateOutputType = {
   listingRejectReason: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  searchText: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -128,6 +130,7 @@ export type DestinationCountAggregateOutputType = {
   listingRejectReason: number
   submittedAt: number
   approvedAt: number
+  searchText: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -180,6 +183,7 @@ export type DestinationMinAggregateInputType = {
   listingRejectReason?: true
   submittedAt?: true
   approvedAt?: true
+  searchText?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -208,6 +212,7 @@ export type DestinationMaxAggregateInputType = {
   listingRejectReason?: true
   submittedAt?: true
   approvedAt?: true
+  searchText?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -236,6 +241,7 @@ export type DestinationCountAggregateInputType = {
   listingRejectReason?: true
   submittedAt?: true
   approvedAt?: true
+  searchText?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -351,6 +357,7 @@ export type DestinationGroupByOutputType = {
   listingRejectReason: string | null
   submittedAt: Date | null
   approvedAt: Date | null
+  searchText: string
   createdAt: Date
   updatedAt: Date
   _count: DestinationCountAggregateOutputType | null
@@ -402,6 +409,7 @@ export type DestinationWhereInput = {
   listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  searchText?: Prisma.StringFilter<"Destination"> | string
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -440,6 +448,7 @@ export type DestinationOrderByWithRelationInput = {
   listingRejectReason?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  searchText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
@@ -482,6 +491,7 @@ export type DestinationWhereUniqueInput = Prisma.AtLeast<{
   listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  searchText?: Prisma.StringFilter<"Destination"> | string
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -520,6 +530,7 @@ export type DestinationOrderByWithAggregationInput = {
   listingRejectReason?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  searchText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DestinationCountOrderByAggregateInput
@@ -556,6 +567,7 @@ export type DestinationScalarWhereWithAggregatesInput = {
   listingRejectReason?: Prisma.StringNullableWithAggregatesFilter<"Destination"> | string | null
   submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Destination"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Destination"> | Date | string | null
+  searchText?: Prisma.StringWithAggregatesFilter<"Destination"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Destination"> | Date | string
 }
@@ -581,6 +593,7 @@ export type DestinationCreateInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -619,6 +632,7 @@ export type DestinationUncheckedCreateInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -652,6 +666,7 @@ export type DestinationUpdateInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -690,6 +705,7 @@ export type DestinationUncheckedUpdateInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -726,6 +742,7 @@ export type DestinationCreateManyInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -751,6 +768,7 @@ export type DestinationUpdateManyMutationInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -779,6 +797,7 @@ export type DestinationUncheckedUpdateManyInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -823,6 +842,7 @@ export type DestinationCountOrderByAggregateInput = {
   listingRejectReason?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  searchText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -862,6 +882,7 @@ export type DestinationMaxOrderByAggregateInput = {
   listingRejectReason?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  searchText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -890,6 +911,7 @@ export type DestinationMinOrderByAggregateInput = {
   listingRejectReason?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  searchText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1167,6 +1189,7 @@ export type DestinationCreateWithoutOwnerInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.CategoryCreateNestedOneWithoutDestinationsInput
@@ -1203,6 +1226,7 @@ export type DestinationUncheckedCreateWithoutOwnerInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1268,6 +1292,7 @@ export type DestinationScalarWhereInput = {
   listingRejectReason?: Prisma.StringNullableFilter<"Destination"> | string | null
   submittedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"Destination"> | Date | string | null
+  searchText?: Prisma.StringFilter<"Destination"> | string
   createdAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Destination"> | Date | string
 }
@@ -1293,6 +1318,7 @@ export type DestinationCreateWithoutCategoryInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1329,6 +1355,7 @@ export type DestinationUncheckedCreateWithoutCategoryInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1388,6 +1415,7 @@ export type DestinationCreateWithoutFacilitiesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1425,6 +1453,7 @@ export type DestinationUncheckedCreateWithoutFacilitiesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1478,6 +1507,7 @@ export type DestinationCreateWithoutImagesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1515,6 +1545,7 @@ export type DestinationUncheckedCreateWithoutImagesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   facilities?: Prisma.FacilityUncheckedCreateNestedManyWithoutDestinationsInput
@@ -1563,6 +1594,7 @@ export type DestinationUpdateWithoutImagesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -1600,6 +1632,7 @@ export type DestinationUncheckedUpdateWithoutImagesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   facilities?: Prisma.FacilityUncheckedUpdateManyWithoutDestinationsNestedInput
@@ -1632,6 +1665,7 @@ export type DestinationCreateWithoutPackagesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1669,6 +1703,7 @@ export type DestinationUncheckedCreateWithoutPackagesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1717,6 +1752,7 @@ export type DestinationUpdateWithoutPackagesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -1754,6 +1790,7 @@ export type DestinationUncheckedUpdateWithoutPackagesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1786,6 +1823,7 @@ export type DestinationCreateWithoutRoomTypesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1823,6 +1861,7 @@ export type DestinationUncheckedCreateWithoutRoomTypesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -1871,6 +1910,7 @@ export type DestinationUpdateWithoutRoomTypesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -1908,6 +1948,7 @@ export type DestinationUncheckedUpdateWithoutRoomTypesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -1940,6 +1981,7 @@ export type DestinationCreateWithoutServicesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -1977,6 +2019,7 @@ export type DestinationUncheckedCreateWithoutServicesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -2025,6 +2068,7 @@ export type DestinationUpdateWithoutServicesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2062,6 +2106,7 @@ export type DestinationUncheckedUpdateWithoutServicesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2094,6 +2139,7 @@ export type DestinationCreateWithoutBookingsInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -2131,6 +2177,7 @@ export type DestinationUncheckedCreateWithoutBookingsInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -2179,6 +2226,7 @@ export type DestinationUpdateWithoutBookingsInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2216,6 +2264,7 @@ export type DestinationUncheckedUpdateWithoutBookingsInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2248,6 +2297,7 @@ export type DestinationCreateWithoutFavoritesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -2285,6 +2335,7 @@ export type DestinationUncheckedCreateWithoutFavoritesInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -2333,6 +2384,7 @@ export type DestinationUpdateWithoutFavoritesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2370,6 +2422,7 @@ export type DestinationUncheckedUpdateWithoutFavoritesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2402,6 +2455,7 @@ export type DestinationCreateWithoutReviewsInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.UserCreateNestedOneWithoutOwnedDestinationsInput
@@ -2439,6 +2493,7 @@ export type DestinationUncheckedCreateWithoutReviewsInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.DestinationImageUncheckedCreateNestedManyWithoutDestinationInput
@@ -2487,6 +2542,7 @@ export type DestinationUpdateWithoutReviewsInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2524,6 +2580,7 @@ export type DestinationUncheckedUpdateWithoutReviewsInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2558,6 +2615,7 @@ export type DestinationCreateManyOwnerInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2583,6 +2641,7 @@ export type DestinationUpdateWithoutOwnerInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneWithoutDestinationsNestedInput
@@ -2619,6 +2678,7 @@ export type DestinationUncheckedUpdateWithoutOwnerInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2654,6 +2714,7 @@ export type DestinationUncheckedUpdateManyWithoutOwnerInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2681,6 +2742,7 @@ export type DestinationCreateManyCategoryInput = {
   listingRejectReason?: string | null
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
+  searchText?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2706,6 +2768,7 @@ export type DestinationUpdateWithoutCategoryInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2742,6 +2805,7 @@ export type DestinationUncheckedUpdateWithoutCategoryInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2777,6 +2841,7 @@ export type DestinationUncheckedUpdateManyWithoutCategoryInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2802,6 +2867,7 @@ export type DestinationUpdateWithoutFacilitiesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneWithoutOwnedDestinationsNestedInput
@@ -2839,6 +2905,7 @@ export type DestinationUncheckedUpdateWithoutFacilitiesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.DestinationImageUncheckedUpdateManyWithoutDestinationNestedInput
@@ -2874,6 +2941,7 @@ export type DestinationUncheckedUpdateManyWithoutFacilitiesInput = {
   listingRejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  searchText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2996,6 +3064,7 @@ export type DestinationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   listingRejectReason?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  searchText?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.Destination$ownerArgs<ExtArgs>
@@ -3037,11 +3106,12 @@ export type DestinationSelectScalar = {
   listingRejectReason?: boolean
   submittedAt?: boolean
   approvedAt?: boolean
+  searchText?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "location" | "address" | "latitude" | "longitude" | "imageUrl" | "contactPhone" | "contactEmail" | "policy" | "isActive" | "isFeatured" | "minPrice" | "averageRating" | "reviewCount" | "categoryId" | "ownerId" | "listingStatus" | "listingRejectReason" | "submittedAt" | "approvedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
+export type DestinationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "location" | "address" | "latitude" | "longitude" | "imageUrl" | "contactPhone" | "contactEmail" | "policy" | "isActive" | "isFeatured" | "minPrice" | "averageRating" | "reviewCount" | "categoryId" | "ownerId" | "listingStatus" | "listingRejectReason" | "submittedAt" | "approvedAt" | "searchText" | "createdAt" | "updatedAt", ExtArgs["result"]["destination"]>
 export type DestinationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.Destination$ownerArgs<ExtArgs>
   category?: boolean | Prisma.Destination$categoryArgs<ExtArgs>
@@ -3094,6 +3164,7 @@ export type $DestinationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     listingRejectReason: string | null
     submittedAt: Date | null
     approvedAt: Date | null
+    searchText: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["destination"]>
@@ -3498,6 +3569,7 @@ export interface DestinationFieldRefs {
   readonly listingRejectReason: Prisma.FieldRef<"Destination", 'String'>
   readonly submittedAt: Prisma.FieldRef<"Destination", 'DateTime'>
   readonly approvedAt: Prisma.FieldRef<"Destination", 'DateTime'>
+  readonly searchText: Prisma.FieldRef<"Destination", 'String'>
   readonly createdAt: Prisma.FieldRef<"Destination", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Destination", 'DateTime'>
 }

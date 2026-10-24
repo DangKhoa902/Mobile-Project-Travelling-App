@@ -23,6 +23,9 @@ COPY --from=build /app/src ./src
 COPY prisma ./prisma
 COPY prisma.config.ts tsconfig.json ./
 
+# Thư mục ảnh khi STORAGE_DRIVER=local (gắn volume trong docker-compose).
+RUN mkdir -p /app/uploads && chown node:node /app/uploads
+
 USER node
 EXPOSE 3000
 

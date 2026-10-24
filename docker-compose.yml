@@ -30,13 +30,27 @@ services:
       PORT: 3000
       DATABASE_URL: mysql://travelling:${DB_PASSWORD}@db:3306/travelling_app
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
       BOOKING_TAX_RATE: ${BOOKING_TAX_RATE:-0.08}
       TRUST_PROXY: ${TRUST_PROXY:-0}
       SEED_DEFAULT_PASSWORD: ${SEED_DEFAULT_PASSWORD:-Password123}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      APP_URL: ${APP_URL:-http://localhost:8081}
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT:-console}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-Travelling App <no-reply@travelling.app>}
+      PUSH_ENABLED: ${PUSH_ENABLED:-false}
+      STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
+      UPLOAD_DIR: /app/uploads
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+    volumes:
+      - uploads:/app/uploads
     ports:
       - "${API_PORT:-3000}:3000"
 
 volumes:
   db_data:
+  uploads:

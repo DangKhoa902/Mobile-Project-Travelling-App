@@ -47,6 +47,36 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model VerificationToken
+ * 
+ */
+export type VerificationToken = Prisma.VerificationTokenModel
+/**
+ * Model DeviceToken
+ * 
+ */
+export type DeviceToken = Prisma.DeviceTokenModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model Payout
+ * 
+ */
+export type Payout = Prisma.PayoutModel
+/**
+ * Model Upload
+ * 
+ */
+export type Upload = Prisma.UploadModel
+/**
  * Model PartnerProfile
  * 
  */
@@ -82,6 +112,11 @@ export type Package = Prisma.PackageModel
  */
 export type RoomType = Prisma.RoomTypeModel
 /**
+ * Model RoomRate
+ * 
+ */
+export type RoomRate = Prisma.RoomRateModel
+/**
  * Model AddonService
  * 
  */
@@ -116,6 +151,11 @@ export type Favorite = Prisma.FavoriteModel
  * 
  */
 export type Review = Prisma.ReviewModel
+/**
+ * Model ReviewImage
+ * 
+ */
+export type ReviewImage = Prisma.ReviewImageModel
 /**
  * Model Conversation
  * 

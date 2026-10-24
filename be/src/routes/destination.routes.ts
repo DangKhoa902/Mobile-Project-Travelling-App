@@ -81,7 +81,7 @@ destinationRouter.post("/:id/submit", authenticate, requireRole("OWNER"), async 
 destinationRouter.patch("/:id/review", authenticate, requireRole("ADMIN"), async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
   const { status, rejectReason } = reviewListingSchema.parse(request.body);
-  response.json({ data: await destinationService.reviewListing(id, status, rejectReason) });
+  response.json({ data: await destinationService.reviewListing(currentUser(request), id, status, rejectReason) });
 });
 
 // Xóa hẳn chỉ khi chưa có booking; nếu đã có booking (FK RESTRICT) trả 409, hãy dùng isActive=false.

@@ -13,6 +13,8 @@ const reviewBodySchema = z.object({
   bookingId: z.number().int().positive(),
   rating: z.number().int().min(1).max(5),
   comment: z.string().trim().max(2000).optional(),
+  // URL lấy từ POST /api/uploads với purpose=review.
+  imageUrls: z.array(z.url().max(500)).max(5).optional(),
 });
 
 reviewRouter.post("/", async (request, response) => {
@@ -31,7 +33,10 @@ reviewRouter.get("/mine", async (request, response) => {
       orderBy: { createdAt: "desc" },
       skip,
       take,
-      include: { destination: { select: { id: true, name: true, slug: true, imageUrl: true } } },
+      include: {
+        destination: { select: { id: true, name: true, slug: true, imageUrl: true } },
+        images: { orderBy: { sortOrder: "asc" }, select: { id: true, url: true } },
+      },
     }),
     prisma.review.count({ where }),
   ]);
@@ -53,6 +58,7 @@ reviewRouter.get("/moderation", requireRole("STAFF", "ADMIN"), async (request, r
       include: {
         user: { select: { id: true, name: true, email: true } },
         destination: { select: { id: true, name: true } },
+        images: { orderBy: { sortOrder: "asc" }, select: { id: true, url: true } },
       },
     }),
     prisma.review.count({ where }),

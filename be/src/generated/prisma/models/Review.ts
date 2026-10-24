@@ -296,6 +296,7 @@ export type ReviewWhereInput = {
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
   booking?: Prisma.XOR<Prisma.BookingScalarRelationFilter, Prisma.BookingWhereInput>
   moderatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  images?: Prisma.ReviewImageListRelationFilter
 }
 
 export type ReviewOrderByWithRelationInput = {
@@ -315,6 +316,7 @@ export type ReviewOrderByWithRelationInput = {
   destination?: Prisma.DestinationOrderByWithRelationInput
   booking?: Prisma.BookingOrderByWithRelationInput
   moderatedBy?: Prisma.UserOrderByWithRelationInput
+  images?: Prisma.ReviewImageOrderByRelationAggregateInput
   _relevance?: Prisma.ReviewOrderByRelevanceInput
 }
 
@@ -338,6 +340,7 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
   booking?: Prisma.XOR<Prisma.BookingScalarRelationFilter, Prisma.BookingWhereInput>
   moderatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  images?: Prisma.ReviewImageListRelationFilter
 }, "id" | "bookingId">
 
 export type ReviewOrderByWithAggregationInput = {
@@ -390,6 +393,7 @@ export type ReviewCreateInput = {
   destination: Prisma.DestinationCreateNestedOneWithoutReviewsInput
   booking: Prisma.BookingCreateNestedOneWithoutReviewInput
   moderatedBy?: Prisma.UserCreateNestedOneWithoutModeratedReviewsInput
+  images?: Prisma.ReviewImageCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUncheckedCreateInput = {
@@ -405,6 +409,7 @@ export type ReviewUncheckedCreateInput = {
   rejectReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.ReviewImageUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUpdateInput = {
@@ -419,6 +424,7 @@ export type ReviewUpdateInput = {
   destination?: Prisma.DestinationUpdateOneRequiredWithoutReviewsNestedInput
   booking?: Prisma.BookingUpdateOneRequiredWithoutReviewNestedInput
   moderatedBy?: Prisma.UserUpdateOneWithoutModeratedReviewsNestedInput
+  images?: Prisma.ReviewImageUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateInput = {
@@ -434,6 +440,7 @@ export type ReviewUncheckedUpdateInput = {
   rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ReviewImageUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewCreateManyInput = {
@@ -558,6 +565,11 @@ export type ReviewSumOrderByAggregateInput = {
   bookingId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   moderatedById?: Prisma.SortOrder
+}
+
+export type ReviewScalarRelationFilter = {
+  is?: Prisma.ReviewWhereInput
+  isNot?: Prisma.ReviewWhereInput
 }
 
 export type ReviewCreateNestedManyWithoutUserInput = {
@@ -722,6 +734,20 @@ export type EnumReviewStatusFieldUpdateOperationsInput = {
   set?: $Enums.ReviewStatus
 }
 
+export type ReviewCreateNestedOneWithoutImagesInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutImagesInput, Prisma.ReviewUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutImagesInput
+  connect?: Prisma.ReviewWhereUniqueInput
+}
+
+export type ReviewUpdateOneRequiredWithoutImagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutImagesInput, Prisma.ReviewUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutImagesInput
+  upsert?: Prisma.ReviewUpsertWithoutImagesInput
+  connect?: Prisma.ReviewWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReviewUpdateToOneWithWhereWithoutImagesInput, Prisma.ReviewUpdateWithoutImagesInput>, Prisma.ReviewUncheckedUpdateWithoutImagesInput>
+}
+
 export type ReviewCreateWithoutUserInput = {
   rating: number
   comment?: string | null
@@ -733,6 +759,7 @@ export type ReviewCreateWithoutUserInput = {
   destination: Prisma.DestinationCreateNestedOneWithoutReviewsInput
   booking: Prisma.BookingCreateNestedOneWithoutReviewInput
   moderatedBy?: Prisma.UserCreateNestedOneWithoutModeratedReviewsInput
+  images?: Prisma.ReviewImageCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUncheckedCreateWithoutUserInput = {
@@ -747,6 +774,7 @@ export type ReviewUncheckedCreateWithoutUserInput = {
   rejectReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.ReviewImageUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewCreateOrConnectWithoutUserInput = {
@@ -770,6 +798,7 @@ export type ReviewCreateWithoutModeratedByInput = {
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
   destination: Prisma.DestinationCreateNestedOneWithoutReviewsInput
   booking: Prisma.BookingCreateNestedOneWithoutReviewInput
+  images?: Prisma.ReviewImageCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUncheckedCreateWithoutModeratedByInput = {
@@ -784,6 +813,7 @@ export type ReviewUncheckedCreateWithoutModeratedByInput = {
   rejectReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.ReviewImageUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewCreateOrConnectWithoutModeratedByInput = {
@@ -857,6 +887,7 @@ export type ReviewCreateWithoutDestinationInput = {
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
   booking: Prisma.BookingCreateNestedOneWithoutReviewInput
   moderatedBy?: Prisma.UserCreateNestedOneWithoutModeratedReviewsInput
+  images?: Prisma.ReviewImageCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUncheckedCreateWithoutDestinationInput = {
@@ -871,6 +902,7 @@ export type ReviewUncheckedCreateWithoutDestinationInput = {
   rejectReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.ReviewImageUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewCreateOrConnectWithoutDestinationInput = {
@@ -910,6 +942,7 @@ export type ReviewCreateWithoutBookingInput = {
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
   destination: Prisma.DestinationCreateNestedOneWithoutReviewsInput
   moderatedBy?: Prisma.UserCreateNestedOneWithoutModeratedReviewsInput
+  images?: Prisma.ReviewImageCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewUncheckedCreateWithoutBookingInput = {
@@ -924,6 +957,7 @@ export type ReviewUncheckedCreateWithoutBookingInput = {
   rejectReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  images?: Prisma.ReviewImageUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewCreateOrConnectWithoutBookingInput = {
@@ -953,12 +987,88 @@ export type ReviewUpdateWithoutBookingInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
   destination?: Prisma.DestinationUpdateOneRequiredWithoutReviewsNestedInput
   moderatedBy?: Prisma.UserUpdateOneWithoutModeratedReviewsNestedInput
+  images?: Prisma.ReviewImageUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateWithoutBookingInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+  moderatedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ReviewImageUncheckedUpdateManyWithoutReviewNestedInput
+}
+
+export type ReviewCreateWithoutImagesInput = {
+  rating: number
+  comment?: string | null
+  status?: $Enums.ReviewStatus
+  moderatedAt?: Date | string | null
+  rejectReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  destination: Prisma.DestinationCreateNestedOneWithoutReviewsInput
+  booking: Prisma.BookingCreateNestedOneWithoutReviewInput
+  moderatedBy?: Prisma.UserCreateNestedOneWithoutModeratedReviewsInput
+}
+
+export type ReviewUncheckedCreateWithoutImagesInput = {
+  id?: number
+  userId: number
+  destinationId: number
+  bookingId: number
+  rating: number
+  comment?: string | null
+  status?: $Enums.ReviewStatus
+  moderatedById?: number | null
+  moderatedAt?: Date | string | null
+  rejectReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ReviewCreateOrConnectWithoutImagesInput = {
+  where: Prisma.ReviewWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReviewCreateWithoutImagesInput, Prisma.ReviewUncheckedCreateWithoutImagesInput>
+}
+
+export type ReviewUpsertWithoutImagesInput = {
+  update: Prisma.XOR<Prisma.ReviewUpdateWithoutImagesInput, Prisma.ReviewUncheckedUpdateWithoutImagesInput>
+  create: Prisma.XOR<Prisma.ReviewCreateWithoutImagesInput, Prisma.ReviewUncheckedCreateWithoutImagesInput>
+  where?: Prisma.ReviewWhereInput
+}
+
+export type ReviewUpdateToOneWithWhereWithoutImagesInput = {
+  where?: Prisma.ReviewWhereInput
+  data: Prisma.XOR<Prisma.ReviewUpdateWithoutImagesInput, Prisma.ReviewUncheckedUpdateWithoutImagesInput>
+}
+
+export type ReviewUpdateWithoutImagesInput = {
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+  moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  destination?: Prisma.DestinationUpdateOneRequiredWithoutReviewsNestedInput
+  booking?: Prisma.BookingUpdateOneRequiredWithoutReviewNestedInput
+  moderatedBy?: Prisma.UserUpdateOneWithoutModeratedReviewsNestedInput
+}
+
+export type ReviewUncheckedUpdateWithoutImagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  bookingId?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
@@ -1008,6 +1118,7 @@ export type ReviewUpdateWithoutUserInput = {
   destination?: Prisma.DestinationUpdateOneRequiredWithoutReviewsNestedInput
   booking?: Prisma.BookingUpdateOneRequiredWithoutReviewNestedInput
   moderatedBy?: Prisma.UserUpdateOneWithoutModeratedReviewsNestedInput
+  images?: Prisma.ReviewImageUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateWithoutUserInput = {
@@ -1022,6 +1133,7 @@ export type ReviewUncheckedUpdateWithoutUserInput = {
   rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ReviewImageUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateManyWithoutUserInput = {
@@ -1049,6 +1161,7 @@ export type ReviewUpdateWithoutModeratedByInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
   destination?: Prisma.DestinationUpdateOneRequiredWithoutReviewsNestedInput
   booking?: Prisma.BookingUpdateOneRequiredWithoutReviewNestedInput
+  images?: Prisma.ReviewImageUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateWithoutModeratedByInput = {
@@ -1063,6 +1176,7 @@ export type ReviewUncheckedUpdateWithoutModeratedByInput = {
   rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ReviewImageUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateManyWithoutModeratedByInput = {
@@ -1104,6 +1218,7 @@ export type ReviewUpdateWithoutDestinationInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
   booking?: Prisma.BookingUpdateOneRequiredWithoutReviewNestedInput
   moderatedBy?: Prisma.UserUpdateOneWithoutModeratedReviewsNestedInput
+  images?: Prisma.ReviewImageUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateWithoutDestinationInput = {
@@ -1118,6 +1233,7 @@ export type ReviewUncheckedUpdateWithoutDestinationInput = {
   rejectReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  images?: Prisma.ReviewImageUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewUncheckedUpdateManyWithoutDestinationInput = {
@@ -1134,6 +1250,35 @@ export type ReviewUncheckedUpdateManyWithoutDestinationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type ReviewCountOutputType
+ */
+
+export type ReviewCountOutputType = {
+  images: number
+}
+
+export type ReviewCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  images?: boolean | ReviewCountOutputTypeCountImagesArgs
+}
+
+/**
+ * ReviewCountOutputType without action
+ */
+export type ReviewCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewCountOutputType
+   */
+  select?: Prisma.ReviewCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ReviewCountOutputType without action
+ */
+export type ReviewCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewImageWhereInput
+}
 
 
 export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1153,6 +1298,8 @@ export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
   booking?: boolean | Prisma.BookingDefaultArgs<ExtArgs>
   moderatedBy?: boolean | Prisma.Review$moderatedByArgs<ExtArgs>
+  images?: boolean | Prisma.Review$imagesArgs<ExtArgs>
+  _count?: boolean | Prisma.ReviewCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["review"]>
 
 
@@ -1178,6 +1325,8 @@ export type ReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
   booking?: boolean | Prisma.BookingDefaultArgs<ExtArgs>
   moderatedBy?: boolean | Prisma.Review$moderatedByArgs<ExtArgs>
+  images?: boolean | Prisma.Review$imagesArgs<ExtArgs>
+  _count?: boolean | Prisma.ReviewCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1187,6 +1336,7 @@ export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     destination: Prisma.$DestinationPayload<ExtArgs>
     booking: Prisma.$BookingPayload<ExtArgs>
     moderatedBy: Prisma.$UserPayload<ExtArgs> | null
+    images: Prisma.$ReviewImagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1545,6 +1695,7 @@ export interface Prisma__ReviewClient<T, Null = never, ExtArgs extends runtime.T
   destination<T extends Prisma.DestinationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DestinationDefaultArgs<ExtArgs>>): Prisma.Prisma__DestinationClient<runtime.Types.Result.GetResult<Prisma.$DestinationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   booking<T extends Prisma.BookingDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BookingDefaultArgs<ExtArgs>>): Prisma.Prisma__BookingClient<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   moderatedBy<T extends Prisma.Review$moderatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Review$moderatedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  images<T extends Prisma.Review$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Review$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1950,6 +2101,30 @@ export type Review$moderatedByArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Review.images
+ */
+export type Review$imagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewImage
+   */
+  select?: Prisma.ReviewImageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReviewImage
+   */
+  omit?: Prisma.ReviewImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewImageInclude<ExtArgs> | null
+  where?: Prisma.ReviewImageWhereInput
+  orderBy?: Prisma.ReviewImageOrderByWithRelationInput | Prisma.ReviewImageOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewImageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewImageScalarFieldEnum | Prisma.ReviewImageScalarFieldEnum[]
 }
 
 /**

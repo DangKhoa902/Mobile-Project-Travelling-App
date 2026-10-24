@@ -11,6 +11,7 @@ npm install
 cp .env.example .env          # sửa DATABASE_URL, JWT_SECRET
 npm run db:deploy             # tạo bảng
 npm run db:seed               # dữ liệu demo
+npm run db:backfill           # một lần, nếu DB có dữ liệu từ trước migration platform_extensions
 npm run dev                   # http://localhost:3000
 ```
 
@@ -32,7 +33,16 @@ Tài khoản demo (mật khẩu `Password123`): xem [../02-thiet-ke/giao-dien.md
 | `JWT_SECRET` | ✓ | | ≥ 32 ký tự ngẫu nhiên: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
 | `NODE_ENV` | | `development` | `production` ẩn chi tiết lỗi 500 |
 | `PORT` | | `3000` | |
-| `JWT_EXPIRES_IN` | | `7d` | Thời hạn token |
+| `JWT_EXPIRES_IN` | | `15m` | Thời hạn access token |
+| `REFRESH_TOKEN_TTL_DAYS` | | `30` | Thời hạn refresh token |
+| `APP_URL` | | `http://localhost:8081` | Địa chỉ giao diện web, dùng tạo link trong email |
+| `EMAIL_TRANSPORT` | | `console` | `console` in email ra log (API trả kèm `devToken` khi không phải production); `smtp` gửi thật |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | khi `smtp` | | Gmail: `smtp.gmail.com`, 587, App Password; hoặc Brevo, Mailgun, SendGrid |
+| `PUSH_ENABLED` | | `false` | Bật gửi push qua Expo Push API |
+| `EXPO_ACCESS_TOKEN` | | | Chỉ cần nếu bật "Enhanced Push Security" trên Expo |
+| `STORAGE_DRIVER` | | `local` | `local` hoặc `s3` |
+| `UPLOAD_DIR`, `PUBLIC_BASE_URL`, `UPLOAD_MAX_MB` | | `uploads`, `http://localhost:3000`, `5` | Lưu local: thư mục, URL công khai của API, giới hạn MB |
+| `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | khi `s3` | | Cloudflare R2: endpoint `https://<account>.r2.cloudflarestorage.com`, region `auto`, `S3_PUBLIC_URL` = domain public của bucket |
 | `CORS_ORIGINS` | | `*` | Production: domain web build, phân tách bằng dấu phẩy |
 | `BOOKING_TAX_RATE` | | `0.08` | Thuế/phí trên booking |
 | `PAYMENT_TIMEOUT_MINUTES` | | `15` | Hạn thanh toán online |
@@ -40,7 +50,9 @@ Tài khoản demo (mật khẩu `Password123`): xem [../02-thiet-ke/giao-dien.md
 | `DATABASE_CONNECTION_LIMIT` | | `5` | Số kết nối DB tối đa |
 | `SEED_DEFAULT_PASSWORD` | | `Password123` | Mật khẩu tài khoản demo khi seed |
 
-API **không khởi động** nếu thiếu biến bắt buộc hoặc sai định dạng (báo rõ biến nào sai).
+API **không khởi động** nếu thiếu biến bắt buộc hoặc sai định dạng (báo rõ biến nào sai). Biến khai báo nhưng để trống (`S3_ENDPOINT=`) được coi như chưa đặt.
+
+**Production nên đặt:** `EMAIL_TRANSPORT=smtp` (nếu không, không ai nhận được email xác thực/đặt lại mật khẩu), `APP_URL` = domain web thật, `PUBLIC_BASE_URL` = domain API thật (HTTPS) hoặc `STORAGE_DRIVER=s3`.
 
 ## 3. Địa chỉ API cho frontend
 
@@ -78,7 +90,9 @@ Migration đã được sửa tên bảng PascalCase để chạy đúng trên M
 | Render / Railway | Deploy từ `be/Dockerfile` | MariaDB/MySQL được quản lý hoặc container | Đặt `TRUST_PROXY=1`; có HTTPS sẵn |
 | Máy cá nhân khi demo | `npm run dev` | MariaDB local | Điện thoại cùng Wi-Fi |
 
-Chỉ chạy **một instance API** (job hủy booking quá hạn chạy trong tiến trình). Muốn nhiều instance: tách job ra cron riêng.
+Chỉ chạy **một instance API** (job hủy booking quá hạn và job push chạy trong tiến trình). Muốn nhiều instance: tách job ra cron riêng và dùng `STORAGE_DRIVER=s3` (các instance không chung ổ đĩa).
+
+**Ảnh khi lưu local:** docker-compose gắn volume `uploads` vào `/app/uploads` để ảnh không mất khi build lại container. Sao lưu volume này cùng với volume `db_data`.
 
 ## 5. Build frontend
 

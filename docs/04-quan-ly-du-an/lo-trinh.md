@@ -10,6 +10,7 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 | 2 | Giao diện khám phá ban đầu (dữ liệu tĩnh) | ✅ |
 | 3 | Backend nghiệp vụ: đặt chỗ, thanh toán giả lập, đánh giá, CSKH, thông báo | ✅ |
 | 4 | Mô hình môi giới: chủ địa điểm, duyệt tin, hoa hồng, dashboard, hạn thanh toán | ✅ |
+| 4b | Mở rộng: đối soát, giá mùa, refresh token, email, push, nhật ký, tìm không dấu, ảnh | ✅ |
 | 5 | Giao diện Web + Mobile theo đặc tả | 🔄 |
 | 6 | Kết nối giao diện với API, trạng thái tải/lỗi | ⬜ |
 | 7 | Kiểm thử đa nền tảng, build, triển khai | 🔄 (backend xong) |
@@ -30,6 +31,13 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 - Thanh toán giả lập có hạn 15 phút, tự hủy, kênh thanh toán.
 - Đăng ký bắt buộc đồng ý điều khoản.
 - 32 test, Postman 133 request / 194 assertion.
+
+## Giai đoạn 4b – Mở rộng nền tảng (✅ 25/10/2026)
+
+- Đối soát và chuyển tiền cho chủ địa điểm (`Payout`), giá theo mùa (`RoomRate`).
+- Refresh token xoay vòng, quản lý thiết bị đăng nhập; xác thực email, quên / đặt lại mật khẩu.
+- Push notification qua Expo (outbox), nhật ký quản trị, tìm kiếm không dấu, tải ảnh (local / S3) + ảnh trong đánh giá.
+- 46 test, Postman 196 request / 299 assertion.
 
 ## Giai đoạn 5 – Giao diện Web + Mobile (🔄)
 
@@ -63,12 +71,8 @@ Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile
 
 ## Đề xuất sau đồ án (theo thứ tự giá trị)
 
-1. **Đối soát và chuyển tiền cho đối tác** theo kỳ (bảng `Payout`), trang đối soát cho admin và chủ.
-2. **Cổng thanh toán thật** (VNPay/MoMo sandbox): thay `payBooking` bằng tạo URL + xử lý IPN – xem [thanh-toan-gia-lap.md](../01-dac-ta/thanh-toan-gia-lap.md) mục 7.
-3. **Tải ảnh lên** (Cloudinary/S3) cho avatar và tin đăng.
-4. **Quên mật khẩu, xác thực email** khi đăng ký.
-5. **Push notification** qua Expo cho booking mới (chủ) và xác nhận (khách).
-6. **Chủ địa điểm trả lời đánh giá**; nhật ký thao tác quản trị.
-7. **Giá theo mùa / ngày lễ**, đóng phòng theo ngày.
-8. **Tìm kiếm không dấu** ("da lat" → "Đà Lạt").
-9. **Chat thời gian thực** bằng WebSocket.
+1. **Cổng thanh toán thật** (VNPay/MoMo sandbox): thay `payBooking` bằng tạo URL + xử lý IPN – xem [thanh-toan-gia-lap.md](../01-dac-ta/thanh-toan-gia-lap.md) mục 7.
+2. **Chủ địa điểm trả lời đánh giá.**
+3. **Đóng phòng theo ngày**, phí hủy thay vì chặn hủy.
+4. **Chat thời gian thực** bằng WebSocket.
+5. **Xuất báo cáo CSV** cho dashboard và đối soát.

@@ -38,7 +38,10 @@ fe/src/app/
 │
 ├── (auth)/
 │   ├── login.tsx                    A1  Đăng nhập
-│   └── register.tsx                 A2  Đăng ký
+│   ├── register.tsx                 A2  Đăng ký
+│   ├── forgot-password.tsx          A3  Quên mật khẩu
+│   ├── reset-password.tsx           A4  Đặt mật khẩu mới (mở từ link email)
+│   └── verify-email.tsx             A5  Xác thực email (mở từ link email)
 │
 ├── search.tsx                       D1  Kết quả tìm kiếm + bộ lọc
 ├── destinations/
@@ -63,7 +66,8 @@ fe/src/app/
 │   ├── edit.tsx                     P1  Sửa hồ sơ
 │   ├── password.tsx                 P2  Đổi mật khẩu
 │   ├── reviews.tsx                  P3  Đánh giá của tôi
-│   └── partner.tsx                  P4  Trở thành đối tác / trạng thái hồ sơ
+│   ├── partner.tsx                  P4  Trở thành đối tác / trạng thái hồ sơ
+│   └── sessions.tsx                 P5  Thiết bị đang đăng nhập
 │
 ├── owner/                           Khu chủ địa điểm (ưu tiên Web, có bản Mobile rút gọn)
 │   ├── _layout.tsx                  Chặn role OWNER, sidebar (web) / stack (mobile)
@@ -73,7 +77,8 @@ fe/src/app/
 │   ├── destinations/[id]/status.tsx O4  Trạng thái duyệt, xem trước, đánh giá của khách
 │   ├── profile.tsx                  O5  Hồ sơ đối tác & tài khoản nhận tiền
 │   ├── bookings/index.tsx           O6  Booking tại cơ sở của tôi
-│   └── bookings/[id].tsx            O7  Xử lý booking
+│   ├── bookings/[id].tsx            O7  Xử lý booking
+│   └── payouts.tsx                  O8  Đối soát: tiền chưa đối soát, các kỳ đã nhận
 │
 └── admin/                           Khu quản trị (ưu tiên chạy trên Web)
     ├── _layout.tsx                  Chặn theo role STAFF/ADMIN, sidebar
@@ -89,7 +94,9 @@ fe/src/app/
     ├── vouchers.tsx                 M10 Mã giảm giá                 (ADMIN)
     ├── users.tsx                    M11 Quản lý người dùng
     ├── partners.tsx                 M12 Hồ sơ đối tác: duyệt, hoa hồng, tạm ngưng (ADMIN)
-    └── listings.tsx                 M13 Duyệt tin đăng địa điểm     (ADMIN)
+    ├── listings.tsx                 M13 Duyệt tin đăng địa điểm     (ADMIN)
+    ├── payouts.tsx                  M14 Đối soát, chuyển tiền cho chủ (ADMIN)
+    └── audit-logs.tsx               M15 Nhật ký quản trị            (ADMIN)
 ```
 
 Nhóm `(tabs)` và `(auth)` trong ngoặc là route group của Expo Router: không xuất hiện trong URL, chỉ để gom layout.
@@ -226,7 +233,7 @@ flowchart LR
 ### D3 – Tất cả đánh giá
 
 - **Route:** `destinations/[slug]/reviews.tsx` · **Ai dùng:** tất cả · **Ưu tiên:** P2
-- **Hiển thị:** điểm trung bình lớn, tổng số đánh giá, danh sách (avatar, tên, sao, ngày, nội dung), cuộn vô hạn.
+- **Hiển thị:** điểm trung bình lớn, tổng số đánh giá, danh sách (avatar, tên, sao, ngày, nội dung, ảnh thu nhỏ – chạm để xem lớn), cuộn vô hạn.
 - **API:** `GET /api/destinations/{id}/reviews?page=&limit=`
 - **Quy tắc:** chỉ review đã được duyệt (`APPROVED`) mới hiện ở đây.
 - **Đề xuất API bổ sung:** biểu đồ phân bố 1–5 sao cần endpoint thống kê (chưa có).
@@ -286,6 +293,7 @@ flowchart LR
 3. Chọn ngày nhận và ngày trả (date picker; gợi ý ngày trả = ngày nhận + số đêm của gói).
 4. Chọn loại phòng (radio card), kèm "Còn {availableRooms} phòng".
 5. Bộ đếm số khách và số phòng (+/−).
+6. Nếu khoảng ở có giá mùa (`nightlyRoomPrices[].rateName` trong báo giá): nhãn "Có 2 đêm giá Tết (800.000đ/đêm)" dưới loại phòng; lịch chọn ngày tô màu các ngày có giá mùa (`roomTypes[].rates` trong D2).
 6. Thanh đáy: tạm tính + nút **Tiếp tục**.
 
 **API**
@@ -439,7 +447,8 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 
 - **Route:** `reviews/new.tsx?bookingId=` (sửa: `?reviewId=`) · **Ai dùng:** User · **Ưu tiên:** MVP
 - **Mục đích:** mục 16.
-- **Hiển thị:** tên địa điểm + ngày đi, chọn 1–5 sao (bắt buộc), ô nhận xét (tối đa 2000 ký tự, có bộ đếm), nút **Gửi**.
+- **Hiển thị:** tên địa điểm + ngày đi, chọn 1–5 sao (bắt buộc), ô nhận xét (tối đa 2000 ký tự, có bộ đếm), **tối đa 5 ảnh** (nút + Thêm ảnh, xem trước, xóa), nút **Gửi**.
+- **Ảnh:** chọn bằng `expo-image-picker`, nén về cạnh dài ≤ 1600px bằng `expo-image-manipulator`, tải từng ảnh qua `POST /api/uploads` (`multipart/form-data`, purpose `review`), giữ `url` trả về; gửi kèm `imageUrls` khi tạo/sửa đánh giá.
 - **API:** tạo `POST /api/reviews` `{ bookingId, rating, comment }`; sửa `PATCH /api/reviews/{id}`; xóa `DELETE /api/reviews/{id}`.
 
 | Kết quả | Hiển thị |
@@ -507,7 +516,9 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 | `OWNER` | **Quản lý cơ sở** → O1 |
 | `STAFF` / `ADMIN` | **Trang quản trị** → M1 |
 
-4. Nút **Đăng xuất**: xóa token, xóa cache dữ liệu cá nhân, về T1.
+4. Nếu `emailVerifiedAt = null`: dải vàng "Xác thực email để trở thành đối tác" + nút **Gửi lại email** (`POST /api/auth/resend-verification`).
+5. Mục **Thiết bị đang đăng nhập** → P5.
+6. Nút **Đăng xuất**: `POST /api/auth/logout { refreshToken }`, `DELETE /api/devices { token }`, xóa token, xóa cache dữ liệu cá nhân, về T1.
 
 **API:** `GET /api/auth/me`; với USER thêm `GET /api/partners/me` (404 = chưa nộp hồ sơ).
 
@@ -516,8 +527,8 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 ### A1 – Đăng nhập
 
 - **Route:** `(auth)/login.tsx?redirect=` · **Ai dùng:** Guest · **Ưu tiên:** MVP
-- **Hiển thị:** email, mật khẩu (nút hiện/ẩn), nút **Đăng nhập**, link "Chưa có tài khoản? Đăng ký".
-- **API:** `POST /api/auth/login` `{ email, password }` → lưu `token` (SecureStore trên mobile, localStorage trên web) và `user`.
+- **Hiển thị:** email, mật khẩu (nút hiện/ẩn), nút **Đăng nhập**, link **Quên mật khẩu?** → A3, link "Chưa có tài khoản? Đăng ký".
+- **API:** `POST /api/auth/login` `{ email, password, deviceName }` → lưu `accessToken` và `refreshToken` (SecureStore trên mobile, localStorage trên web) và `user`. `deviceName` lấy từ `expo-device` (ví dụ "Samsung Galaxy A54") để hiện ở P5.
 
 | Kết quả | Xử lý |
 |---|---|
@@ -526,7 +537,15 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 | 403 | "Tài khoản đã bị khóa, vui lòng liên hệ CSKH" |
 | 429 `TOO_MANY_REQUESTS` | "Bạn thử quá nhiều lần, vui lòng thử lại sau" |
 
-**Đề xuất API bổ sung:** "Quên mật khẩu" (chưa có, xem [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 13).
+### A3 – Quên mật khẩu · A4 – Đặt mật khẩu mới · A5 – Xác thực email
+
+| Trang | Ưu tiên | Hiển thị | API | Sau khi xong |
+|---|---|---|---|---|
+| A3 `(auth)/forgot-password.tsx` | P2 | Ô email + nút Gửi link | `POST /api/auth/forgot-password` | Luôn hiện "Nếu email đã đăng ký, bạn sẽ nhận được link..." (không nói email có tồn tại không) |
+| A4 `(auth)/reset-password.tsx?token=` | P2 | Mật khẩu mới, nhập lại | `POST /api/auth/reset-password` | "Đã đổi mật khẩu" → A1; lỗi `INVALID_TOKEN` → "Link hết hạn" + nút về A3 |
+| A5 `(auth)/verify-email.tsx?token=` | P2 | Tự gọi API khi mở trang, hiện đang xác thực / thành công / thất bại | `POST /api/auth/verify-email` | Thành công → T5; lỗi → nút Gửi lại (nếu đã đăng nhập) |
+
+Link trong email trỏ tới `APP_URL/reset-password?token=...` và `APP_URL/verify-email?token=...`, nên route phải đúng các đường dẫn này. Khi dev, token có sẵn trong response (`devResetToken`, `devVerificationToken`) và trong log của API.
 
 ### A2 – Đăng ký
 
@@ -553,8 +572,9 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 
 | Trang | Ưu tiên | Hiển thị | API |
 |---|---|---|---|
-| P1 `profile/edit.tsx` | P2 | Tên, số điện thoại, ngày sinh, URL avatar (email không sửa được) | `PATCH /api/auth/me` |
-| P2 `profile/password.tsx` | P2 | Mật khẩu hiện tại, mật khẩu mới, nhập lại | `PATCH /api/auth/me/password` (204); 400 `INVALID_PASSWORD` → "Mật khẩu hiện tại không đúng" |
+| P1 `profile/edit.tsx` | P2 | Tên, số điện thoại, ngày sinh, ảnh đại diện (chọn ảnh → tải lên → lưu URL; email không sửa được) | `POST /api/uploads` (purpose `avatar`) → `PATCH /api/auth/me { avatarUrl }` |
+| P2 `profile/password.tsx` | P2 | Mật khẩu hiện tại, mật khẩu mới, nhập lại | `PATCH /api/auth/me/password` → **lưu phiên mới trong response** (thiết bị khác bị đăng xuất); 400 `INVALID_PASSWORD` → "Mật khẩu hiện tại không đúng" |
+| P5 `profile/sessions.tsx` | P3 | Danh sách thiết bị: tên, trình duyệt/IP, lần dùng cuối; nút Đăng xuất từng thiết bị; nút Đăng xuất tất cả | `GET /api/auth/sessions`, `DELETE /api/auth/sessions/:id`, `POST /api/auth/logout-all` |
 | P3 `profile/reviews.tsx` | P3 | Review của tôi kèm trạng thái: Chờ duyệt / Đã hiển thị / Bị từ chối + lý do | `GET /api/reviews/mine` |
 
 ### P4 – Trở thành đối tác
@@ -575,7 +595,7 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 
 **Form** (`*` = bắt buộc): Tên cơ sở *, Địa chỉ kinh doanh *, SĐT liên hệ *, Mã số thuế, Giới thiệu, Ngân hàng, Số tài khoản, Chủ tài khoản, ☐ Đồng ý điều khoản đối tác * (hiển thị mức hoa hồng mặc định 15%). Ghi chú dưới phần ngân hàng: "Bắt buộc trước khi hồ sơ được duyệt".
 
-**API:** `POST /api/partners/apply`. Lỗi: 409 `ALREADY_APPLIED`, 409 `INVALID_ROLE` (Staff/Admin không nộp).
+**API:** `POST /api/partners/apply`. Lỗi: 403 `EMAIL_NOT_VERIFIED` (hiện dải xác thực email như T5, khóa nút Nộp), 409 `ALREADY_APPLIED`, 409 `INVALID_ROLE` (Staff/Admin không nộp).
 
 ## 4. Trang chủ địa điểm (Owner)
 
@@ -601,6 +621,7 @@ Khu `owner/` dành cho đối tác đã được duyệt. **Web là giao diện 
 3. **Biểu đồ đường** doanh thu theo ngày (`revenueByDay[].ownerRevenue`) – trục X ngày, trục Y VNĐ.
 4. **Việc cần làm:** "N booking chờ xác nhận" → O6 (lọc PENDING); "N lượt nhận phòng trong 7 ngày" → O6.
 5. **Tin đăng:** số tin theo trạng thái (`listings`), tin bị từ chối hiện màu đỏ → O4.
+6. **Tiền:** "Chưa đối soát: x đ (N booking)" và "Chờ sàn chuyển: y đ" (`payouts`) → O8.
 6. **Top địa điểm** của tôi theo doanh thu.
 
 **Rỗng:** chưa có tin đăng → "Đăng địa điểm đầu tiên" → O3.
@@ -617,8 +638,8 @@ Khu `owner/` dành cho đối tác đã được duyệt. **Web là giao diện 
 
 | Tab | Trường | API ghi |
 |---|---|---|
-| Thông tin | Tên *, Khu vực *, danh mục, địa chỉ, tọa độ, mô tả, chính sách, liên hệ, ảnh (URL), tiện ích | `POST /api/destinations` (tạo nháp) · `PATCH /api/destinations/{id}` |
-| Phòng | Tên, mô tả, sức chứa, giá/đêm, tổng số phòng, đang bán | `POST /api/room-types` · `PATCH /api/room-types/{id}` |
+| Thông tin | Tên *, Khu vực *, danh mục, địa chỉ, tọa độ, mô tả, chính sách, liên hệ, ảnh (tải lên qua `POST /api/uploads` purpose `destination`, kéo để sắp thứ tự), tiện ích | `POST /api/destinations` (tạo nháp) · `PATCH /api/destinations/{id}` |
+| Phòng | Tên, mô tả, sức chứa, giá/đêm, tổng số phòng, đang bán; mỗi phòng có mục **Giá theo mùa** (tên, từ ngày, đến ngày, giá/đêm) | `POST /api/room-types` · `PATCH /api/room-types/{id}` · `POST/PATCH/DELETE /api/room-types/{id}/rates` (409 `RATE_OVERLAP` khi trùng ngày) |
 | Gói | Tên, mô tả, quyền lợi, số ngày/đêm, giá, giờ hủy miễn phí, đang bán | `POST /api/packages` · `PATCH /api/packages/{id}` |
 | Dịch vụ | Tên, mô tả, giá, đơn vị tính, đang bán | `POST /api/addon-services` · `PATCH /api/addon-services/{id}` |
 
@@ -636,6 +657,12 @@ Khu `owner/` dành cho đối tác đã được duyệt. **Web là giao diện 
 
 - **Ưu tiên:** P2 · **API:** `GET /api/partners/me`, `PATCH /api/partners/me`
 - **Hiển thị:** thông tin cơ sở, tài khoản nhận tiền (che bớt số tài khoản: `•••• 3456`), tỷ lệ hoa hồng hiện tại (chỉ đọc), ngày được duyệt.
+
+### O8 – Đối soát
+
+- **Ưu tiên:** P2 · **API:** `GET /api/payouts/unsettled`, `GET /api/payouts`, `GET /api/payouts/{id}`
+- **Hiển thị:** thẻ "Doanh thu chưa đối soát" (số booking, số tiền); bảng các kỳ: kỳ (từ → đến), số booking, tổng khách trả, hoa hồng, **số tiền nhận**, trạng thái (Chờ chuyển vàng · Đã chuyển xanh · Đã hủy xám), ngày chuyển, mã giao dịch. Chạm một kỳ → danh sách booking của kỳ và doanh thu từng booking.
+- **Không có thao tác ghi:** sàn lập kỳ và chuyển tiền (M14).
 
 ### O6 – Booking tại cơ sở của tôi · O7 – Xử lý booking
 
@@ -670,6 +697,8 @@ Khu `admin/` nên ưu tiên giao diện **web** (màn hình rộng, bảng dữ 
 | M11 Người dùng | Xem | Xem, khóa/mở, đổi role |
 | M12 Hồ sơ đối tác | | ✓ |
 | M13 Duyệt tin đăng | | ✓ |
+| M14 Đối soát | | ✓ |
+| M15 Nhật ký quản trị | | ✓ |
 
 ### M1 – Dashboard toàn sàn
 
@@ -777,6 +806,20 @@ M11: Admin không tự khóa hoặc tự đổi quyền chính mình (API trả 
 - **API:** `GET /api/manage/destinations?listingStatus=PENDING_REVIEW`; `PATCH /api/destinations/{id}/review` `{ status, rejectReason? }`.
 - **Checklist cho người duyệt** (hiển thị bên cạnh): ảnh thật, mô tả đúng sự thật, giá hợp lý, địa chỉ có trên bản đồ, chính sách hủy rõ ràng. Lý do từ chối gợi ý nhanh: "Thiếu ảnh", "Sai địa chỉ", "Giá bất thường", "Nội dung không phù hợp".
 
+### M14 – Đối soát
+
+- **Ưu tiên:** P2 (ADMIN)
+- **Hiển thị:** chọn kỳ (mặc định tháng trước) → bảng xem trước từng chủ: tên cơ sở, số booking, tổng khách trả, hoa hồng, **số tiền phải chuyển**, có tài khoản ngân hàng hay không; nút **Lập kỳ** từng dòng. Tab "Các kỳ đã lập": lọc trạng thái, nút **Xác nhận đã chuyển** (nhập mã giao dịch) và **Hủy kỳ** cho kỳ đang chờ.
+- **API:** `GET /api/payouts/preview?periodStart=&periodEnd=`, `POST /api/payouts`, `GET /api/payouts`, `PATCH /api/payouts/{id}/pay`, `PATCH /api/payouts/{id}/cancel`
+- **Quy tắc:** kỳ phải đã kết thúc; chủ thiếu ngân hàng thì khóa nút Lập kỳ (409 `PARTNER_BANK_REQUIRED`); hộp thoại xác nhận hiện tài khoản nhận (`bankName`, `bankAccountNumber`, `bankAccountName`) để admin đối chiếu trước khi chuyển.
+
+### M15 – Nhật ký quản trị
+
+- **Ưu tiên:** P3 (ADMIN)
+- **Hiển thị:** bảng thời gian, người thực hiện, hành động (nhãn tiếng Việt: `user.lock` → "Khóa tài khoản"), đối tượng + mã, nút xem chi tiết trước/sau (JSON hiển thị dạng bảng 2 cột). Lọc theo người, loại đối tượng, nhóm hành động (`partner.`, `payout.`, `booking.`...), khoảng ngày.
+- **API:** `GET /api/audit-logs?actorId=&entity=&entityId=&action=&from=&to=&page=`
+- Từ trang chi tiết một đối tác/booking/kỳ đối soát nên có link "Lịch sử thao tác" mở M15 lọc sẵn `entity` + `entityId`.
+
 ## 6. Thứ tự làm đề xuất
 
 | Đợt | Trang | Kết quả demo được |
@@ -789,6 +832,7 @@ M11: Admin không tự khóa hoặc tự đổi quyền chính mình (API trả 
 | 6 | M1 | Dashboard toàn sàn |
 | 7 | C1, C2, M5, M6, P1–P3, D3, O4, O5 | Chat CSKH, hồ sơ, đánh giá |
 | 8 | M7–M11 | Quản trị nội dung còn lại |
+| 9 | A3–A5, P5, O8, M14, M15; ảnh ở P1, O3, R1; giá mùa ở O3, B1 | Tài khoản an toàn, đối soát, nhật ký, ảnh |
 
 Tài khoản demo sau khi chạy `npm run db:seed` trong `be/` (mật khẩu `Password123`):
 

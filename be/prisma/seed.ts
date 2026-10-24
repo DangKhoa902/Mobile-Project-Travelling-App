@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/prisma.js";
 import { refreshDestinationMinPrice, refreshDestinationRating } from "../src/services/destination.service.js";
 import { generateBookingCode } from "../src/services/booking-rules.js";
+import { backfillSearchText } from "./backfill-search.js";
 
 const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? "Password123";
 
@@ -181,7 +182,7 @@ async function main() {
     await Promise.all(
       accounts.map(async (account) => [
         account.role,
-        await prisma.user.upsert({ where: { email: account.email }, update: {}, create: { ...account, password } }),
+        await prisma.user.upsert({ where: { email: account.email }, update: {}, create: { ...account, password, emailVerifiedAt: new Date() } }),
       ]),
     ),
   );
@@ -268,7 +269,7 @@ async function main() {
     const user = await prisma.user.upsert({
       where: { email: partner.email },
       update: {},
-      create: { email: partner.email, name: partner.name, password, role: partner.status === "APPROVED" ? "OWNER" : "USER" },
+      create: { email: partner.email, name: partner.name, password, emailVerifiedAt: new Date(), role: partner.status === "APPROVED" ? "OWNER" : "USER" },
     });
     await prisma.partnerProfile.upsert({
       where: { userId: user.id },
@@ -361,6 +362,8 @@ async function main() {
   }
 
   await seedDashboardBookings(demoUser.id);
+  await seedSeasonalRates();
+  await backfillSearchText();
 
   console.log(`Seed completed. Demo accounts (password: ${DEFAULT_PASSWORD}):`);
   for (const account of accounts) console.log(`  ${account.role.padEnd(5)} ${account.email}`);
@@ -459,6 +462,21 @@ async function seedDashboardBookings(userId: number) {
       },
     });
   }
+}
+
+// Giá Tết và lễ 30/4 cho phòng Deluxe ở Đà Lạt để demo giá theo mùa.
+async function seedSeasonalRates() {
+  const room = await prisma.roomType.findFirst({
+    where: { name: "Deluxe Room", destination: { slug: "da-lat-pine-hill-resort" } },
+    select: { id: true, pricePerNight: true },
+  });
+  if (!room || (await prisma.roomRate.count({ where: { roomTypeId: room.id } })) > 0) return;
+  await prisma.roomRate.createMany({
+    data: [
+      { roomTypeId: room.id, name: "Tết Nguyên đán 2027", startDate: new Date("2027-02-04T00:00:00Z"), endDate: new Date("2027-02-12T00:00:00Z"), pricePerNight: Math.round(room.pricePerNight * 1.6) },
+      { roomTypeId: room.id, name: "Lễ 30/4 - 1/5", startDate: new Date("2027-04-29T00:00:00Z"), endDate: new Date("2027-05-02T00:00:00Z"), pricePerNight: Math.round(room.pricePerNight * 1.3) },
+    ],
+  });
 }
 
 main()

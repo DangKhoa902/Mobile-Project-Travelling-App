@@ -1,12 +1,24 @@
 import { badRequest, conflict, notFound } from "../lib/http-error.js";
 import { prisma, type TransactionClient } from "../lib/prisma.js";
+import { searchTextFor } from "../lib/destination-search.js";
 import { slugify } from "../lib/slug.js";
 import type { AuthUser } from "../middlewares/auth.js";
 import { assertCanManageDestination } from "./access.service.js";
+import { audit } from "./audit.service.js";
 import { createNotification, notifyRoles } from "./notification.service.js";
 import type { DestinationBody } from "../validators/destination.schema.js";
 
 type Db = TransactionClient | typeof prisma;
+
+// Tìm kiếm không dấu: tính lại khi tên, khu vực, địa chỉ hoặc danh mục đổi.
+export async function refreshDestinationSearchText(destinationId: number, db: Db = prisma) {
+  const destination = await db.destination.findUnique({
+    where: { id: destinationId },
+    select: { name: true, location: true, address: true, category: { select: { name: true } } },
+  });
+  if (!destination) return;
+  await db.destination.update({ where: { id: destinationId }, data: { searchText: searchTextFor(destination) } });
+}
 
 // "Giá từ" = gói rẻ nhất + phòng rẻ nhất cho đủ số đêm của gói đó.
 export async function refreshDestinationMinPrice(destinationId: number, db: Db = prisma) {
@@ -53,7 +65,7 @@ export async function createDestination(user: AuthUser, input: DestinationBody) 
   const byOwner = user.role === "OWNER";
   if (!byOwner) await assertOwnerAccount(ownerId);
 
-  return prisma.destination.create({
+  const created = await prisma.destination.create({
     data: {
       ...data,
       slug: input.slug ?? slugify(input.name),
@@ -66,6 +78,8 @@ export async function createDestination(user: AuthUser, input: DestinationBody) 
       images: images ? { create: images.map((url, sortOrder) => ({ url, sortOrder })) } : undefined,
     },
   });
+  await refreshDestinationSearchText(created.id);
+  return created;
 }
 
 // Tin đã duyệt vẫn hiển thị khi chủ địa điểm sửa nội dung; admin có thể ẩn nếu vi phạm.
@@ -75,7 +89,7 @@ export async function updateDestination(user: AuthUser, id: number, input: Parti
   const byOwner = user.role === "OWNER";
   if (!byOwner) await assertOwnerAccount(ownerId);
 
-  return prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx) => {
     if (images) {
       await tx.destinationImage.deleteMany({ where: { destinationId: id } });
     }
@@ -91,6 +105,8 @@ export async function updateDestination(user: AuthUser, id: number, input: Parti
       },
     });
   });
+  await refreshDestinationSearchText(id);
+  return updated;
 }
 
 // Chủ địa điểm gửi tin để admin duyệt. Tin phải đủ thông tin để khách đặt được.
@@ -120,7 +136,7 @@ export async function submitListing(user: AuthUser, id: number) {
   return updated;
 }
 
-export async function reviewListing(id: number, status: "APPROVED" | "REJECTED", rejectReason?: string) {
+export async function reviewListing(reviewer: AuthUser, id: number, status: "APPROVED" | "REJECTED", rejectReason?: string) {
   const destination = await prisma.destination.findUnique({ where: { id }, select: { listingStatus: true, ownerId: true, name: true } });
   if (!destination) throw notFound("Địa điểm");
   if (destination.listingStatus !== "PENDING_REVIEW") {
@@ -135,6 +151,7 @@ export async function reviewListing(id: number, status: "APPROVED" | "REJECTED",
           ? { listingStatus: "APPROVED", approvedAt: new Date(), listingRejectReason: null }
           : { listingStatus: "REJECTED", listingRejectReason: rejectReason },
     });
+    await audit({ actorId: reviewer.id, action: status === "APPROVED" ? "listing.approve" : "listing.reject", entity: "Destination", entityId: id, before: { listingStatus: destination.listingStatus }, after: { listingStatus: updated.listingStatus, rejectReason } }, tx);
     if (destination.ownerId) {
       await createNotification(
         {

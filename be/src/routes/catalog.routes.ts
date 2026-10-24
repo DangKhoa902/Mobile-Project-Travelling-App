@@ -5,7 +5,10 @@ import { prisma } from "../lib/prisma.js";
 import { slugify } from "../lib/slug.js";
 import { authenticate, currentUser, requireRole } from "../middlewares/auth.js";
 import { assertCanManageDestination } from "../services/access.service.js";
-import { refreshDestinationMinPrice } from "../services/destination.service.js";
+import { audit, requestIp } from "../services/audit.service.js";
+import { refreshDestinationMinPrice, refreshDestinationSearchText } from "../services/destination.service.js";
+import { parseDateOnly } from "../services/booking-rules.js";
+import { badRequest, conflict, notFound } from "../lib/http-error.js";
 
 const adminOnly = [authenticate, requireRole("ADMIN")];
 // Gói, phòng, dịch vụ: ADMIN quản lý mọi địa điểm, OWNER quản lý địa điểm của mình.
@@ -37,7 +40,11 @@ categoryRouter.post("/", ...adminOnly, async (request, response) => {
 
 categoryRouter.patch("/:id", ...adminOnly, async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
-  response.json({ data: await prisma.category.update({ where: { id }, data: categorySchema.partial().parse(request.body) }) });
+  const data = await prisma.category.update({ where: { id }, data: categorySchema.partial().parse(request.body) });
+  // Tên danh mục nằm trong searchText của các địa điểm thuộc danh mục.
+  const destinations = await prisma.destination.findMany({ where: { categoryId: id }, select: { id: true } });
+  for (const destination of destinations) await refreshDestinationSearchText(destination.id);
+  response.json({ data });
 });
 
 categoryRouter.delete("/:id", ...adminOnly, async (request, response) => {
@@ -105,7 +112,11 @@ packageRouter.patch("/:id", ...managers, async (request, response) => {
   const existing = await prisma.package.findUniqueOrThrow({ where: { id }, select: { destinationId: true } });
   await assertCanManageDestination(currentUser(request), existing.destinationId);
   const input = packageBaseSchema.omit({ destinationId: true }).partial().parse(request.body);
+  const before = await prisma.package.findUniqueOrThrow({ where: { id }, select: { price: true, isActive: true } });
   const data = await prisma.package.update({ where: { id }, data: input });
+  if (input.price !== undefined && input.price !== before.price) {
+    await audit({ actorId: currentUser(request).id, action: "package.price_change", entity: "Package", entityId: id, before, after: { price: data.price }, ip: requestIp(request) });
+  }
   await refreshDestinationMinPrice(data.destinationId);
   response.json({ data });
 });
@@ -135,12 +146,87 @@ roomTypeRouter.patch("/:id", ...managers, async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
   const existing = await prisma.roomType.findUniqueOrThrow({ where: { id }, select: { destinationId: true } });
   await assertCanManageDestination(currentUser(request), existing.destinationId);
-  const data = await prisma.roomType.update({
-    where: { id },
-    data: roomTypeSchema.omit({ destinationId: true }).partial().parse(request.body),
-  });
+  const input = roomTypeSchema.omit({ destinationId: true }).partial().parse(request.body);
+  const before = await prisma.roomType.findUniqueOrThrow({ where: { id }, select: { pricePerNight: true, totalRooms: true } });
+  const data = await prisma.roomType.update({ where: { id }, data: input });
+  if (input.pricePerNight !== undefined && input.pricePerNight !== before.pricePerNight) {
+    await audit({ actorId: currentUser(request).id, action: "room_type.price_change", entity: "RoomType", entityId: id, before, after: { pricePerNight: data.pricePerNight }, ip: requestIp(request) });
+  }
   await refreshDestinationMinPrice(data.destinationId);
   response.json({ data });
+});
+
+// ---------- Giá theo mùa của loại phòng ----------
+const roomRateBaseSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
+  pricePerNight: money,
+});
+const roomRateSchema = roomRateBaseSchema.refine((value) => value.endDate >= value.startDate, {
+  message: "endDate phải từ startDate trở đi",
+  path: ["endDate"],
+});
+const rateParamSchema = z.object({ id: z.coerce.number().int().positive(), rateId: z.coerce.number().int().positive() });
+
+async function assertNoOverlap(roomTypeId: number, startDate: Date, endDate: Date, exceptId?: number) {
+  const clash = await prisma.roomRate.findFirst({
+    where: { roomTypeId, startDate: { lte: endDate }, endDate: { gte: startDate }, ...(exceptId ? { id: { not: exceptId } } : {}) },
+    select: { name: true },
+  });
+  if (clash) throw conflict(`Trùng ngày với giá mùa "${clash.name}"`, "RATE_OVERLAP");
+}
+
+async function managedRoomType(request: Parameters<typeof currentUser>[0], roomTypeId: number) {
+  const roomType = await prisma.roomType.findUnique({ where: { id: roomTypeId }, select: { id: true, destinationId: true } });
+  if (!roomType) throw notFound("Loại phòng");
+  await assertCanManageDestination(currentUser(request), roomType.destinationId);
+  return roomType;
+}
+
+// Công khai để giao diện hiện lịch giá; chỉ trả các khoảng chưa kết thúc.
+roomTypeRouter.get("/:id/rates", async (request, response) => {
+  const { id } = idParamSchema.parse(request.params);
+  const today = new Date(new Date().toISOString().slice(0, 10) + "T00:00:00.000Z");
+  response.json({
+    data: await prisma.roomRate.findMany({ where: { roomTypeId: id, endDate: { gte: today } }, orderBy: { startDate: "asc" } }),
+  });
+});
+
+roomTypeRouter.post("/:id/rates", ...managers, async (request, response) => {
+  const { id } = idParamSchema.parse(request.params);
+  const input = roomRateSchema.parse(request.body);
+  await managedRoomType(request, id);
+  const startDate = parseDateOnly(input.startDate), endDate = parseDateOnly(input.endDate);
+  await assertNoOverlap(id, startDate, endDate);
+  const data = await prisma.roomRate.create({ data: { roomTypeId: id, name: input.name, startDate, endDate, pricePerNight: input.pricePerNight } });
+  await audit({ actorId: currentUser(request).id, action: "room_rate.create", entity: "RoomRate", entityId: data.id, after: data, ip: requestIp(request) });
+  response.status(201).json({ data });
+});
+
+roomTypeRouter.patch("/:id/rates/:rateId", ...managers, async (request, response) => {
+  const { id, rateId } = rateParamSchema.parse(request.params);
+  const input = roomRateBaseSchema.partial().parse(request.body);
+  await managedRoomType(request, id);
+  const before = await prisma.roomRate.findFirst({ where: { id: rateId, roomTypeId: id } });
+  if (!before) throw notFound("giá mùa");
+  const startDate = input.startDate ? parseDateOnly(input.startDate) : before.startDate;
+  const endDate = input.endDate ? parseDateOnly(input.endDate) : before.endDate;
+  if (endDate < startDate) throw badRequest("endDate phải từ startDate trở đi", "INVALID_DATES");
+  await assertNoOverlap(id, startDate, endDate, rateId);
+  const data = await prisma.roomRate.update({ where: { id: rateId }, data: { name: input.name, pricePerNight: input.pricePerNight, startDate, endDate } });
+  await audit({ actorId: currentUser(request).id, action: "room_rate.update", entity: "RoomRate", entityId: rateId, before, after: data, ip: requestIp(request) });
+  response.json({ data });
+});
+
+roomTypeRouter.delete("/:id/rates/:rateId", ...managers, async (request, response) => {
+  const { id, rateId } = rateParamSchema.parse(request.params);
+  await managedRoomType(request, id);
+  const before = await prisma.roomRate.findFirst({ where: { id: rateId, roomTypeId: id } });
+  if (!before) throw notFound("giá mùa");
+  await prisma.roomRate.delete({ where: { id: rateId } });
+  await audit({ actorId: currentUser(request).id, action: "room_rate.delete", entity: "RoomRate", entityId: rateId, before, ip: requestIp(request) });
+  response.status(204).end();
 });
 
 // ---------- Dịch vụ bổ sung ----------
@@ -204,11 +290,16 @@ voucherRouter.get("/", async (request, response) => {
 });
 
 voucherRouter.post("/", async (request, response) => {
-  response.status(201).json({ data: await prisma.voucher.create({ data: voucherSchema.parse(request.body) }) });
+  const data = await prisma.voucher.create({ data: voucherSchema.parse(request.body) });
+  await audit({ actorId: currentUser(request).id, action: "voucher.create", entity: "Voucher", entityId: data.id, after: data, ip: requestIp(request) });
+  response.status(201).json({ data });
 });
 
 voucherRouter.patch("/:id", async (request, response) => {
   const { id } = idParamSchema.parse(request.params);
   const input = voucherBaseSchema.omit({ code: true }).partial().parse(request.body);
-  response.json({ data: await prisma.voucher.update({ where: { id }, data: input }) });
+  const before = await prisma.voucher.findUniqueOrThrow({ where: { id } });
+  const data = await prisma.voucher.update({ where: { id }, data: input });
+  await audit({ actorId: currentUser(request).id, action: "voucher.update", entity: "Voucher", entityId: id, before, after: data, ip: requestIp(request) });
+  response.json({ data });
 });

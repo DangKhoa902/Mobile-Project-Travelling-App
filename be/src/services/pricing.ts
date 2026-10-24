@@ -13,9 +13,29 @@ export type PricedVoucher = {
   maxDiscount: number | null;
 };
 
+export type SeasonalRate = { name: string; startDate: Date; endDate: Date; pricePerNight: number };
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Giá từng đêm: đêm d dùng giá mùa nếu startDate ≤ d ≤ endDate (gồm cả hai ngày), ngược lại dùng giá gốc.
+// Các khoảng giá mùa của một loại phòng không chồng nhau (kiểm tra lúc tạo), nên mỗi đêm khớp tối đa một khoảng.
+export function nightlyRoomPrices(basePrice: number, rates: SeasonalRate[], checkIn: Date, nights: number) {
+  return Array.from({ length: nights }, (_, index) => {
+    const night = new Date(checkIn.getTime() + index * DAY_MS);
+    const rate = rates.find((item) => item.startDate <= night && night <= item.endDate);
+    return {
+      date: night.toISOString().slice(0, 10),
+      price: rate ? rate.pricePerNight : basePrice,
+      rateName: rate?.name ?? null,
+    };
+  });
+}
+
 export type PricingInput = {
   packagePrice: number;
   roomPricePerNight: number;
+  // Có giá mùa thì truyền giá từng đêm; bỏ trống = mọi đêm dùng roomPricePerNight.
+  roomNightlyPrices?: number[];
   nights: number;
   roomsCount: number;
   guests: number;
@@ -59,7 +79,10 @@ export function calculateCommission(subtotal: number, discountAmount: number, co
 
 // Tổng tiền = Giá gói + Giá phòng + Dịch vụ bổ sung - Giảm giá + Thuế/phí
 export function calculateBookingPrice(input: PricingInput): PriceBreakdown {
-  const roomPrice = input.roomPricePerNight * input.nights * input.roomsCount;
+  const perRoom = input.roomNightlyPrices
+    ? input.roomNightlyPrices.reduce((sum, price) => sum + price, 0)
+    : input.roomPricePerNight * input.nights;
+  const roomPrice = perRoom * input.roomsCount;
   const services = input.services.map((service) => ({
     addonServiceId: service.id,
     quantity: service.quantity,

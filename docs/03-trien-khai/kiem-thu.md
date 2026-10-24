@@ -4,7 +4,7 @@ Ba lớp kiểm thử, từ nhanh đến đầy đủ:
 
 | Lớp | Công cụ | Vị trí | Cần DB | Kiểm tra gì |
 |---|---|---|---|---|
-| Unit | Vitest | `be/tests/unit/` | Không | Hàm thuần: tính giá, giảm giá, hoa hồng, máy trạng thái, chính sách hủy, ngày giờ VN, mã booking |
+| Unit | Vitest | `be/tests/unit/` | Không | Hàm thuần: tính giá, giá mùa từng đêm, giảm giá, hoa hồng, máy trạng thái, chính sách hủy, ngày giờ VN, mã booking, bỏ dấu tìm kiếm, nhận dạng ảnh |
 | Integration | Vitest + Supertest | `be/tests/integration/` | Không | Route trả đúng mã lỗi khi thiếu token, sai body, JSON hỏng, thiếu đồng ý điều khoản |
 | End-to-end API | Postman CLI | `be/postman/travelling-app.postman_collection.json` | **Có** (sau khi seed) | Toàn bộ luồng nghiệp vụ trên server và DB thật |
 
@@ -17,7 +17,7 @@ cd be
 npm test
 ```
 
-Kết quả hiện tại: **3 file, 32 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
+Kết quả hiện tại: **4 file, 46 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
 
 ## 2. Chạy kiểm thử end-to-end
 
@@ -34,9 +34,11 @@ cd be
 postman collection run postman/travelling-app.postman_collection.json
 ```
 
-Kết quả hiện tại: **133 request, 194 assertion, 0 lỗi**. Có thể mở file collection bằng ứng dụng Postman để chạy từng request.
+Kết quả hiện tại: **196 request, 299 assertion, 0 lỗi** (lần chạy đầu sau `db:seed`). Các lần chạy sau, nhóm 19 (đối soát) chỉ chạy phần đầu vì booking demo đã được đối soát ở lần trước; các bước còn lại tự bỏ qua (`skipRequest`), không báo lỗi. Muốn chạy đủ lại: seed vào một DB mới.
 
-**Lưu ý giới hạn đăng nhập:** mỗi lần chạy dùng khoảng 10 lượt đăng nhập/đăng ký, giới hạn là 20 lượt / 15 phút / IP. Chạy collection 2 lần liên tiếp sẽ gặp 429; khởi động lại API (`npm run dev`) để xóa bộ đếm.
+Collection cần chạy từ thư mục `be/` để tìm thấy file mẫu `postman/fixtures/*.png` của nhóm 17. Có thể mở file collection bằng ứng dụng Postman để chạy từng request.
+
+**Lưu ý giới hạn đăng nhập:** mỗi lần chạy dùng khoảng 17 lượt đăng nhập/đăng ký/quên mật khẩu, giới hạn là 20 lượt / 15 phút / IP. Chạy collection 2 lần liên tiếp sẽ gặp 429; khởi động lại API (`npm run dev`) để xóa bộ đếm.
 
 ### Các nhóm trong collection
 
@@ -55,6 +57,16 @@ Kết quả hiện tại: **133 request, 194 assertion, 0 lỗi**. Có thể m�
 | 10. Đối tác & tin đăng | Nộp hồ sơ, duyệt thiếu ngân hàng → 409, bổ sung, duyệt → OWNER; tạo nháp, ẩn với khách, gửi duyệt thiếu gói → 400, chủ khác sửa → 403, từ chối → gửi lại → duyệt |
 | 11. Booking tại địa điểm đối tác | Hoa hồng đúng tỷ lệ, chủ nhận thông báo, chỉ thấy booking của mình, chủ khác → 404, hủy thiếu lý do → 400, chủ xác nhận, hạn thanh toán ~15 phút, thanh toán qua ví |
 | 12. Dashboard | User → 403, admin toàn sàn (30 ngày, tổng theo ngày = summary), owner chỉ cơ sở mình, khoảng ngày sai → 400, tạm ngưng đối tác ẩn tin |
+| 13. Phiên đăng nhập | Refresh xoay vòng, dùng lại token vừa xoay → `ROTATED`, danh sách phiên, đăng xuất, dùng token đã đăng xuất → `REUSED` |
+| 14. Quên mật khẩu | Gửi link (email có/không tồn tại cùng kết quả), đặt lại, dùng lại link → 400, mật khẩu cũ hết hiệu lực, đổi mật khẩu trả phiên mới và thu hồi phiên cũ |
+| 15. Giá theo mùa | Chủ khác → 403, tạo, trùng ngày → 409, ngày ngược → 400, báo giá áp giá mùa từng đêm, chi tiết có `rates`, sửa, xóa |
+| 16. Tìm không dấu | "da lat" = "ĐÀ LẠT", tìm theo danh mục không dấu |
+| 17. Tải ảnh | PNG thật → 201 và tải lại được qua URL; file giả ảnh → 400; khách tải ảnh địa điểm → 403; thiếu file → 400; gắn ảnh vào đánh giá; ảnh của người khác → 400 |
+| 18. Thiết bị push | Đăng ký token, token sai → 400, danh sách, gỡ |
+| 19. Đối soát | Chưa đối soát, xem trước (chỉ admin), kỳ chưa kết thúc → 400, lập kỳ, lập trùng → 409, chủ khác → 404, tổng booking = số tiền kỳ, hủy kỳ trả booking, lập lại, chuyển, chuyển lại → 409, hủy kỳ đã chuyển → 409, chủ nhận thông báo |
+| 20. Nhật ký quản trị | User → 403, lọc theo hành động, đối tượng; có người thực hiện |
+
+**Chưa kiểm thử với dịch vụ thật:** gửi email qua SMTP (mới chạy chế độ `console`), gửi push tới Expo (mới kiểm thử đăng ký thiết bị; job gửi chưa gọi Expo thật), lưu ảnh lên S3/R2 (mới chạy `local`).
 
 ### Kiểm thử hết hạn thanh toán
 
@@ -81,4 +93,5 @@ Theo [frontend-web-mobile.md](frontend-web-mobile.md) mục 6. Với mỗi trang
 5. **Admin**: duyệt tin.
 6. **Khách**: thấy tin mới, đặt "trả tại nơi ở".
 7. **Đối tác**: nhận thông báo, xác nhận booking, xem dashboard thấy doanh thu sau hoa hồng.
-8. **Staff** (`staff@travelling.app`): hoàn thành booking cũ → khách đánh giá → staff duyệt → rating cập nhật.
+8. **Staff** (`staff@travelling.app`): hoàn thành booking cũ → khách đánh giá (kèm ảnh) → staff duyệt → rating cập nhật.
+9. **Admin**: đối soát tháng trước cho chủ địa điểm → xác nhận đã chuyển → chủ thấy thông báo và kỳ "Đã chuyển"; mở nhật ký thấy toàn bộ thao tác vừa làm.

@@ -21,7 +21,18 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.email().trim().toLowerCase(),
   password: z.string().min(1).max(72),
+  // Tên thiết bị hiển thị ở danh sách phiên đăng nhập, ví dụ "iPhone 15 của An".
+  deviceName: z.string().trim().max(100).optional(),
 });
+
+export const refreshSchema = z.object({
+  refreshToken: z.string().min(20).max(200),
+  deviceName: z.string().trim().max(100).optional(),
+});
+
+export const tokenSchema = z.object({ token: z.string().min(20).max(200) });
+
+export const forgotPasswordSchema = z.object({ email: z.email().trim().toLowerCase() });
 
 export const updateProfileSchema = z
   .object({
@@ -34,5 +45,10 @@ export const updateProfileSchema = z
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1).max(72),
+  newPassword: passwordSchema,
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(20).max(200),
   newPassword: passwordSchema,
 });

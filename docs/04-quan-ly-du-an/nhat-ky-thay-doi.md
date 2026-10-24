@@ -4,6 +4,57 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 25/10/2026 – Mở rộng nền tảng (8 mục đề xuất của cơ sở dữ liệu)
+
+### Yêu cầu
+
+Triển khai mục 1, 2, 6, 7, 8, 9, 10, 11 trong "Đề xuất mở rộng" của `co-so-du-lieu.md`: đối soát cho chủ địa điểm, giá theo mùa, refresh token, quên mật khẩu / xác thực email, push notification, nhật ký quản trị, tìm kiếm không dấu, ảnh tải lên.
+
+### Thay đổi theo lớp
+
+| Lớp | File | Thay đổi |
+|---|---|---|
+| Database | `schema.prisma`, migration `20261025090000_platform_extensions` | 8 bảng mới: `RefreshToken`, `VerificationToken`, `DeviceToken`, `AuditLog`, `Payout`, `Upload`, `RoomRate`, `ReviewImage`; 3 enum mới; cột `User.emailVerifiedAt`, `Destination.searchText`, `Booking.payoutId`, `Notification.pushedAt`. Tài khoản có sẵn coi là đã xác thực; thông báo cũ không gửi push |
+| Config | `config/env.ts`, `.env.example`, `docker-compose.yml`, `Dockerfile` | Biến cho refresh token, email, push, lưu file; `JWT_EXPIRES_IN` mặc định 15m; biến để trống = chưa đặt; volume `uploads` |
+| Thư viện | `lib/crypto.ts`, `lib/search-text.ts`, `lib/destination-search.ts`, `lib/storage.ts` | Token ngẫu nhiên + SHA-256; bỏ dấu; lưu ảnh local/S3 + nhận dạng chữ ký file |
+| Hàm thuần | `services/pricing.ts` | `nightlyRoomPrices`; `calculateBookingPrice` nhận giá từng đêm |
+| Service mới | `session.service.ts`, `verification.service.ts`, `mail.service.ts`, `push.service.ts`, `payout.service.ts`, `audit.service.ts` | Phiên + xoay vòng; link email; gửi mail; outbox push; đối soát; nhật ký |
+| Service | `auth.service.ts` | Đăng ký gửi email xác thực; đăng nhập trả phiên; đổi mật khẩu thu hồi phiên; xác thực email; quên / đặt lại mật khẩu |
+| Service | `booking.service.ts` | Báo giá áp giá mùa, trả `nightlyRoomPrices`; nhật ký khi chủ/staff xử lý booking |
+| Service | `destination.service.ts`, `review.service.ts`, `stats.service.ts` | `searchText`; nhật ký duyệt tin / đánh giá; ảnh đánh giá; dashboard chủ có `payouts` |
+| Route mới | `payout.routes.ts`, `audit.routes.ts`, `device.routes.ts`, `upload.routes.ts` | `/api/payouts`, `/api/audit-logs`, `/api/devices`, `/api/uploads` + phục vụ `/uploads` |
+| Route | `auth.routes.ts` | `/refresh`, `/logout`, `/logout-all`, `/sessions`, `/verify-email`, `/resend-verification`, `/forgot-password`, `/reset-password` |
+| Route | `catalog.routes.ts` | CRUD giá mùa `/room-types/:id/rates`; nhật ký đổi giá gói/phòng, voucher; đổi tên danh mục cập nhật `searchText` |
+| Route | `user.routes.ts`, `partner.routes.ts`, `review.routes.ts`, `destination.routes.ts` | Nhật ký; khóa tài khoản thu hồi phiên; nộp hồ sơ đối tác cần email đã xác thực; `imageUrls` cho đánh giá |
+| Hạ tầng | `app.ts`, `server.ts`, `middlewares/error-handler.ts` | Mount router; helmet cho phép ảnh cross-origin; job push 15 giây; lỗi upload (413) |
+| DAO | `destination.dao.ts`, `user.dao.ts` | Tìm theo `searchText`; chi tiết kèm `rates`, ảnh đánh giá; `emailVerifiedAt` |
+| Seed | `prisma/seed.ts`, `prisma/backfill-search.ts` | Tài khoản demo đã xác thực; giá Tết và 30/4 cho phòng Deluxe Đà Lạt; tính `searchText` |
+| Test | `tests/unit/extensions.test.ts`, `tests/integration/api.test.ts` | 14 test mới (46 tổng) |
+| Postman | `postman/` | Thư mục 13–20 (60 request), file ảnh mẫu `fixtures/` |
+
+### Quyết định thiết kế
+
+| Quyết định | Lý do |
+|---|---|
+| Access token 15 phút + refresh token xoay vòng, phát hiện dùng lại | Lộ access token chỉ dùng được ít phút; lộ refresh token bị phát hiện khi chủ thật làm mới |
+| Cửa sổ 30 giây trước khi coi là dùng lại | App mở lại thường gửi nhiều request cùng lúc; không đăng xuất nhầm người dùng thật |
+| Chỉ lưu SHA-256 của token | Lộ DB không lộ phiên |
+| Chỉ chặn nộp hồ sơ đối tác khi chưa xác thực email | Không thêm bước cho khách đặt chỗ; đối tác nhận tiền nên cần chắc chắn email |
+| `EMAIL_TRANSPORT=console` + `devToken` khi không phải production | Chạy thử và kiểm thử tự động không cần hộp thư thật |
+| Push qua outbox `Notification.pushedAt` | Lỗi mạng tới Expo không làm hỏng giao dịch; gửi lại được |
+| Đối soát lập theo kỳ, admin chuyển khoản thủ công | Đồ án không tích hợp ngân hàng; vẫn có số liệu, trạng thái, mã giao dịch, thông báo |
+| Giá mùa theo khoảng ngày, không chồng nhau | Mỗi đêm có đúng một giá; chủ nhập ít dòng |
+| `searchText` + `LIKE` thay vì FULLTEXT | FULLTEXT bỏ từ ngắn hơn 3 ký tự, không hợp tiếng Việt |
+| Kho file thay được (local / S3) | Dev không cần cloud; deploy nhiều instance chuyển sang R2/S3 không đổi code |
+
+### Kiểm chứng
+
+- `npm run typecheck` sạch; `npm test` 46/46.
+- Postman lần đầu sau seed: 196 request, 299 assertion; lỗi duy nhất ở script test URL ảnh (`//uploads`), đã sửa; lần chạy lại 187 request / 283 assertion, 0 lỗi (đối soát tự bỏ qua vì đã đối soát).
+- Chưa kiểm thử với SMTP thật, Expo Push thật, S3/R2 thật.
+
+---
+
 ## 24/10/2026 – Mô hình môi giới, dashboard, thanh toán giả lập có hạn
 
 ### Yêu cầu

@@ -130,7 +130,19 @@ Chủ địa điểm / Admin (web lg)       Chủ địa điểm (mobile)
 
 **Cách test nhanh nhiều kích thước:** chạy `npm run web` trong `fe/`, mở DevTools của trình duyệt (F12) → chế độ thiết bị, chuyển giữa iPhone (375), iPad (768), Desktop (1280). Sau đó chạy `npm run android` để kiểm tra cử chỉ, bàn phím, tai thỏ trên máy thật/emulator.
 
-## 7. Cấu trúc thư mục frontend đề xuất
+## 7. Kết nối các chức năng mới của backend
+
+| Chức năng | Việc ở frontend | Thư viện (cài bằng `npx expo install`) |
+|---|---|---|
+| Refresh token | `services/api/client.ts`: interceptor bắt 401 → gọi `/auth/refresh` **một lần** (các request khác chờ cùng promise) → lưu cặp token mới → gửi lại request; lỗi thì đăng xuất. Lúc mở app gọi `/auth/refresh` thay cho `/auth/me` | `expo-secure-store` (đã có) |
+| Tên thiết bị | Gửi `deviceName` khi đăng nhập | `expo-device` (đã có) |
+| Push notification | Sau đăng nhập: xin quyền, lấy Expo push token, `POST /api/devices`; khi đăng xuất `DELETE /api/devices`; lắng nghe chạm vào push → mở trang theo `data`. Cần development build (không chạy trong Expo Go trên Android từ SDK 53) và `projectId` của EAS | `expo-notifications` |
+| Tải ảnh | Chọn ảnh → nén → `FormData` với `{ uri, name, type }` → `POST /api/uploads` (không tự đặt header `Content-Type`, để Axios tự thêm boundary). Web: `FormData` nhận `File` từ `<input type="file">` | `expo-image-picker`, `expo-image-manipulator` |
+| Link email | Route `/verify-email` và `/reset-password` đọc `token` bằng `useLocalSearchParams`; mobile mở được nhờ `scheme: "travellingapp"` trong `app.json` | `expo-linking` (đã có) |
+
+Kiểu dữ liệu trong `fe/src/types/api.ts` cần bổ sung: `Role` thêm `OWNER`; `User.emailVerifiedAt`; `AuthResult` thêm `accessToken`, `refreshToken`; `Review.images`; `RoomType.rates`; báo giá có `nightlyRoomPrices`.
+
+## 8. Cấu trúc thư mục frontend đề xuất
 
 ```text
 fe/src/

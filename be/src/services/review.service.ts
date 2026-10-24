@@ -2,9 +2,19 @@ import { badRequest, conflict, notFound } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
 import type { AuthUser } from "../middlewares/auth.js";
 import { refreshDestinationRating } from "./destination.service.js";
+import { audit } from "./audit.service.js";
 import { createNotification } from "./notification.service.js";
 
-type ReviewInput = { bookingId: number; rating: number; comment?: string };
+type ReviewInput = { bookingId: number; rating: number; comment?: string; imageUrls?: string[] };
+
+// Ảnh đính kèm phải do chính người viết tải lên qua /api/uploads (purpose=review).
+async function assertOwnReviewImages(userId: number, urls: string[] | undefined) {
+  if (!urls?.length) return;
+  const owned = await prisma.upload.count({ where: { userId, purpose: "review", url: { in: urls } } });
+  if (owned !== new Set(urls).size) throw badRequest("Ảnh đánh giá không hợp lệ", "INVALID_IMAGE");
+}
+
+const imageRows = (urls: string[]) => urls.map((url, sortOrder) => ({ url, sortOrder }));
 
 export async function createReview(user: AuthUser, input: ReviewInput) {
   const booking = await prisma.booking.findUnique({
@@ -16,6 +26,7 @@ export async function createReview(user: AuthUser, input: ReviewInput) {
   if (booking.status !== "COMPLETED") throw conflict("Chỉ được đánh giá sau khi hoàn thành chuyến đi", "BOOKING_NOT_COMPLETED");
   // BR-08: mỗi booking chỉ có một review; muốn sửa thì dùng PATCH.
   if (booking.review) throw conflict("Booking này đã được đánh giá", "ALREADY_REVIEWED");
+  await assertOwnReviewImages(user.id, input.imageUrls);
 
   return prisma.review.create({
     data: {
@@ -24,7 +35,9 @@ export async function createReview(user: AuthUser, input: ReviewInput) {
       bookingId: booking.id,
       rating: input.rating,
       comment: input.comment,
+      images: input.imageUrls ? { create: imageRows(input.imageUrls) } : undefined,
     },
+    include: { images: { orderBy: { sortOrder: "asc" } } },
   });
 }
 
@@ -33,9 +46,20 @@ export async function updateReview(user: AuthUser, id: number, input: Partial<Om
   const review = await prisma.review.findUnique({ where: { id } });
   if (!review || review.userId !== user.id) throw notFound("Review");
 
+  const { imageUrls, ...fields } = input;
+  await assertOwnReviewImages(user.id, imageUrls);
   const updated = await prisma.review.update({
     where: { id },
-    data: { ...input, status: "PENDING", moderatedAt: null, moderatedById: null, rejectReason: null },
+    data: {
+      ...fields,
+      // Gửi imageUrls = thay toàn bộ ảnh; không gửi = giữ nguyên.
+      images: imageUrls ? { deleteMany: {}, create: imageRows(imageUrls) } : undefined,
+      status: "PENDING",
+      moderatedAt: null,
+      moderatedById: null,
+      rejectReason: null,
+    },
+    include: { images: { orderBy: { sortOrder: "asc" } } },
   });
   if (review.status === "APPROVED") await refreshDestinationRating(review.destinationId);
   return updated;
@@ -64,6 +88,7 @@ export async function moderateReview(moderator: AuthUser, id: number, status: "A
         moderatedAt: new Date(),
       },
     });
+    await audit({ actorId: moderator.id, action: status === "APPROVED" ? "review.approve" : "review.reject", entity: "Review", entityId: id, before: { status: review.status }, after: { status, rejectReason } }, tx);
     await refreshDestinationRating(review.destinationId, tx);
     await createNotification(
       {

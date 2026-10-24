@@ -52,6 +52,12 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  RefreshToken: 'RefreshToken',
+  VerificationToken: 'VerificationToken',
+  DeviceToken: 'DeviceToken',
+  AuditLog: 'AuditLog',
+  Payout: 'Payout',
+  Upload: 'Upload',
   PartnerProfile: 'PartnerProfile',
   Category: 'Category',
   Facility: 'Facility',
@@ -59,6 +65,7 @@ export const ModelName = {
   DestinationImage: 'DestinationImage',
   Package: 'Package',
   RoomType: 'RoomType',
+  RoomRate: 'RoomRate',
   AddonService: 'AddonService',
   Voucher: 'Voucher',
   Booking: 'Booking',
@@ -66,6 +73,7 @@ export const ModelName = {
   Payment: 'Payment',
   Favorite: 'Favorite',
   Review: 'Review',
+  ReviewImage: 'ReviewImage',
   Conversation: 'Conversation',
   Message: 'Message',
   Notification: 'Notification'
@@ -95,6 +103,7 @@ export const UserScalarFieldEnum = {
   phone: 'phone',
   dateOfBirth: 'dateOfBirth',
   avatarUrl: 'avatarUrl',
+  emailVerifiedAt: 'emailVerifiedAt',
   role: 'role',
   status: 'status',
   createdAt: 'createdAt',
@@ -102,6 +111,102 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  deviceName: 'deviceName',
+  userAgent: 'userAgent',
+  ip: 'ip',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  replacedById: 'replacedById',
+  createdAt: 'createdAt'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const VerificationTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const DeviceTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  platform: 'platform',
+  createdAt: 'createdAt',
+  lastSeenAt: 'lastSeenAt'
+} as const
+
+export type DeviceTokenScalarFieldEnum = (typeof DeviceTokenScalarFieldEnum)[keyof typeof DeviceTokenScalarFieldEnum]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  before: 'before',
+  after: 'after',
+  ip: 'ip',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const PayoutScalarFieldEnum = {
+  id: 'id',
+  ownerId: 'ownerId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  bookingCount: 'bookingCount',
+  grossAmount: 'grossAmount',
+  commissionAmount: 'commissionAmount',
+  amount: 'amount',
+  status: 'status',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  transferRef: 'transferRef',
+  note: 'note',
+  paidAt: 'paidAt',
+  cancelledAt: 'cancelledAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayoutScalarFieldEnum = (typeof PayoutScalarFieldEnum)[keyof typeof PayoutScalarFieldEnum]
+
+
+export const UploadScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  url: 'url',
+  mimeType: 'mimeType',
+  size: 'size',
+  purpose: 'purpose',
+  createdAt: 'createdAt'
+} as const
+
+export type UploadScalarFieldEnum = (typeof UploadScalarFieldEnum)[keyof typeof UploadScalarFieldEnum]
 
 
 export const PartnerProfileScalarFieldEnum = {
@@ -172,6 +277,7 @@ export const DestinationScalarFieldEnum = {
   listingRejectReason: 'listingRejectReason',
   submittedAt: 'submittedAt',
   approvedAt: 'approvedAt',
+  searchText: 'searchText',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -221,6 +327,20 @@ export const RoomTypeScalarFieldEnum = {
 } as const
 
 export type RoomTypeScalarFieldEnum = (typeof RoomTypeScalarFieldEnum)[keyof typeof RoomTypeScalarFieldEnum]
+
+
+export const RoomRateScalarFieldEnum = {
+  id: 'id',
+  roomTypeId: 'roomTypeId',
+  name: 'name',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  pricePerNight: 'pricePerNight',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RoomRateScalarFieldEnum = (typeof RoomRateScalarFieldEnum)[keyof typeof RoomRateScalarFieldEnum]
 
 
 export const AddonServiceScalarFieldEnum = {
@@ -287,6 +407,7 @@ export const BookingScalarFieldEnum = {
   commissionAmount: 'commissionAmount',
   ownerRevenue: 'ownerRevenue',
   paymentDueAt: 'paymentDueAt',
+  payoutId: 'payoutId',
   confirmedAt: 'confirmedAt',
   completedAt: 'completedAt',
   cancelledAt: 'cancelledAt',
@@ -354,6 +475,16 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+export const ReviewImageScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  url: 'url',
+  sortOrder: 'sortOrder'
+} as const
+
+export type ReviewImageScalarFieldEnum = (typeof ReviewImageScalarFieldEnum)[keyof typeof ReviewImageScalarFieldEnum]
+
+
 export const ConversationScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
@@ -389,6 +520,7 @@ export const NotificationScalarFieldEnum = {
   body: 'body',
   data: 'data',
   isRead: 'isRead',
+  pushedAt: 'pushedAt',
   createdAt: 'createdAt'
 } as const
 
@@ -428,6 +560,78 @@ export const UserOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const RefreshTokenOrderByRelevanceFieldEnum = {
+  tokenHash: 'tokenHash',
+  deviceName: 'deviceName',
+  userAgent: 'userAgent',
+  ip: 'ip'
+} as const
+
+export type RefreshTokenOrderByRelevanceFieldEnum = (typeof RefreshTokenOrderByRelevanceFieldEnum)[keyof typeof RefreshTokenOrderByRelevanceFieldEnum]
+
+
+export const VerificationTokenOrderByRelevanceFieldEnum = {
+  tokenHash: 'tokenHash'
+} as const
+
+export type VerificationTokenOrderByRelevanceFieldEnum = (typeof VerificationTokenOrderByRelevanceFieldEnum)[keyof typeof VerificationTokenOrderByRelevanceFieldEnum]
+
+
+export const DeviceTokenOrderByRelevanceFieldEnum = {
+  token: 'token'
+} as const
+
+export type DeviceTokenOrderByRelevanceFieldEnum = (typeof DeviceTokenOrderByRelevanceFieldEnum)[keyof typeof DeviceTokenOrderByRelevanceFieldEnum]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const AuditLogOrderByRelevanceFieldEnum = {
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  ip: 'ip'
+} as const
+
+export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
+
+
+export const PayoutOrderByRelevanceFieldEnum = {
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  bankAccountName: 'bankAccountName',
+  transferRef: 'transferRef',
+  note: 'note'
+} as const
+
+export type PayoutOrderByRelevanceFieldEnum = (typeof PayoutOrderByRelevanceFieldEnum)[keyof typeof PayoutOrderByRelevanceFieldEnum]
+
+
+export const UploadOrderByRelevanceFieldEnum = {
+  key: 'key',
+  url: 'url',
+  mimeType: 'mimeType',
+  purpose: 'purpose'
+} as const
+
+export type UploadOrderByRelevanceFieldEnum = (typeof UploadOrderByRelevanceFieldEnum)[keyof typeof UploadOrderByRelevanceFieldEnum]
 
 
 export const PartnerProfileOrderByRelevanceFieldEnum = {
@@ -472,7 +676,8 @@ export const DestinationOrderByRelevanceFieldEnum = {
   contactPhone: 'contactPhone',
   contactEmail: 'contactEmail',
   policy: 'policy',
-  listingRejectReason: 'listingRejectReason'
+  listingRejectReason: 'listingRejectReason',
+  searchText: 'searchText'
 } as const
 
 export type DestinationOrderByRelevanceFieldEnum = (typeof DestinationOrderByRelevanceFieldEnum)[keyof typeof DestinationOrderByRelevanceFieldEnum]
@@ -483,23 +688,6 @@ export const DestinationImageOrderByRelevanceFieldEnum = {
 } as const
 
 export type DestinationImageOrderByRelevanceFieldEnum = (typeof DestinationImageOrderByRelevanceFieldEnum)[keyof typeof DestinationImageOrderByRelevanceFieldEnum]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 export const PackageOrderByRelevanceFieldEnum = {
@@ -516,6 +704,13 @@ export const RoomTypeOrderByRelevanceFieldEnum = {
 } as const
 
 export type RoomTypeOrderByRelevanceFieldEnum = (typeof RoomTypeOrderByRelevanceFieldEnum)[keyof typeof RoomTypeOrderByRelevanceFieldEnum]
+
+
+export const RoomRateOrderByRelevanceFieldEnum = {
+  name: 'name'
+} as const
+
+export type RoomRateOrderByRelevanceFieldEnum = (typeof RoomRateOrderByRelevanceFieldEnum)[keyof typeof RoomRateOrderByRelevanceFieldEnum]
 
 
 export const AddonServiceOrderByRelevanceFieldEnum = {
@@ -560,6 +755,13 @@ export const ReviewOrderByRelevanceFieldEnum = {
 } as const
 
 export type ReviewOrderByRelevanceFieldEnum = (typeof ReviewOrderByRelevanceFieldEnum)[keyof typeof ReviewOrderByRelevanceFieldEnum]
+
+
+export const ReviewImageOrderByRelevanceFieldEnum = {
+  url: 'url'
+} as const
+
+export type ReviewImageOrderByRelevanceFieldEnum = (typeof ReviewImageOrderByRelevanceFieldEnum)[keyof typeof ReviewImageOrderByRelevanceFieldEnum]
 
 
 export const ConversationOrderByRelevanceFieldEnum = {

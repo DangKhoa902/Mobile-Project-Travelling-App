@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import multer from "multer";
 import { ZodError } from "zod";
 import { env } from "../config/env.js";
 import { Prisma } from "../generated/prisma/client.js";
@@ -36,6 +37,15 @@ export function errorHandler(error: unknown, _request: Request, response: Respon
       response.status(409).json({ code: "REFERENCE_CONFLICT", message: "Dữ liệu đang được sử dụng ở nơi khác, không thể xóa" });
       return;
     }
+  }
+
+  if (error instanceof multer.MulterError) {
+    const tooLarge = error.code === "LIMIT_FILE_SIZE";
+    response.status(tooLarge ? 413 : 400).json({
+      code: tooLarge ? "FILE_TOO_LARGE" : "INVALID_UPLOAD",
+      message: tooLarge ? `Ảnh tối đa ${env.UPLOAD_MAX_MB} MB` : "File tải lên không hợp lệ",
+    });
+    return;
   }
 
   // JSON body sai cú pháp do express.json() ném ra.
