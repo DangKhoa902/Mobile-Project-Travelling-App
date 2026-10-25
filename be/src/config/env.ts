@@ -45,6 +45,17 @@ const envSchema = z.object({
   BOOKING_TAX_RATE: z.coerce.number().min(0).max(1).default(0.08),
   // Số phút khách phải thanh toán online sau khi đặt; quá hạn booking tự hủy và trả phòng.
   PAYMENT_TIMEOUT_MINUTES: z.coerce.number().int().min(1).max(1440).default(15),
+  // Ghi một dòng JSON cho mỗi request (route, status, thời gian xử lý). Tắt khi chạy test.
+  REQUEST_LOG: z.enum(["true", "false"]).default("true").transform((value) => value === "true"),
+  // Request chậm hơn ngưỡng này được ghi level "warn".
+  SLOW_REQUEST_MS: z.coerce.number().int().min(1).default(1000),
+  // Sentry: để trống SENTRY_DSN = không gửi lỗi ra ngoài.
+  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_ENVIRONMENT: z.string().optional(),
+  // Nên đặt bằng tag phát hành, ví dụ v1.1.0, để biết lỗi thuộc bản nào.
+  SENTRY_RELEASE: z.string().optional(),
+  // 0 = chỉ thu lỗi; 0.1 = thêm đo hiệu năng cho 10% request.
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
   // Số lượng proxy đứng trước app (Nginx, Render, Railway...) để đọc đúng IP client.
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
 });

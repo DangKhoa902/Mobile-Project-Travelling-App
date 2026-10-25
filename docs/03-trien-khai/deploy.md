@@ -1,4 +1,4 @@
-# Cài đặt và triển khai
+# Cài đặt và cấu hình
 
 ## 1. Chạy ở máy cá nhân (dev)
 
@@ -49,6 +49,9 @@ Tài khoản demo (mật khẩu `Password123`): xem [../02-thiet-ke/giao-dien.md
 | `TRUST_PROXY` | | `0` | `1` nếu đứng sau Nginx / Render / Railway |
 | `DATABASE_CONNECTION_LIMIT` | | `5` | Số kết nối DB tối đa |
 | `SEED_DEFAULT_PASSWORD` | | `Password123` | Mật khẩu tài khoản demo khi seed |
+| `REQUEST_LOG` | | `true` | Ghi một dòng JSON cho mỗi request |
+| `SLOW_REQUEST_MS` | | `1000` | Ngưỡng ghi request chậm (`level: warn`) |
+| `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `SENTRY_TRACES_SAMPLE_RATE` | | trống, `NODE_ENV`, trống, `0` | Gửi lỗi 500 lên Sentry; trống DSN = tắt ([giam-sat-van-hanh.md](giam-sat-van-hanh.md) mục 8) |
 
 API **không khởi động** nếu thiếu biến bắt buộc hoặc sai định dạng (báo rõ biến nào sai). Biến khai báo nhưng để trống (`S3_ENDPOINT=`) được coi như chưa đặt.
 
@@ -65,68 +68,22 @@ API **không khởi động** nếu thiếu biến bắt buộc hoặc sai đị
 
 Bản build Android production chặn `http://` không mã hóa: API production phải dùng **HTTPS**.
 
-## 4. Triển khai backend bằng Docker
+#### 4. Chạy thử bằng Docker trên máy
 
-`be/Dockerfile` build 2 giai đoạn (biên dịch TypeScript → image chạy nhỏ gọn, user không phải root, có healthcheck). Khi container khởi động sẽ tự chạy `prisma migrate deploy` rồi mới chạy API.
-
-`docker-compose.yml` ở thư mục gốc gồm MariaDB 11.4 + API:
+`docker-compose.yml` ở thư mục gốc gồm MariaDB 11.4 + API (image từ `be/Dockerfile`: build 2 giai đoạn, user không phải root, healthcheck, tự chạy `prisma migrate deploy` khi khởi động):
 
 ```bash
-cp .env.example .env     # ở thư mục gốc: DB_PASSWORD, DB_ROOT_PASSWORD, JWT_SECRET, CORS_ORIGINS
+cp .env.example .env     # thư mục gốc: DB_PASSWORD, DB_ROOT_PASSWORD, JWT_SECRET
 docker compose up -d --build
-docker compose exec api npm run db:seed     # chỉ cho môi trường demo
+docker compose exec api npm run db:seed
 docker compose logs -f api
 ```
 
-> **Trạng thái kiểm thử:** bản build production (`npm run build` + `node dist/server.js`) đã được chạy thử; **image Docker chưa được build thử** vì Docker Desktop chưa bật trên máy phát triển. Chạy lệnh trên một lần trước khi nộp.
+Migration đã được sửa tên bảng PascalCase để chạy đúng trên MariaDB Linux. Khi thêm migration mới, xem [backend.md](backend.md) mục 6.
 
-Migration đã được sửa tên bảng PascalCase để chạy đúng trên MariaDB Linux (phân biệt hoa thường). Khi thêm migration mới, xem [backend.md](backend.md) mục 6.
+## 5. Triển khai thật và vận hành
 
-### Gợi ý nơi triển khai
-
-| Nơi | Backend | Database | Ghi chú |
-|---|---|---|---|
-| VPS (DigitalOcean, Vultr, VPS Việt Nam) | `docker compose` | Container MariaDB | Linh hoạt nhất; cần tự cài HTTPS (Caddy / Nginx + Let's Encrypt) |
-| Render / Railway | Deploy từ `be/Dockerfile` | MariaDB/MySQL được quản lý hoặc container | Đặt `TRUST_PROXY=1`; có HTTPS sẵn |
-| Máy cá nhân khi demo | `npm run dev` | MariaDB local | Điện thoại cùng Wi-Fi |
-
-Chỉ chạy **một instance API** (job hủy booking quá hạn và job push chạy trong tiến trình). Muốn nhiều instance: tách job ra cron riêng và dùng `STORAGE_DRIVER=s3` (các instance không chung ổ đĩa).
-
-**Ảnh khi lưu local:** docker-compose gắn volume `uploads` vào `/app/uploads` để ảnh không mất khi build lại container. Sao lưu volume này cùng với volume `db_data`.
-
-## 5. Build frontend
-
-### Web
-
-```bash
-cd fe
-EXPO_PUBLIC_API_URL=https://api.example.com/api npx expo export --platform web
-```
-
-Kết quả trong `fe/dist/` là web tĩnh, deploy lên Netlify, Vercel, Cloudflare Pages hoặc thư mục tĩnh của Nginx. Thêm domain web vào `CORS_ORIGINS` của backend.
-
-### Android / iOS bằng EAS
-
-Cần tài khoản Expo. `app.json` cần thêm `android.package` và `ios.bundleIdentifier` (ví dụ `com.travellingapp.app`) trước khi build.
-
-```bash
-cd fe
-npx eas-cli@latest build:configure
-npx eas-cli@latest build --platform android --profile preview    # file .apk để cài thử
-```
-
-Khai báo `EXPO_PUBLIC_API_URL` trong `eas.json` cho từng profile (`development`, `preview`, `production`).
-
-## 6. Danh sách kiểm tra trước khi nộp / demo
-
-| Hạng mục | Đã làm |
+| Việc | Tài liệu |
 |---|---|
-| `JWT_SECRET` thật, không dùng giá trị mẫu | ☐ |
-| `CORS_ORIGINS` là domain web, không phải `*` | ☐ |
-| `NODE_ENV=production` | ☐ |
-| API chạy HTTPS | ☐ |
-| `npm test` pass, Postman collection pass | ☐ |
-| `docker compose up --build` chạy được | ☐ |
-| Web build mở được, gọi đúng API | ☐ |
-| File `.apk` cài và chạy trên điện thoại thật | ☐ |
-| Đổi mật khẩu tài khoản demo nếu public | ☐ |
+| API + DB lên VPS có HTTPS, web lên domain, build file APK, sao lưu, rollback, danh sách trước khi công bố | [trien-khai-production.md](trien-khai-production.md) |
+| Đo tốc độ, theo dõi lỗi, giám sát uptime, đo app Android, xử lý sự cố | [giam-sat-van-hanh.md](giam-sat-van-hanh.md) |

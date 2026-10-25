@@ -50,11 +50,12 @@ be/
     ├── server.ts                     Listen, job hủy booking quá hạn, job gửi push, tắt an toàn
     ├── app.ts                        Middleware chung + mount router
     ├── config/env.ts                 Đọc và kiểm tra biến môi trường bằng Zod
-    ├── lib/                          prisma, http-error, pagination, slug, crypto (token + SHA-256),
+    ├── lib/                          prisma, http-error, pagination, slug, crypto (token + SHA-256), monitoring (Sentry),
     │                                 search-text (bỏ dấu), storage (local / S3), destination-search
     ├── middlewares/
     │   ├── auth.ts                   authenticate, optionalAuth, requireRole, signAccessToken
-    │   └── error-handler.ts          HttpError / ZodError / Prisma error → JSON
+    │   ├── request-log.ts            X-Request-Id + log JSON mỗi request (route, status, ms)
+    │   └── error-handler.ts          HttpError / ZodError / Prisma / upload error → JSON; lỗi 500 → log + Sentry
     ├── validators/                   auth, booking, destination
     ├── dao/                          user, destination, booking
     ├── services/
@@ -193,6 +194,10 @@ await audit({ actorId: user.id, action: "voucher.update", entity: "Voucher", ent
 ```
 
 `action` theo dạng `<đối tượng>.<hành động>`; danh sách đang dùng ở BR-25 ([quy-tac-nghiep-vu.md](../01-dac-ta/quy-tac-nghiep-vu.md)).
+
+## 7b2. Log và Sentry
+
+`app.use(requestLog)` đứng đầu `app.ts`: mọi response có `X-Request-Id`, mỗi request ghi một dòng JSON khi kết thúc. Lỗi không lường trước đi tới `errorHandler`: ghi log `level: error` + stack, gọi `captureError()` (no-op khi không có `SENTRY_DSN`), trả `requestId` cho client. Job nền tự bắt lỗi và cũng gọi `captureError()`. Không `console.log` dữ liệu request (body, query, token) ở chỗ khác.
 
 ## 7c. Lưu file
 

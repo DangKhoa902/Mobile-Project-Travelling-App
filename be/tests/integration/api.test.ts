@@ -72,3 +72,20 @@ describe("API guards", () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe("Mã request (X-Request-Id)", () => {
+  it("mọi response có X-Request-Id", async () => {
+    const response = await request(app).get("/api/khong-ton-tai");
+    expect(response.headers["x-request-id"]).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it("giữ mã hợp lệ do proxy / client gửi lên", async () => {
+    const response = await request(app).get("/").set("X-Request-Id", "caddy-abc12345");
+    expect(response.headers["x-request-id"]).toBe("caddy-abc12345");
+  });
+
+  it("thay mã chứa ký tự lạ bằng mã mới", async () => {
+    const response = await request(app).get("/").set("X-Request-Id", 'bad id <INJECT> "x"');
+    expect(response.headers["x-request-id"]).not.toContain("INJECT");
+  });
+});

@@ -1,10 +1,20 @@
 import * as SecureStore from "expo-secure-store";
 
 // Android/iOS: lưu token trong Keychain/Keystore thay vì AsyncStorage dạng plain text.
-const TOKEN_KEY = "auth_token";
+const KEY = "auth_session";
+
+export type StoredTokens = { accessToken: string; refreshToken: string; sessionId: number };
 
 export const tokenStorage = {
-  get: () => SecureStore.getItemAsync(TOKEN_KEY),
-  set: (token: string) => SecureStore.setItemAsync(TOKEN_KEY, token),
-  clear: () => SecureStore.deleteItemAsync(TOKEN_KEY),
+  async get(): Promise<StoredTokens | null> {
+    const raw = await SecureStore.getItemAsync(KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as StoredTokens;
+    } catch {
+      return null;
+    }
+  },
+  set: (tokens: StoredTokens) => SecureStore.setItemAsync(KEY, JSON.stringify(tokens)),
+  clear: () => SecureStore.deleteItemAsync(KEY),
 };

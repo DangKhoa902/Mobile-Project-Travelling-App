@@ -5,6 +5,7 @@ import { corsOrigins, env } from "./config/env.js";
 import { prisma } from "./lib/prisma.js";
 import { localUploadRoot } from "./lib/storage.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler.js";
+import { requestLog } from "./middlewares/request-log.js";
 import { auditRouter } from "./routes/audit.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { bookingRouter } from "./routes/booking.routes.js";
@@ -33,6 +34,9 @@ export const app = express();
 
 app.set("trust proxy", env.TRUST_PROXY);
 app.disable("x-powered-by");
+
+// Đặt đầu tiên để đo trọn thời gian xử lý và mọi response đều có X-Request-Id.
+app.use(requestLog);
 
 // Ảnh trong /uploads được app web ở origin khác nhúng vào, nên cho phép cross-origin.
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));

@@ -1,22 +1,25 @@
 // expo-secure-store không hỗ trợ web; dùng localStorage (có thể bị chặn trong private mode).
-const TOKEN_KEY = "auth_token";
+const KEY = "auth_session";
+
+export type StoredTokens = { accessToken: string; refreshToken: string; sessionId: number };
 
 export const tokenStorage = {
-  async get() {
+  async get(): Promise<StoredTokens | null> {
     try {
-      return globalThis.localStorage?.getItem(TOKEN_KEY) ?? null;
+      const raw = globalThis.localStorage?.getItem(KEY);
+      return raw ? (JSON.parse(raw) as StoredTokens) : null;
     } catch {
       return null;
     }
   },
-  async set(token: string) {
+  async set(tokens: StoredTokens) {
     try {
-      globalThis.localStorage?.setItem(TOKEN_KEY, token);
+      globalThis.localStorage?.setItem(KEY, JSON.stringify(tokens));
     } catch {}
   },
   async clear() {
     try {
-      globalThis.localStorage?.removeItem(TOKEN_KEY);
+      globalThis.localStorage?.removeItem(KEY);
     } catch {}
   },
 };

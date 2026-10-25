@@ -5,7 +5,7 @@ Ba lớp kiểm thử, từ nhanh đến đầy đủ:
 | Lớp | Công cụ | Vị trí | Cần DB | Kiểm tra gì |
 |---|---|---|---|---|
 | Unit | Vitest | `be/tests/unit/` | Không | Hàm thuần: tính giá, giá mùa từng đêm, giảm giá, hoa hồng, máy trạng thái, chính sách hủy, ngày giờ VN, mã booking, bỏ dấu tìm kiếm, nhận dạng ảnh |
-| Integration | Vitest + Supertest | `be/tests/integration/` | Không | Route trả đúng mã lỗi khi thiếu token, sai body, JSON hỏng, thiếu đồng ý điều khoản |
+| Integration | Vitest + Supertest | `be/tests/integration/` | Không | Route trả đúng mã lỗi khi thiếu token, sai body, JSON hỏng, thiếu đồng ý điều khoản; `X-Request-Id` |
 | End-to-end API | Postman CLI | `be/postman/travelling-app.postman_collection.json` | **Có** (sau khi seed) | Toàn bộ luồng nghiệp vụ trên server và DB thật |
 
 Tài liệu gốc ghi Jest; dự án dùng **Vitest** vì chạy thẳng TypeScript + ESM không cần cấu hình thêm, API giống Jest (`describe`, `it`, `expect`).
@@ -17,7 +17,7 @@ cd be
 npm test
 ```
 
-Kết quả hiện tại: **4 file, 46 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
+Kết quả hiện tại: **4 file, 51 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
 
 ## 2. Chạy kiểm thử end-to-end
 
@@ -74,7 +74,7 @@ Postman không chờ được 15 phút, nên luồng quá hạn được kiểm 
 
 ## 3. Kiểm thử giao diện (thủ công)
 
-Theo [frontend-web-mobile.md](frontend-web-mobile.md) mục 6. Với mỗi trang:
+Trước khi thử bằng tay, chạy trong `fe/`: `npm run typecheck`, `npm run lint`, `npm run build:web` (bắt lỗi bundle). Theo [frontend-web-mobile.md](frontend-web-mobile.md) mục 6. Với mỗi trang:
 
 | Kiểm tra | Android | Web 375px | Web 1280px |
 |---|---|---|---|

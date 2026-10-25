@@ -11,8 +11,8 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 | 3 | Backend nghiệp vụ: đặt chỗ, thanh toán giả lập, đánh giá, CSKH, thông báo | ✅ |
 | 4 | Mô hình môi giới: chủ địa điểm, duyệt tin, hoa hồng, dashboard, hạn thanh toán | ✅ |
 | 4b | Mở rộng: đối soát, giá mùa, refresh token, email, push, nhật ký, tìm không dấu, ảnh | ✅ |
-| 5 | Giao diện Web + Mobile theo đặc tả | 🔄 |
-| 6 | Kết nối giao diện với API, trạng thái tải/lỗi | ⬜ |
+| 5 | Giao diện Web + Mobile theo đặc tả | ✅ (25/10/2026) |
+| 6 | Kết nối giao diện với API, trạng thái tải/lỗi | ✅ (25/10/2026) |
 | 7 | Kiểm thử đa nền tảng, build, triển khai | 🔄 (backend xong) |
 
 ## Giai đoạn 3 – Backend nghiệp vụ (✅ 21/10/2026)
@@ -37,22 +37,22 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 - Đối soát và chuyển tiền cho chủ địa điểm (`Payout`), giá theo mùa (`RoomRate`).
 - Refresh token xoay vòng, quản lý thiết bị đăng nhập; xác thực email, quên / đặt lại mật khẩu.
 - Push notification qua Expo (outbox), nhật ký quản trị, tìm kiếm không dấu, tải ảnh (local / S3) + ảnh trong đánh giá.
-- 46 test, Postman 196 request / 299 assertion.
+- 51 test, Postman 196 request / 299 assertion.
 
-## Giai đoạn 5 – Giao diện Web + Mobile (🔄)
+## Giai đoạn 5 – Giao diện Web + Mobile (✅ 25/10/2026)
 
-Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile.md) mục 6 và thứ tự đợt trong [giao-dien.md](../02-thiet-ke/giao-dien.md) mục 6.
+Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile.md) mục 6 và thứ tự đợt trong [giao-dien.md](../02-thiet-ke/giao-dien.md) mục 6. Hiện trạng chi tiết: [yeu-cau-frontend.md](../03-trien-khai/yeu-cau-frontend.md) mục 2.
 
 | Việc | Trạng thái |
 |---|---|
-| Lớp gọi API, store đăng nhập, kiểu dữ liệu, `StateView` (bản tham khảo) | ✅ |
-| `babel.config.js` cho NativeWind | ✅ |
-| `_layout.tsx`: import `global.css`, `QueryClientProvider`, khôi phục đăng nhập | ⬜ |
-| Breakpoint + `useBreakpoint` + design system nhỏ | ⬜ |
-| 5 tab khách (native + web) | ⬜ |
-| Đợt 1–3: khám phá, chi tiết, đăng nhập, đặt chỗ, cổng thanh toán | ⬜ |
-| Đợt 4–6: đối tác, tin đăng, xử lý booking, dashboard | ⬜ |
-| Đợt 7–8: CSKH, hồ sơ, quản trị còn lại | ⬜ |
+| `_layout.tsx`: `global.css`, `QueryClientProvider`, khôi phục phiên (refresh token), toast, chạm push | ✅ |
+| Breakpoint `md`/`lg`, `useBreakpoint`, bộ component `ui/` (Button, Input, Dialog, DateField, ImageUploader...) | ✅ |
+| 5 tab khách: thanh đáy (mobile) / thanh trái (web ≥ 1024px), badge thông báo | ✅ |
+| Đợt 1–3: khám phá, tìm kiếm + lọc, chi tiết, đăng nhập / đăng ký, đặt chỗ B1–B5, cổng thanh toán, B6 | ✅ |
+| Đợt 4–6: đối tác P4, tin đăng O2–O4 (phòng, giá mùa, gói, dịch vụ, ảnh), xử lý booking O6/O7, M2/M3, M4, dashboard O1/M1 | ✅ |
+| Đợt 7–9: chat C1/C2, M5/M6, hồ sơ P1–P5, D3, O5, O8, M7–M15, A3–A5 | ✅ |
+| Kiểm tra: `tsc`, `expo lint`, `expo export` web + Android; chạy thử luồng đặt chỗ → thanh toán trên web 375px | ✅ |
+| Chạy thử trên Android thật / emulator, push trên development build | ⬜ |
 
 **Tiêu chí hoàn thành:** chạy được luồng demo ở [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 4 trên Android và Web (375px, 1280px).
 
@@ -65,8 +65,10 @@ Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile
 | Build production backend | ✅ |
 | Build và chạy image Docker | ⬜ (Docker Desktop chưa bật) |
 | Triển khai lên VPS / Render có HTTPS | ⬜ |
-| `app.json`: `android.package`, `ios.bundleIdentifier`; `eas.json` | ⬜ |
-| Web build + deploy | ⬜ |
+| `app.json`: `android.package`, `ios.bundleIdentifier` | ✅ |
+| `eas.json` | ⬜ |
+| Web build (`npx expo export --platform web` chạy được) | ✅ |
+| Deploy web lên hosting | ⬜ |
 | File `.apk` chạy trên điện thoại thật | ⬜ |
 
 ## Đề xuất sau đồ án (theo thứ tự giá trị)

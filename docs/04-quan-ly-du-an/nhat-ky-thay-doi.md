@@ -4,6 +4,47 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 25/10/2026 – Frontend đầy đủ (Web + Mobile)
+
+| Phần | Thay đổi |
+|---|---|
+| Route | `(tabs)` 5 tab; `(auth)` A1–A5; `search`, `destinations/[slug]` (+ `reviews`); `booking/` B1–B5; `bookings/[id]`; `reviews/new`; `conversations/`; `profile/` P1–P5; `owner/` O1–O8; `admin/` M1–M15; `+not-found` |
+| Nền | Kiểu dữ liệu theo response thật; Axios + làm mới token một lần + cổng chờ khôi phục phiên; lưu cặp token (SecureStore / localStorage); nháp đặt chỗ, toast (Zustand) |
+| Component | Bộ `ui/`, khung quản lý (sidebar, bảng), trình soạn tin đăng dùng chung chủ – admin, chi tiết booking dùng chung khách – chủ – staff, chat poll 5 giây, biểu đồ tự vẽ |
+| Cấu hình | `app.json` có `android.package` / `ios.bundleIdentifier`, `web.output: "single"`; Tailwind breakpoint `md`/`lg`, `darkMode: "class"`; thêm 4 thư viện Expo; bỏ file mẫu của template |
+| Tài liệu | README gốc viết lại phần chạy project; `fe/README.md`; [yeu-cau-frontend.md](../03-trien-khai/yeu-cau-frontend.md) mục 2; [lo-trinh.md](lo-trinh.md) |
+
+Kiểm chứng: `tsc`, `expo lint` sạch; `expo export` web + Android build được; chạy thử trên web: đăng nhập, đặt chỗ có voucher, thanh toán giả lập, chi tiết booking, dashboard chủ / admin, các trang quản trị; chủ tạo tin → thêm phòng, gói → gửi duyệt → admin duyệt → khách tìm "hoi an" ra tin; đăng ký (lỗi dưới ô, tự đăng nhập); chat CSKH nhận tin mới qua poll. Lỗi tìm ra khi chạy thử và đã sửa: B4 trắng sau khi xóa nháp, gọi `/auth/refresh` hai lần khi tải lại trang, trang trắng do `target!.x` với React Compiler. Chưa chạy trên Android.
+
+---
+
+## 25/10/2026 – Log request và Sentry cho backend
+
+| Lớp | File | Thay đổi |
+|---|---|---|
+| Middleware mới | `middlewares/request-log.ts` | `X-Request-Id` (giữ mã an toàn từ proxy, không thì sinh UUID); một dòng JSON mỗi request: route chuẩn hóa `:id`, status, ms, userId; `warn` khi chậm; bỏ qua `/health`; không ghi query/body/token |
+| Thư viện mới | `lib/monitoring.ts` | `initMonitoring`, `captureError`, `flushMonitoring` bọc `@sentry/node` 11; tắt khi không có `SENTRY_DSN`; không gửi cookie, body, query, Authorization |
+| Hạ tầng | `app.ts`, `server.ts`, `error-handler.ts` | Gắn middleware đầu tiên; lỗi 500 ghi log có mã request, gửi Sentry, trả `requestId`; job nền gửi Sentry; flush khi tắt |
+| Config | `config/env.ts`, `.env.example`, `docker-compose.yml`, `vitest.config.ts` | `REQUEST_LOG`, `SLOW_REQUEST_MS`, `SENTRY_*`; test tắt log request |
+| Test | `tests/` | 5 test mới (51 tổng): header mã request, giữ / thay mã, chuẩn hóa route |
+
+Kiểm chứng: `npm test` 51/51; chạy API xem dòng log thật; bản build production ghi log đúng; Sentry gửi đúng nội dung tới máy nhận giả lập local (chưa gửi lên sentry.io thật).
+
+---
+
+## 25/10/2026 – Tài liệu frontend, triển khai thật và giám sát
+
+| Tài liệu | Nội dung |
+|---|---|
+| `03-trien-khai/yeu-cau-frontend.md` | Bàn giao để làm FE ở phiên mới: hiện trạng `fe/`, quy ước, kiến trúc, refresh token, 27 yêu cầu chức năng, Sprint 0, bẫy đã biết |
+| `03-trien-khai/trien-khai-production.md` | VPS + Docker Compose + Caddy (HTTPS), web SPA, build APK bằng EAS hoặc Gradle, push qua FCM, sao lưu / khôi phục, rollback, checklist công bố |
+| `03-trien-khai/giam-sat-van-hanh.md` | Chỉ tiêu mục tiêu, uptime, log, đo tải (số liệu nền: ~408 req/s, p99 120 ms với 20 kết nối trên máy dev), MariaDB, Lighthouse, đo APK bằng adb, Sentry, xử lý sự cố |
+| `03-trien-khai/deploy.md` | Rút gọn còn cài đặt máy dev, biến môi trường, Docker trên máy |
+
+Chưa chạy thử: image Docker, Caddy, build web, build APK (Docker Desktop tắt, chưa có tài khoản Expo của nhóm).
+
+---
+
 ## 25/10/2026 – Mở rộng nền tảng (8 mục đề xuất của cơ sở dữ liệu)
 
 ### Yêu cầu

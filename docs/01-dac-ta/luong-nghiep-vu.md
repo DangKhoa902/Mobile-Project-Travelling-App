@@ -12,8 +12,10 @@ Mã trang (T1, B4, O3, M3...) khớp với [giao-dien.md](../02-thiet-ke/giao-di
 |---|---|
 | Một đối tượng | `{ "data": { ... } }` |
 | Danh sách có phân trang | `{ "data": [ ... ], "meta": { "page", "limit", "total", "totalPages" } }` |
-| Lỗi | `{ "code": "NOT_AVAILABLE", "message": "...", "details": ... }` |
+| Lỗi | `{ "code": "NOT_AVAILABLE", "message": "...", "details": ... }`; lỗi 500 có thêm `requestId` |
 | Thành công không có nội dung | HTTP 204 |
+
+Mọi response có header `X-Request-Id`. Khi gặp lỗi 500, giao diện nên hiện "Mã lỗi: <requestId>" (chữ nhỏ, chạm để sao chép) để người dùng gửi CSKH.
 
 Giao diện nên **dựa vào `code`** để quyết định xử lý (chuyển trang, khóa nút...) và **hiển thị `message`** cho người dùng (backend đã viết sẵn bằng tiếng Việt).
 

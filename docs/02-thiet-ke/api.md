@@ -1,6 +1,6 @@
 # Danh sách API
 
-Base URL khi dev: `http://localhost:3000`. Mọi endpoint nghiệp vụ có tiền tố `/api`. Quy ước response, mã lỗi và xử lý token: [../01-dac-ta/luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 1 và 12.
+Base URL khi dev: `http://localhost:3000`. Mọi endpoint nghiệp vụ có tiền tố `/api`. Quy ước response, mã lỗi và xử lý token: [../01-dac-ta/luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 1 và 12. Mọi response có header `X-Request-Id` (gửi kèm header này trong request để tự đặt mã, 8–64 ký tự `A-Z a-z 0-9 . _ -`).
 
 Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-app.postman_collection.json` (xem [../03-trien-khai/kiem-thu.md](../03-trien-khai/kiem-thu.md)).
 

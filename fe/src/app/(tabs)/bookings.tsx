@@ -1,71 +1,75 @@
-import { useQuery } from "@tanstack/react-query";
-import { FlatList, Text, View } from "react-native";
+import { router } from "expo-router";
+import { useState } from "react";
+import { View } from "react-native";
 
-import { RequireAuth } from "@/components/require-auth";
-import { Screen } from "@/components/screen";
-import { StateView } from "@/components/state-view";
-import { bookingService } from "@/services/travel.service";
-import type { BookingStatus, BookingSummary } from "@/types/api";
-import { BOOKING_STATUS_LABEL, formatDate, formatVnd } from "@/utils/format";
+import { BookingCard } from "@/components/booking/booking-card";
+import { RequireAuth } from "@/components/layout/require-auth";
+import { Button } from "@/components/ui/button";
+import { Segmented } from "@/components/ui/choice";
+import { Screen } from "@/components/ui/screen";
+import { StateView } from "@/components/ui/state-view";
+import { useBookings } from "@/services/booking.service";
+import { useAuthStore } from "@/store/auth-store";
+import type { Booking } from "@/types/api";
 
-const STATUS_STYLE: Record<BookingStatus, string> = {
-  PENDING: "bg-amber-100 text-amber-800",
-  CONFIRMED: "bg-emerald-100 text-emerald-800",
-  COMPLETED: "bg-sky-100 text-sky-800",
-  CANCELLED: "bg-zinc-200 text-zinc-600",
-};
+type Tab = "upcoming" | "completed" | "cancelled";
 
+// T3 – Chuyến đi của tôi: Sắp tới (PENDING + CONFIRMED) · Đã hoàn thành · Đã hủy.
 export default function BookingsScreen() {
+  const [tab, setTab] = useState<Tab>("upcoming");
+  const authed = useAuthStore((state) => state.status === "authenticated");
+
+  // "Sắp tới" gọi hai trạng thái rồi ghép (backend nhận một status mỗi lần).
+  const pending = useBookings({ scope: "mine", status: "PENDING", limit: 50 }, authed && tab === "upcoming");
+  const confirmed = useBookings({ scope: "mine", status: "CONFIRMED", limit: 50 }, authed && tab === "upcoming");
+  const completed = useBookings({ scope: "mine", status: "COMPLETED", limit: 50 }, authed && tab === "completed");
+  const cancelled = useBookings({ scope: "mine", status: "CANCELLED", limit: 50 }, authed && tab === "cancelled");
+
+  const queries = tab === "upcoming" ? [pending, confirmed] : tab === "completed" ? [completed] : [cancelled];
+  const loading = queries.some((query) => query.isPending);
+  const failed = queries.find((query) => query.isError);
+  const rows: Booking[] = queries
+    .flatMap((query) => query.data?.data ?? [])
+    .sort((a, b) => (tab === "upcoming" ? a.checkInDate.localeCompare(b.checkInDate) : b.checkInDate.localeCompare(a.checkInDate)));
+
   return (
-    <Screen title="Chuyến đi của tôi">
-      <RequireAuth message="Đăng nhập để đặt dịch vụ và theo dõi lịch sử đặt chỗ.">
-        <BookingList />
+    <Screen title="Chuyến đi của tôi" refreshing={queries.some((q) => q.isRefetching)} onRefresh={() => queries.forEach((q) => void q.refetch())}>
+      <RequireAuth message="Đăng nhập để xem các chuyến đi đã đặt">
+        <View className="gap-4">
+          <Segmented
+            value={tab}
+            onChange={setTab}
+            options={[
+              { value: "upcoming", label: "Sắp tới" },
+              { value: "completed", label: "Đã hoàn thành" },
+              { value: "cancelled", label: "Đã hủy" },
+            ]}
+          />
+          {loading ? (
+            <StateView kind="loading" />
+          ) : failed ? (
+            <StateView kind="error" error={failed.error} onRetry={() => void failed.refetch()} />
+          ) : rows.length === 0 ? (
+            <StateView kind="empty" icon="airplane-outline" message="Bạn chưa có chuyến đi nào" action={{ label: "Khám phá ngay", onPress: () => router.navigate("/") }} />
+          ) : (
+            <View className="gap-3 lg:flex-row lg:flex-wrap">
+              {rows.map((booking) => (
+                <View key={booking.id} className="lg:w-[49%]">
+                  <BookingCard
+                    booking={booking}
+                    onPress={() => router.push(`/bookings/${booking.id}`)}
+                    footer={
+                      booking.status === "COMPLETED" && !booking.review ? (
+                        <Button title="Đánh giá" size="sm" variant="secondary" icon="star-outline" onPress={() => router.push(`/reviews/new?bookingId=${booking.id}`)} />
+                      ) : null
+                    }
+                  />
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </RequireAuth>
     </Screen>
-  );
-}
-
-function BookingList() {
-  const bookings = useQuery({ queryKey: ["bookings"], queryFn: bookingService.list });
-
-  if (bookings.isPending) return <StateView kind="loading" />;
-  if (bookings.isError) {
-    return <StateView kind="error" message={bookings.error.message} onRetry={() => void bookings.refetch()} />;
-  }
-  return (
-    <FlatList
-      data={bookings.data.data}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={({ item }) => <BookingRow booking={item} />}
-      ItemSeparatorComponent={() => <View className="h-3" />}
-      contentContainerClassName="pb-28"
-      refreshing={bookings.isRefetching}
-      onRefresh={() => void bookings.refetch()}
-      ListEmptyComponent={<StateView kind="empty" icon="airplane-outline" message="Bạn chưa có booking nào." />}
-    />
-  );
-}
-
-function BookingRow({ booking }: { booking: BookingSummary }) {
-  const [badgeBg, badgeText] = STATUS_STYLE[booking.status].split(" ");
-  return (
-    <View className="gap-2 rounded-2xl bg-surface-card p-4">
-      <View className="flex-row items-center justify-between">
-        <Text className="text-xs font-semibold text-muted">{booking.code}</Text>
-        <View className={`rounded-full px-3 py-1 ${badgeBg}`}>
-          <Text className={`text-xs font-semibold ${badgeText}`}>{BOOKING_STATUS_LABEL[booking.status]}</Text>
-        </View>
-      </View>
-      <Text className="text-base font-bold text-brand">{booking.destination.name}</Text>
-      <Text className="text-sm text-muted">
-        {booking.package.name} · {booking.roomType.name} × {booking.roomsCount}
-      </Text>
-      <View className="flex-row items-center justify-between">
-        <Text className="text-sm text-muted">
-          {formatDate(booking.checkInDate)} → {formatDate(booking.checkOutDate)} · {booking.guests} khách
-        </Text>
-        <Text className="text-base font-bold text-brand">{formatVnd(booking.totalAmount)}</Text>
-      </View>
-    </View>
   );
 }

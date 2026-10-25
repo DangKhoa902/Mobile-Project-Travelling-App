@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sha256 } from "../../src/lib/crypto.js";
+import { routeKey } from "../../src/middlewares/request-log.js";
 import { toSearchText } from "../../src/lib/search-text.js";
 import { detectImageType } from "../../src/lib/storage.js";
 import { parseDateOnly } from "../../src/services/booking-rules.js";
@@ -61,5 +62,18 @@ describe("detectImageType", () => {
 describe("sha256", () => {
   it("ổn định và 64 ký tự hex", () => {
     expect(sha256("abc")).toBe("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+  });
+});
+
+describe("routeKey", () => {
+  const key = (originalUrl: string) => routeKey({ originalUrl } as Parameters<typeof routeKey>[0]);
+
+  it("thay đoạn số bằng :id và bỏ query string", () => {
+    expect(key("/api/bookings/12/pay?x=1")).toBe("/api/bookings/:id/pay");
+    expect(key("/api/room-types/3/rates/7")).toBe("/api/room-types/:id/rates/:id");
+  });
+
+  it("giữ slug", () => {
+    expect(key("/api/destinations/da-lat-pine-hill-resort")).toBe("/api/destinations/da-lat-pine-hill-resort");
   });
 });

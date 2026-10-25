@@ -18,9 +18,12 @@ docs/
 │
 ├── 03-trien-khai/              LÀM VÀ CHẠY
 │   ├── backend.md              Kiến trúc lớp, cấu trúc file, quy ước, thêm chức năng, migration
+│   ├── yeu-cau-frontend.md     BẮT ĐẦU LÀM FE: hiện trạng, quy ước, kiến trúc, chức năng, Sprint 0, bẫy
 │   ├── frontend-web-mobile.md  Một codebase cho Web + Mobile: breakpoint, kỹ thuật, tiến trình
 │   ├── kiem-thu.md             Unit, integration, Postman, kịch bản demo
-│   └── deploy.md               Chạy local, biến môi trường, Docker, build web / Android
+│   ├── deploy.md               Chạy local, biến môi trường, Docker trên máy
+│   ├── trien-khai-production.md VPS + HTTPS, web, file APK, sao lưu, rollback, checklist công bố
+│   └── giam-sat-van-hanh.md    Đo tốc độ, log, uptime, đo app Android, xử lý sự cố
 │
 ├── 04-quan-ly-du-an/
 │   ├── lo-trinh.md             Giai đoạn, trạng thái, đề xuất sau đồ án
@@ -38,9 +41,10 @@ docs/
 | Bạn là | Đọc theo thứ tự |
 |---|---|
 | Thành viên mới | [tong-quan.md](01-dac-ta/tong-quan.md) → [deploy.md](03-trien-khai/deploy.md) mục 1 → [git.md](04-quan-ly-du-an/git.md) |
-| Làm giao diện | [frontend-web-mobile.md](03-trien-khai/frontend-web-mobile.md) → [giao-dien.md](02-thiet-ke/giao-dien.md) → [luong-nghiep-vu.md](01-dac-ta/luong-nghiep-vu.md) → [api.md](02-thiet-ke/api.md) |
+| Làm giao diện | [yeu-cau-frontend.md](03-trien-khai/yeu-cau-frontend.md) → [frontend-web-mobile.md](03-trien-khai/frontend-web-mobile.md) → [giao-dien.md](02-thiet-ke/giao-dien.md) → [luong-nghiep-vu.md](01-dac-ta/luong-nghiep-vu.md) → [api.md](02-thiet-ke/api.md) |
 | Làm backend | [backend.md](03-trien-khai/backend.md) → [quy-tac-nghiep-vu.md](01-dac-ta/quy-tac-nghiep-vu.md) → [co-so-du-lieu.md](02-thiet-ke/co-so-du-lieu.md) → [api.md](02-thiet-ke/api.md) |
 | Kiểm thử / demo | [kiem-thu.md](03-trien-khai/kiem-thu.md) |
+| Triển khai / vận hành | [trien-khai-production.md](03-trien-khai/trien-khai-production.md) → [giam-sat-van-hanh.md](03-trien-khai/giam-sat-van-hanh.md) |
 | Viết báo cáo đồ án | [tong-quan.md](01-dac-ta/tong-quan.md) (phân tích yêu cầu) → [co-so-du-lieu.md](02-thiet-ke/co-so-du-lieu.md) (thiết kế) → [nhat-ky-thay-doi.md](04-quan-ly-du-an/nhat-ky-thay-doi.md) (quá trình) → [kiem-thu.md](03-trien-khai/kiem-thu.md) (kết quả) |
 
 ## Quy ước viết tài liệu
