@@ -527,7 +527,7 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 ### A1 – Đăng nhập
 
 - **Route:** `(auth)/login.tsx?redirect=` · **Ai dùng:** Guest · **Ưu tiên:** MVP
-- **Hiển thị:** email, mật khẩu (nút hiện/ẩn), nút **Đăng nhập**, link **Quên mật khẩu?** → A3, link "Chưa có tài khoản? Đăng ký".
+- **Hiển thị:** nút **Tiếp tục với Google** (chỉ hiện khi đã cấu hình client ID, ẩn trên Expo Go) + dải "hoặc", email, mật khẩu (nút hiện/ẩn), nút **Đăng nhập**, link **Quên mật khẩu?** → A3, link "Chưa có tài khoản? Đăng ký". A2 có nút **Đăng ký bằng Google** tương tự.
 - **API:** `POST /api/auth/login` `{ email, password, deviceName }` → lưu `accessToken` và `refreshToken` (SecureStore trên mobile, localStorage trên web) và `user`. `deviceName` lấy từ `expo-device` (ví dụ "Samsung Galaxy A54") để hiện ở P5.
 
 | Kết quả | Xử lý |

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { sha256 } from "../../src/lib/crypto.js";
 import { routeKey } from "../../src/middlewares/request-log.js";
+import { planGoogleSignIn } from "../../src/services/auth.service.js";
 import { toSearchText } from "../../src/lib/search-text.js";
 import { detectImageType } from "../../src/lib/storage.js";
 import { parseDateOnly } from "../../src/services/booking-rules.js";
@@ -75,5 +76,29 @@ describe("routeKey", () => {
 
   it("giữ slug", () => {
     expect(key("/api/destinations/da-lat-pine-hill-resort")).toBe("/api/destinations/da-lat-pine-hill-resort");
+  });
+});
+
+describe("planGoogleSignIn", () => {
+  const profile = { sub: "g-123", email: "an@gmail.com", emailVerified: true, name: "An", picture: null };
+
+  it("đã liên kết Google thì đăng nhập đúng tài khoản đó", () => {
+    expect(planGoogleSignIn({ id: 7, googleId: "g-123" }, { id: 7, googleId: "g-123" }, profile)).toEqual({ kind: "existing", userId: 7 });
+  });
+
+  it("email đã đăng ký bằng mật khẩu thì liên kết vào tài khoản cũ", () => {
+    expect(planGoogleSignIn(null, { id: 3, googleId: null }, profile)).toEqual({ kind: "link", userId: 3 });
+  });
+
+  it("chưa có tài khoản thì tạo mới", () => {
+    expect(planGoogleSignIn(null, null, profile)).toEqual({ kind: "create" });
+  });
+
+  it("không liên kết khi Google chưa xác minh email (tránh chiếm tài khoản)", () => {
+    expect(() => planGoogleSignIn(null, { id: 3, googleId: null }, { ...profile, emailVerified: false })).toThrow(/chưa được xác minh/);
+  });
+
+  it("không ghi đè liên kết với tài khoản Google khác", () => {
+    expect(() => planGoogleSignIn(null, { id: 3, googleId: "g-999" }, profile)).toThrow(/tài khoản Google khác/);
   });
 });

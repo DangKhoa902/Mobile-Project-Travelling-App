@@ -114,6 +114,8 @@ model User {
   avatarUrl       String?    @db.VarChar(500)
   // NULL = chưa xác thực email.
   emailVerifiedAt DateTime?
+  // "sub" của tài khoản Google đã liên kết (đăng nhập bằng Google). NULL = chưa liên kết.
+  googleId        String?    @unique @db.VarChar(64)
   role            Role       @default(USER)
   status          UserStatus @default(ACTIVE)
   createdAt       DateTime   @default(now())

@@ -118,6 +118,8 @@ Mật khẩu chung `Password123` (tạo bởi `npm run db:seed`):
 | `staff@travelling.app` | CSKH | `/admin`: booking, kiểm duyệt đánh giá, chat |
 | `admin@travelling.app` | Quản trị | `/admin`: dashboard, duyệt đối tác / tin, đối soát, voucher, nhật ký |
 
+Đăng nhập / đăng ký bằng **Google** cần client ID của nhóm trên Google Cloud (chưa cấu hình thì nút Google tự ẩn): [docs/03-trien-khai/dang-nhap-google.md](docs/03-trien-khai/dang-nhap-google.md).
+
 Mã giảm giá thử: `WELCOME10`. Email chạy chế độ `console`: link xác thực / đặt lại mật khẩu in ra log backend (khi dev, app có nút mở link luôn).
 
 ### 5. Kịch bản demo nhanh (5 phút)
@@ -143,7 +145,7 @@ Kịch bản đầy đủ: [docs/03-trien-khai/kiem-thu.md](docs/03-trien-khai/k
 
 ```bash
 cd be
-npm test                                                           # 51 unit + integration test
+npm test                                                           # 58 unit + integration test
 postman collection run postman/travelling-app.postman_collection.json   # 196 request end-to-end (cần API đang chạy)
 
 cd ../fe

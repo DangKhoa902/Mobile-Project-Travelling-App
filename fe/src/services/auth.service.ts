@@ -23,6 +23,11 @@ export const authService = {
     const { data } = await apiClient.post<{ data: Session }>("/auth/login", { email, password, deviceName });
     return data.data;
   },
+  // Đăng nhập / đăng ký bằng Google (ID token lấy từ expo-auth-session).
+  async google(idToken: string) {
+    const { data } = await apiClient.post<{ data: Session & { isNewUser: boolean } }>("/auth/google", { idToken, deviceName, acceptTerms: true });
+    return data.data;
+  },
   async register(input: RegisterInput) {
     const { data } = await apiClient.post<{ data: Session }>("/auth/register", input);
     return data.data;

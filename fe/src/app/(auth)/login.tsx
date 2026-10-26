@@ -2,12 +2,14 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 
+import { GoogleButton, OrDivider } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Screen } from "@/components/ui/screen";
 import { ApiError, fieldErrors } from "@/services/api/client";
 import { useAuthStore } from "@/store/auth-store";
+import { toast } from "@/store/toast-store";
 import { safeRedirect } from "@/utils/validation";
 
 function loginError(error: unknown): string {
@@ -51,6 +53,13 @@ export default function LoginScreen() {
       <View className="gap-4 pt-4">
         <Text className="text-base text-muted">Chào mừng trở lại! Đăng nhập để tiếp tục đặt chỗ.</Text>
         {error ? <Banner tone="danger">{error}</Banner> : null}
+        <GoogleButton
+          onSignedIn={(isNewUser) => {
+            if (isNewUser) toast.success("Đã tạo tài khoản bằng Google");
+            router.replace(safeRedirect(redirect) as never);
+          }}
+        />
+        <OrDivider />
         <Input
           label="Email"
           required
@@ -86,11 +95,6 @@ export default function LoginScreen() {
             <Text className="font-semibold text-brand-light">Đăng ký</Text>
           </Link>
         </View>
-        {__DEV__ ? (
-          <Banner tone="info" title="Tài khoản demo (mật khẩu Password123)">
-            user@travelling.app · owner1@travelling.app · staff@travelling.app · admin@travelling.app
-          </Banner>
-        ) : null}
       </View>
     </Screen>
   );

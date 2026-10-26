@@ -44,6 +44,7 @@ docs/
 | Làm giao diện | [yeu-cau-frontend.md](03-trien-khai/yeu-cau-frontend.md) → [frontend-web-mobile.md](03-trien-khai/frontend-web-mobile.md) → [giao-dien.md](02-thiet-ke/giao-dien.md) → [luong-nghiep-vu.md](01-dac-ta/luong-nghiep-vu.md) → [api.md](02-thiet-ke/api.md) |
 | Làm backend | [backend.md](03-trien-khai/backend.md) → [quy-tac-nghiep-vu.md](01-dac-ta/quy-tac-nghiep-vu.md) → [co-so-du-lieu.md](02-thiet-ke/co-so-du-lieu.md) → [api.md](02-thiet-ke/api.md) |
 | Kiểm thử / demo | [kiem-thu.md](03-trien-khai/kiem-thu.md) |
+| Đăng nhập Google | [dang-nhap-google.md](03-trien-khai/dang-nhap-google.md) |
 | Triển khai / vận hành | [trien-khai-production.md](03-trien-khai/trien-khai-production.md) → [giam-sat-van-hanh.md](03-trien-khai/giam-sat-van-hanh.md) |
 | Viết báo cáo đồ án | [tong-quan.md](01-dac-ta/tong-quan.md) (phân tích yêu cầu) → [co-so-du-lieu.md](02-thiet-ke/co-so-du-lieu.md) (thiết kế) → [nhat-ky-thay-doi.md](04-quan-ly-du-an/nhat-ky-thay-doi.md) (quá trình) → [kiem-thu.md](03-trien-khai/kiem-thu.md) (kết quả) |
 

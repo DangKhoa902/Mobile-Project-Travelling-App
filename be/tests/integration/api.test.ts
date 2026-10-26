@@ -55,6 +55,18 @@ describe("API guards", () => {
     expect(response.status).toBe(401);
   });
 
+  it("đăng nhập Google thiếu đồng ý điều khoản trả 400", async () => {
+    const response = await request(app).post("/api/auth/google").send({ idToken: "x".repeat(40) });
+    expect(response.status).toBe(400);
+    expect(response.body.details.map((issue: { path: string }) => issue.path)).toContain("acceptTerms");
+  });
+
+  it("đăng nhập Google khi máy chủ chưa cấu hình client ID trả 503", async () => {
+    const response = await request(app).post("/api/auth/google").send({ idToken: "x".repeat(40), acceptTerms: true });
+    expect(response.status).toBe(503);
+    expect(response.body.code).toBe("GOOGLE_DISABLED");
+  });
+
   it("refresh token sai định dạng trả 400", async () => {
     const response = await request(app).post("/api/auth/refresh").send({ refreshToken: "ngan" });
     expect(response.status).toBe(400);

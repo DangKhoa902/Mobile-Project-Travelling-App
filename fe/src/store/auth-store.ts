@@ -14,6 +14,8 @@ type AuthState = {
   status: "loading" | "authenticated" | "guest";
   hydrate: () => Promise<void>;
   login: (email: string, password: string) => Promise<User>;
+  // Trả true nếu vừa tạo tài khoản mới.
+  loginWithGoogle: (idToken: string) => Promise<boolean>;
   register: (input: RegisterInput) => Promise<Session>;
   applySession: (session: Session) => Promise<void>;
   refresh: () => Promise<string | null>;
@@ -76,6 +78,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const session = await authService.login(email, password);
     await get().applySession(session);
     return session.user!;
+  },
+
+  async loginWithGoogle(idToken) {
+    const session = await authService.google(idToken);
+    await get().applySession(session);
+    return session.isNewUser;
   },
 
   async register(input) {

@@ -15,6 +15,8 @@ const envSchema = z.object({
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(365).default(30),
   // Địa chỉ giao diện web, dùng để tạo link trong email (xác thực, đặt lại mật khẩu).
   APP_URL: z.string().url().default("http://localhost:8081"),
+  // Client ID OAuth của Google (web, Android, iOS), phân tách bằng dấu phẩy. Trống = tắt đăng nhập Google.
+  GOOGLE_CLIENT_IDS: z.string().optional(),
   // console: in email ra log (dev); smtp: gửi thật qua SMTP_*.
   EMAIL_TRANSPORT: z.enum(["console", "smtp"]).default("console"),
   SMTP_HOST: z.string().optional(),

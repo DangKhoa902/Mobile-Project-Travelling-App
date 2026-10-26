@@ -8,6 +8,7 @@ import * as sessionService from "../services/session.service.js";
 import {
   changePasswordSchema,
   forgotPasswordSchema,
+  googleLoginSchema,
   loginSchema,
   refreshSchema,
   registerSchema,
@@ -41,6 +42,12 @@ authRouter.post("/register", credentialLimiter, async (request, response) => {
 authRouter.post("/login", credentialLimiter, async (request, response) => {
   const result = await authService.login(loginSchema.parse(request.body), sessionMeta(request));
   response.json({ data: result });
+});
+
+// Đăng nhập / đăng ký bằng Google: body { idToken, acceptTerms: true, deviceName? }.
+authRouter.post("/google", credentialLimiter, async (request, response) => {
+  const result = await authService.googleSignIn(googleLoginSchema.parse(request.body), sessionMeta(request));
+  response.status(result.isNewUser ? 201 : 200).json({ data: result });
 });
 
 // Đổi refresh token lấy cặp token mới (access token hết hạn sau JWT_EXPIRES_IN, mặc định 15 phút).
