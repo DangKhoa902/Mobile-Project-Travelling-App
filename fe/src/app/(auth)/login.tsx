@@ -75,15 +75,15 @@ export default function LoginScreen() {
           onSubmitEditing={submit}
         />
         <View className="items-end">
-          <Link href="/forgot-password" className="font-semibold text-brand-light">
-            Quên mật khẩu?
+          <Link href="/forgot-password">
+            <Text className="font-semibold text-brand-light">Quên mật khẩu?</Text>
           </Link>
         </View>
         <Button title="Đăng nhập" full loading={loading} disabled={!email || !password} onPress={submit} />
         <View className="flex-row justify-center gap-1">
           <Text className="text-muted">Chưa có tài khoản?</Text>
-          <Link href={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : "/register"} className="font-semibold text-brand-light">
-            Đăng ký
+          <Link href={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : "/register"} >
+            <Text className="font-semibold text-brand-light">Đăng ký</Text>
           </Link>
         </View>
         {__DEV__ ? (

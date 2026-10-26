@@ -147,7 +147,7 @@ function Gateway({ booking }: { booking: BookingDetail }) {
           <RadioCard key={item.value} selected={channel === item.value} onPress={() => setChannel(item.value)}>
             <View className="flex-row items-center gap-2">
               <Ionicons name={item.icon} size={20} color={Colors.brand} />
-              <Text className="text-base font-semibold text-brand">{item.label}</Text>
+              <Text className="flex-1 text-base font-semibold text-brand">{item.label}</Text>
             </View>
           </RadioCard>
         ))}
@@ -170,7 +170,11 @@ function Gateway({ booking }: { booking: BookingDetail }) {
         <Text className="text-sm text-muted">Cổng giả lập không yêu cầu nhập thông tin thẻ. Bấm “Thanh toán” để mô phỏng giao dịch thẻ thành công.</Text>
       )}
 
-      {failed ? <Banner tone="danger" title="Thanh toán thất bại">{`${failed}. Bạn có thể thử lại khi còn thời gian giữ chỗ.`}</Banner> : null}
+      {failed ? (
+        <Banner tone="danger" title="Thanh toán thất bại">
+          {`${/thất bại/i.test(failed) ? "" : `${failed}. `}Bạn có thể thử lại khi còn thời gian giữ chỗ.`}
+        </Banner>
+      ) : null}
 
       <Button title={failed ? "Thử lại" : "Thanh toán"} full loading={pay.isPending} onPress={() => submit(false)} />
       <Button title="Mô phỏng thất bại" full variant="ghost" disabled={pay.isPending} onPress={() => submit(true)} />

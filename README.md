@@ -103,6 +103,8 @@ npm run web                   # mở http://localhost:8081 trên trình duyệt
 
 Đổi cấu hình (tailwind, `.env`) mà giao diện không cập nhật: `npx expo start --clear`.
 
+Emulator không cần mở tường lửa nếu chuyển cổng qua `adb`: chạy `npx expo start`, rồi `adb reverse tcp:8081 tcp:8081` và `adb reverse tcp:3000 tcp:3000`, sau đó mở `exp://127.0.0.1:8081` trong Expo Go. Đừng dùng cờ `--localhost` (Metro chỉ nghe IPv6, emulator không kết nối được).
+
 ### 4. Tài khoản demo
 
 Mật khẩu chung `Password123` (tạo bởi `npm run db:seed`):

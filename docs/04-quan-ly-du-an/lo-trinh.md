@@ -52,7 +52,8 @@ Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile
 | Đợt 4–6: đối tác P4, tin đăng O2–O4 (phòng, giá mùa, gói, dịch vụ, ảnh), xử lý booking O6/O7, M2/M3, M4, dashboard O1/M1 | ✅ |
 | Đợt 7–9: chat C1/C2, M5/M6, hồ sơ P1–P5, D3, O5, O8, M7–M15, A3–A5 | ✅ |
 | Kiểm tra: `tsc`, `expo lint`, `expo export` web + Android; chạy thử luồng đặt chỗ → thanh toán trên web 375px | ✅ |
-| Chạy thử trên Android thật / emulator, push trên development build | ⬜ |
+| Chạy thử trên Android Emulator (Expo Go) | ✅ |
+| Điện thoại thật, push trên development build | ⬜ |
 
 **Tiêu chí hoàn thành:** chạy được luồng demo ở [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 4 trên Android và Web (375px, 1280px).
 

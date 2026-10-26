@@ -263,7 +263,7 @@ sequenceDiagram
     participant B4 as B4 Xác nhận
     participant API
     participant DB
-    User->>B4: Nhấn "Xác nhận đặt"
+    User->>B4: Nhấn "Đặt ngay"
     B4->>B4: Khóa nút
     B4->>API: POST /bookings (lựa chọn + liên hệ + paymentMethod)
     API->>DB: BEGIN

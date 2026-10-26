@@ -44,7 +44,7 @@ export default function BookingReviewScreen() {
   }
 
   return (
-    <StepScreen step={4} action={{ label: "Xác nhận đặt", onPress: submit, disabled: !agree || !quote.data || quote.isError, loading: create.isPending }}>
+    <StepScreen step={4} action={{ label: "Đặt ngay", onPress: submit, disabled: !agree || !quote.data || quote.isError, loading: create.isPending }}>
       {quote.isError ? (
         <QuoteError error={quote.error} />
       ) : !quote.data ? (

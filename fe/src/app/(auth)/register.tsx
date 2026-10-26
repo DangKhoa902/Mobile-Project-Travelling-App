@@ -96,8 +96,8 @@ export default function RegisterScreen() {
         <Button title="Đăng ký" full loading={loading} disabled={!accept} onPress={submit} />
         <View className="flex-row justify-center gap-1">
           <Text className="text-muted">Đã có tài khoản?</Text>
-          <Link href="/login" className="font-semibold text-brand-light">
-            Đăng nhập
+          <Link href="/login">
+            <Text className="font-semibold text-brand-light">Đăng nhập</Text>
           </Link>
         </View>
       </View>
