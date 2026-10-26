@@ -377,7 +377,7 @@ Thuế/phí (8%)                       240.000đ
 Tổng cộng                         3.240.000đ
 ```
 
-Kèm thông tin liên hệ, phương thức thanh toán, chính sách hủy của gói, checkbox "Tôi đồng ý với chính sách", nút **Xác nhận đặt**.
+Kèm thông tin liên hệ, phương thức thanh toán, chính sách hủy của gói, checkbox "Tôi đồng ý với chính sách", nút **Đặt ngay** (rộng hết thanh đáy, căn giữa).
 
 **API:** `POST /api/bookings` (body = toàn bộ lựa chọn B1–B3).
 
@@ -387,7 +387,7 @@ Kèm thông tin liên hệ, phương thức thanh toán, chính sách hủy củ
 | 409 `NOT_AVAILABLE` | "Dịch vụ không còn khả dụng trong khoảng thời gian bạn chọn" + nút quay về B1 chọn lại |
 | 400 | Hiện lỗi, quay lại bước có trường sai |
 
-Nút **Xác nhận đặt** phải bị khóa trong lúc chờ API để khách không bấm hai lần tạo hai booking.
+Nút **Đặt ngay** phải bị khóa trong lúc chờ API để khách không bấm hai lần tạo hai booking.
 
 ---
 

@@ -29,7 +29,7 @@ sequenceDiagram
     participant App
     participant API
     participant Job as Job mỗi phút
-    Khach->>App: Xác nhận đặt (B4)
+    Khach->>App: Đặt ngay (B4)
     App->>API: POST /bookings (paymentMethod = ONLINE_MOCK)
     API-->>App: 201 booking PENDING, payment UNPAID, paymentDueAt = now + 15'
     App->>Khach: Cổng giả lập (B5): đồng hồ đếm ngược + chọn kênh

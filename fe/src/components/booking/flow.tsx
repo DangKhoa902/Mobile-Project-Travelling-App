@@ -46,10 +46,11 @@ export function StepScreen({
     );
   }
 
+  // Tạm tính ở hàng trên, nút chính rộng hết thanh và căn giữa.
   const footer = (
-    <View className="flex-row items-center justify-between gap-3">
-      <View className="flex-1">
-        <Text className="text-xs text-muted">Tạm tính</Text>
+    <View className="gap-2">
+      <View className="flex-row items-center justify-between gap-3">
+        <Text className="text-sm text-muted">Tạm tính</Text>
         {quote.isFetching && !quote.data ? (
           <ActivityIndicator color={Colors.brand} />
         ) : quote.data && input ? (
@@ -58,8 +59,10 @@ export function StepScreen({
           <Text className="text-sm text-muted">Chọn đủ gói, phòng, ngày</Text>
         )}
       </View>
-      {action.secondary ? <Button title={action.secondary.label} variant="ghost" onPress={action.secondary.onPress} /> : null}
-      <Button title={action.label} onPress={action.onPress} disabled={action.disabled} loading={action.loading} />
+      <View className="flex-row gap-2">
+        {action.secondary ? <Button title={action.secondary.label} variant="outline" className="flex-1" onPress={action.secondary.onPress} /> : null}
+        <Button title={action.label} className="flex-1" onPress={action.onPress} disabled={action.disabled} loading={action.loading} />
+      </View>
     </View>
   );
 

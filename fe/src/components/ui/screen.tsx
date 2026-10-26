@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import type { ReactNode } from "react";
 import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconButton } from "@/components/ui/button";
 import { Colors, MaxContentWidth } from "@/constants/theme";
@@ -43,11 +43,13 @@ export function Screen({
   maxWidth = MaxContentWidth,
   padded = true,
 }: ScreenProps) {
+  // Không có thanh đáy: chừa chỗ cho thanh điều hướng cử chỉ của Android / home indicator iOS.
+  const insets = useSafeAreaInsets();
   const body = <View className={`w-full self-center ${padded ? "px-4 pb-8" : ""}`} style={{ maxWidth }}>{children}</View>;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface">
-      <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "web" ? undefined : "padding"}>
         {title || back ? (
           <View className="w-full self-center flex-row items-center gap-1 px-2 pb-2 pt-2" style={{ maxWidth }}>
             {back ? <IconButton icon="arrow-back" label="Quay lại" onPress={() => goBack(backHref)} /> : <View className="w-2" />}
@@ -70,7 +72,7 @@ export function Screen({
           <ScrollView
             className="flex-1"
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: footer ? 0 : insets.bottom }}
             refreshControl={onRefresh ? <RefreshControl refreshing={Boolean(refreshing)} onRefresh={onRefresh} tintColor={Colors.brand} /> : undefined}>
             {body}
           </ScrollView>

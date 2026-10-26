@@ -14,7 +14,9 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 | Cấu hình | `app.json` có `android.package` / `ios.bundleIdentifier`, `web.output: "single"`; Tailwind breakpoint `md`/`lg`, `darkMode: "class"`; thêm 4 thư viện Expo; bỏ file mẫu của template |
 | Tài liệu | README gốc viết lại phần chạy project; `fe/README.md`; [yeu-cau-frontend.md](../03-trien-khai/yeu-cau-frontend.md) mục 2; [lo-trinh.md](lo-trinh.md) |
 
-Kiểm chứng: `tsc`, `expo lint` sạch; `expo export` web + Android build được; chạy thử trên web: đăng nhập, đặt chỗ có voucher, thanh toán giả lập, chi tiết booking, dashboard chủ / admin, các trang quản trị; chủ tạo tin → thêm phòng, gói → gửi duyệt → admin duyệt → khách tìm "hoi an" ra tin; đăng ký (lỗi dưới ô, tự đăng nhập); chat CSKH nhận tin mới qua poll. Lỗi tìm ra khi chạy thử và đã sửa: B4 trắng sau khi xóa nháp, gọi `/auth/refresh` hai lần khi tải lại trang, trang trắng do `target!.x` với React Compiler. Chưa chạy trên Android.
+Kiểm chứng: `tsc`, `expo lint` sạch; `expo export` web + Android build được; chạy thử trên web: đăng nhập, đặt chỗ có voucher, thanh toán giả lập, chi tiết booking, dashboard chủ / admin, các trang quản trị; chủ tạo tin → thêm phòng, gói → gửi duyệt → admin duyệt → khách tìm "hoi an" ra tin; đăng ký (lỗi dưới ô, tự đăng nhập); chat CSKH nhận tin mới qua poll. Chạy trên Android Emulator: luồng đặt chỗ → thanh toán, tải ảnh, khu chủ; sửa 5 lỗi chỉ có trên Android (bàn phím che ô nhập, nền hộp thoại hở thanh trạng thái, nội dung bị thanh cử chỉ đè, chữ "Ví điện tử" bị cắt, màu link). Lỗi tìm ra khi chạy thử và đã sửa: B4 trắng sau khi xóa nháp, gọi `/auth/refresh` hai lần khi tải lại trang, trang trắng do `target!.x` với React Compiler. Chưa thử trên điện thoại thật và push.
+
+Giao diện thanh đáy đặt chỗ (D2, B1–B4): giá / tạm tính ở hàng trên, nút rộng hết thanh và căn giữa; nút ở B4 đổi từ "Xác nhận đặt" thành "Đặt ngay".
 
 ---
 

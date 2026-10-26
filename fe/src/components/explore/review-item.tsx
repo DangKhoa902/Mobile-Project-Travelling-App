@@ -32,7 +32,7 @@ export function ReviewItem({ review }: { review: PublicReview }) {
           ))}
         </View>
       ) : null}
-      <Modal visible={viewing !== null} transparent animationType="fade" onRequestClose={() => setViewing(null)}>
+      <Modal visible={viewing !== null} transparent statusBarTranslucent navigationBarTranslucent animationType="fade" onRequestClose={() => setViewing(null)}>
         <Pressable className="flex-1 items-center justify-center bg-black/90" onPress={() => setViewing(null)}>
           {viewing ? <Image source={viewing} style={{ width: "100%", height: "80%" }} contentFit="contain" /> : null}
           <View className="absolute right-4 top-10">

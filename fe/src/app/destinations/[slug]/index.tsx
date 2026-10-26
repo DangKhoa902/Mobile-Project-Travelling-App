@@ -289,13 +289,15 @@ function DestinationView({ destination }: { destination: DestinationDetail }) {
     </View>
   );
 
+  // Giá ở hàng trên, nút "Đặt ngay" rộng hết thanh và căn giữa.
   const footer = (
-    <View className="flex-row items-center justify-between gap-3">
-      <View>
-        <Text className="text-xs text-muted">Giá từ</Text>
+    <View className="gap-2">
+      <View className="flex-row items-baseline justify-between gap-3">
+        <Text className="text-sm text-muted">Giá từ</Text>
         <Text className="text-xl font-bold text-brand">{formatVnd(destination.minPrice)}</Text>
       </View>
-      <Button title={bookable ? "Đặt ngay" : "Chưa nhận đặt"} disabled={!bookable} onPress={() => book()} />
+      <Button title="Đặt ngay" full disabled={!bookable} onPress={() => book()} />
+      {!bookable ? <Text className="text-center text-xs text-muted">Địa điểm hiện chưa nhận đặt chỗ</Text> : null}
     </View>
   );
 
@@ -318,8 +320,8 @@ function DestinationView({ destination }: { destination: DestinationDetail }) {
   return (
     <View className="flex-1 bg-surface">
       <ScrollView>{gallery}{content}</ScrollView>
-      <SafeAreaView edges={["bottom"]} className="border-t border-line bg-surface-card px-4 py-3">
-        {footer}
+      <SafeAreaView edges={["bottom"]} className="border-t border-line bg-surface-card">
+        <View className="px-4 py-3">{footer}</View>
       </SafeAreaView>
     </View>
   );

@@ -35,7 +35,7 @@ Muốn làm một phần cụ thể thì thay câu cuối, ví dụ: *"Làm lu�
 
 ## 2. Hiện trạng `fe/`
 
-Cập nhật 25/10/2026: **đã làm đủ các trang trong sitemap** ([giao-dien.md](../02-thiet-ke/giao-dien.md) mục 2), nối API thật. `npx tsc --noEmit` và `npx expo lint` sạch; `npx expo export` cho web và Android chạy được. Đã chạy thử trên web (375px, 800px, 1280px) luồng: đăng nhập → D2 → B1–B4 (voucher) → B5 thanh toán → B6; đăng ký; chủ tạo tin → gửi duyệt → admin duyệt; chat CSKH; dashboard chủ / admin; các trang quản trị. Chưa thử tải ảnh bằng tay (cần chọn file). **Chưa chạy trên Android thật / emulator.**
+Cập nhật 25/10/2026: **đã làm đủ các trang trong sitemap** ([giao-dien.md](../02-thiet-ke/giao-dien.md) mục 2), nối API thật. `npx tsc --noEmit` và `npx expo lint` sạch; `npx expo export` cho web và Android chạy được. Đã chạy thử trên web (375px, 800px, 1280px) luồng: đăng nhập → D2 → B1–B4 (voucher) → B5 thanh toán → B6; đăng ký; chủ tạo tin → gửi duyệt → admin duyệt; chat CSKH; dashboard chủ / admin; các trang quản trị. **Đã chạy trên Android Emulator (Pixel 9, Android 17) qua Expo Go:** đăng nhập, tab, D2 (♥), B1–B5 (lịch giá mùa, voucher, thanh toán thất bại / thành công), B6, hộp thoại hủy, tải ảnh đại diện (nén 1080×2424 → 712×1600), dashboard + booking của chủ. Chưa thử trên điện thoại thật, chưa thử push.
 
 | Phần | File | Ghi chú |
 |---|---|---|
@@ -56,6 +56,8 @@ Cập nhật 25/10/2026: **đã làm đủ các trang trong sitemap** ([giao-die
 
 - File trong `app/` chỉ `export default` component trang; hàm / hằng dùng chung để ở `components/`, `utils/`.
 - React Compiler đọc trước các thuộc tính truy cập trong closure: đừng viết `dialog.target!.id` trong `onConfirm` (target đang `null` sẽ làm trang trắng). Gán `const target = dialog.target; if (!target) return;` rồi mới dùng.
+- Android (edge-to-edge): `KeyboardAvoidingView` phải dùng `behavior="padding"` cả trên Android; `Modal` cần `statusBarTranslucent navigationBarTranslucent` để nền tối phủ kín; màu chữ của `<Link>` không ăn `className` trên Android – bọc `<Text>` bên trong.
+- Chạy trên emulator: `npx expo start` (không dùng `--localhost`: Metro chỉ nghe IPv6 `[::1]`), `adb reverse tcp:8081 tcp:8081` và `adb reverse tcp:3000 tcp:3000`, mở `exp://127.0.0.1:8081` trong Expo Go.
 - Không `setState` trực tiếp trong `useEffect` (lint `react-hooks/set-state-in-effect`); dùng mẫu "so với giá trị trước trong state" như `dialog.tsx`, `destination-editor.tsx`.
 
 ## 3. Chạy môi trường

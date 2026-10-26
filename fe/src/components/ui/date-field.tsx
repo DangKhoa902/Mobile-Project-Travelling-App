@@ -63,7 +63,7 @@ export function DateField({ label, value, onChange, required, error, min, max, p
       </Pressable>
       {error ? <Text className="text-xs text-danger">{error}</Text> : null}
 
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+      <Modal visible={open} transparent statusBarTranslucent navigationBarTranslucent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable className="flex-1 items-center justify-center bg-black/40 p-4" onPress={() => setOpen(false)}>
           <Pressable className="w-full max-w-sm rounded-2xl bg-surface-card p-4" onPress={(event) => event.stopPropagation()}>
             <View className="mb-2 flex-row items-center justify-between">

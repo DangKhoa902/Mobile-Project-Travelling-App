@@ -54,8 +54,8 @@ export function Dialog({ open, onClose, title, message, children, input, confirm
   }
 
   return (
-    <Modal visible={open} transparent animationType="fade" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} className="flex-1">
+    <Modal visible={open} transparent statusBarTranslucent navigationBarTranslucent animationType="fade" onRequestClose={onClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === "web" ? undefined : "padding"} className="flex-1">
         <Pressable className="flex-1 items-center justify-center bg-black/40 p-4" onPress={busy ? undefined : onClose}>
           <Pressable className="w-full max-w-md rounded-2xl bg-surface-card p-5" onPress={(event) => event.stopPropagation()}>
             <ScrollView keyboardShouldPersistTaps="handled" style={{ maxHeight: 560 }} contentContainerClassName="gap-3">

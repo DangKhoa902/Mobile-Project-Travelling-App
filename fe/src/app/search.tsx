@@ -117,7 +117,7 @@ export default function SearchScreen() {
         list
       )}
 
-      <Modal visible={sheet} animationType="slide" transparent onRequestClose={() => setSheet(false)}>
+      <Modal visible={sheet} animationType="slide" transparent statusBarTranslucent navigationBarTranslucent onRequestClose={() => setSheet(false)}>
         <View className="flex-1 justify-end bg-black/40">
           <SafeAreaView edges={["bottom"]} className="max-h-[85%] rounded-t-3xl bg-surface">
             <View className="flex-row items-center justify-between px-4 pt-3">
