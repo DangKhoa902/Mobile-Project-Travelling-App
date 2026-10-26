@@ -25,6 +25,13 @@ export const loginSchema = z.object({
   deviceName: z.string().trim().max(100).optional(),
 });
 
+export const googleLoginSchema = z.object({
+  idToken: z.string().min(20).max(4096),
+  deviceName: z.string().trim().max(100).optional(),
+  // Tạo tài khoản mới bằng Google cũng phải đồng ý điều khoản (giống đăng ký thường).
+  acceptTerms: z.literal(true, { error: "Cần đồng ý điều khoản sử dụng và chính sách bảo mật" }),
+});
+
 export const refreshSchema = z.object({
   refreshToken: z.string().min(20).max(200),
   deviceName: z.string().trim().max(100).optional(),

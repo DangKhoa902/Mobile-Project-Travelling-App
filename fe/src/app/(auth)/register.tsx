@@ -2,6 +2,7 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 
+import { GoogleButton, OrDivider } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/choice";
@@ -68,6 +69,14 @@ export default function RegisterScreen() {
     <Screen back title="Tạo tài khoản" maxWidth={480}>
       <View className="gap-4 pt-2">
         {error ? <Banner tone="danger">{error}</Banner> : null}
+        <GoogleButton
+          label="Đăng ký bằng Google"
+          onSignedIn={(isNewUser) => {
+            toast.success(isNewUser ? "Đã tạo tài khoản bằng Google" : "Email này đã có tài khoản – đã đăng nhập bằng Google");
+            router.replace(safeRedirect(redirect) as never);
+          }}
+        />
+        <OrDivider />
         <Input label="Họ tên" required value={form.name} onChangeText={set("name")} error={errors.name} autoComplete="name" placeholder="Nguyễn Văn A" />
         <Input
           label="Email"

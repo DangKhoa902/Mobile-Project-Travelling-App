@@ -121,6 +121,7 @@ Ký hiệu: **PK** khóa chính, **FK** khóa ngoại, **UQ** duy nhất, **?** 
 | `name` | VARCHAR(191) | | Họ tên |
 | `email` | VARCHAR(191) | UQ | Lưu chữ thường; dùng để đăng nhập |
 | `emailVerifiedAt` | DATETIME? | | `NULL` = chưa xác thực email; bắt buộc trước khi nộp hồ sơ đối tác |
+| `googleId` | VARCHAR(64)? | UNIQUE | `sub` của tài khoản Google đã liên kết; `NULL` = chưa liên kết |
 | `password` | VARCHAR(191) | | Hash bcrypt, không bao giờ trả ra API (BR-09) |
 | `phone` | VARCHAR(20)? | | |
 | `dateOfBirth` | DATE? | | |
@@ -595,6 +596,7 @@ ownerRevenue     = (subtotal - discount) - commissionAmount
 | `20261004083101_init` | 3 bảng ban đầu: `User`, `Destination`, `Booking` |
 | `20261021090000_business_domain` | Danh mục, tiện ích, gói, phòng, dịch vụ, voucher, booking đầy đủ, thanh toán, yêu thích, đánh giá, chat, thông báo |
 | `20261025090000_platform_extensions` | Đối soát (`Payout`), giá mùa (`RoomRate`), refresh token, token email, thiết bị push + `Notification.pushedAt`, nhật ký, `Upload` + `ReviewImage`, `Destination.searchText`, `User.emailVerifiedAt`. Tài khoản có sẵn được coi là đã xác thực email; thông báo cũ không gửi push |
+| `20261026090000_google_sign_in` | `User.googleId` (unique) cho đăng nhập Google |
 | `20261024090000_partner_owner_dashboard` | Role `OWNER`, bảng `PartnerProfile`, `Destination.ownerId` + kiểm duyệt tin, hoa hồng trên `Booking`, `paymentDueAt`, `Payment.channel`, loại thông báo `PARTNER` |
 
 **Lưu ý khi tạo migration trên Windows:** MariaDB trên Windows mặc định `lower_case_table_names=1`, nên SQL do Prisma sinh ra có thể viết tên bảng thành chữ thường (`` `booking` ``). Trên Linux/Docker, tên bảng phân biệt hoa thường và migration đó sẽ lỗi khi deploy. Sau khi tạo migration, kiểm tra và sửa lại tên bảng đúng PascalCase (`` `Booking` ``) trước khi commit. Ba migration `business_domain`, `partner_owner_dashboard`, `platform_extensions` đã được sửa theo cách này. Sau migration `platform_extensions` chạy `npm run db:backfill` một lần để tính `searchText` cho địa điểm có sẵn.

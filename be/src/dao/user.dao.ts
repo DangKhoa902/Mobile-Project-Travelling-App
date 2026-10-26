@@ -43,6 +43,15 @@ export const userDao = {
     return prisma.user.findUnique({ where: { email }, select: { ...publicUserSelect, password: true } });
   },
 
+  // Đăng nhập Google: tìm theo "sub" đã liên kết hoặc theo email.
+  findForGoogle(googleId: string, email: string) {
+    const select = { ...publicUserSelect, googleId: true } as const;
+    return prisma.$transaction([
+      prisma.user.findUnique({ where: { googleId }, select }),
+      prisma.user.findUnique({ where: { email }, select }),
+    ]);
+  },
+
   findCredentialsById(id: number) {
     return prisma.user.findUnique({ where: { id }, select: { id: true, password: true } });
   },

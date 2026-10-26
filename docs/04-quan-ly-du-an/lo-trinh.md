@@ -37,7 +37,7 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 - Đối soát và chuyển tiền cho chủ địa điểm (`Payout`), giá theo mùa (`RoomRate`).
 - Refresh token xoay vòng, quản lý thiết bị đăng nhập; xác thực email, quên / đặt lại mật khẩu.
 - Push notification qua Expo (outbox), nhật ký quản trị, tìm kiếm không dấu, tải ảnh (local / S3) + ảnh trong đánh giá.
-- 51 test, Postman 196 request / 299 assertion.
+- 58 test, Postman 196 request / 299 assertion.
 
 ## Giai đoạn 5 – Giao diện Web + Mobile (✅ 25/10/2026)
 

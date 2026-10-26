@@ -19,7 +19,7 @@ export class ApiError extends Error {
 export const apiClient = axios.create({ baseURL: API_URL, timeout: 15000 });
 
 // Endpoint xác thực không cần access token: không chờ cổng, không tự làm mới khi 401.
-const PUBLIC_AUTH = /^\/auth\/(login|register|refresh|logout|forgot-password|reset-password|verify-email)$/;
+const PUBLIC_AUTH = /^\/auth\/(login|google|register|refresh|logout|forgot-password|reset-password|verify-email)$/;
 
 // Store đăng ký token và hàm làm mới vào đây để tránh import vòng client <-> store.
 let accessToken: string | null = null;

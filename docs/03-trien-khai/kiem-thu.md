@@ -17,7 +17,7 @@ cd be
 npm test
 ```
 
-Kết quả hiện tại: **4 file, 51 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
+Kết quả hiện tại: **4 file, 58 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
 
 ## 2. Chạy kiểm thử end-to-end
 

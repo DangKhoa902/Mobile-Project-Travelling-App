@@ -45,6 +45,10 @@ Lỗi định dạng trả 400 `VALIDATION_ERROR` với `details[].path` là tê
 - Tài khoản bị khóa: 403.
 - Tối đa 20 lần đăng nhập/đăng ký mỗi 15 phút cho một IP (429).
 
+### Đăng nhập / đăng ký bằng Google
+
+`POST /api/auth/google` – nút ở A1 và A2. Body: `idToken` (bắt buộc), `acceptTerms: true` (bắt buộc – bấm nút nghĩa là đồng ý điều khoản), `deviceName` (tùy chọn). Không cần nhập họ tên, mật khẩu: lấy tên, email, ảnh từ Google; email coi như đã xác thực. Email trùng tài khoản đã có thì liên kết vào tài khoản đó. Chi tiết và cách cấu hình: [dang-nhap-google.md](../03-trien-khai/dang-nhap-google.md).
+
 ## 3. Sửa hồ sơ và đổi mật khẩu
 
 `PATCH /api/auth/me` – mọi trường đều tùy chọn, chỉ gửi trường muốn đổi.

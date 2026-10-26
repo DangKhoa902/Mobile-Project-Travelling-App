@@ -19,6 +19,7 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 |---|---|---|---|---|
 | POST | `/register` | Công khai | `name`, `email`, `password`, `acceptTerms: true`, `phone?`, `dateOfBirth?` | Đăng ký, gửi email xác thực, trả phiên (bảng dưới) |
 | POST | `/login` | Công khai | `email`, `password`, `deviceName?` | Đăng nhập, trả phiên |
+| POST | `/google` | Công khai | `idToken` (ID token Google), `acceptTerms: true`, `deviceName?` | Đăng nhập / đăng ký bằng Google, trả phiên + `isNewUser` (201 nếu tạo mới). 503 `GOOGLE_DISABLED` khi chưa cấu hình. Xem [dang-nhap-google.md](../03-trien-khai/dang-nhap-google.md) |
 | POST | `/refresh` | Công khai | `refreshToken`, `deviceName?` | Đổi refresh token lấy cặp token mới (token cũ bị thu hồi) |
 | POST | `/logout` | Công khai | `refreshToken` | Thu hồi phiên này (204) |
 | POST | `/logout-all` | Đăng nhập | | Thu hồi mọi phiên (204) |
@@ -49,7 +50,7 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 - Khi API trả 401, gọi `/refresh` một lần rồi thử lại request; `/refresh` cũng lỗi thì đăng xuất. Luồng chi tiết: [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 1.3.
 - Khi `EMAIL_TRANSPORT=console` (dev, demo), response kèm `devVerificationToken` / `devResetToken` để thử luồng không cần hộp thư. Production không có.
 
-`/register`, `/login`, `/forgot-password`, `/reset-password`, `/resend-verification` giới hạn 20 lần / 15 phút / IP. Trường bắt buộc: [tai-khoan-va-dang-ky.md](../01-dac-ta/tai-khoan-va-dang-ky.md).
+`/register`, `/login`, `/google`, `/forgot-password`, `/reset-password`, `/resend-verification` giới hạn 20 lần / 15 phút / IP. Trường bắt buộc: [tai-khoan-va-dang-ky.md](../01-dac-ta/tai-khoan-va-dang-ky.md).
 
 ## Khám phá – danh mục, tiện ích, địa điểm
 

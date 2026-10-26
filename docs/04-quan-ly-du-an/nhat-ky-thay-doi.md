@@ -4,6 +4,20 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 26/10/2026 – Đăng nhập / đăng ký bằng Google
+
+| Lớp | Thay đổi |
+|---|---|
+| Database | Migration `20261026090000_google_sign_in`: cột `User.googleId` (unique) |
+| Backend | `POST /api/auth/google` (`lib/google.ts` xác minh ID token bằng `google-auth-library`, `planGoogleSignIn` quyết định đăng nhập / liên kết / tạo mới); biến `GOOGLE_CLIENT_IDS`; 7 test mới (58 tổng) |
+| Frontend | `components/auth/google-button.tsx` (`expo-auth-session`), nút ở A1 và A2, tự ẩn khi chưa có client ID hoặc chạy Expo Go; `loginWithGoogle` trong `auth-store` |
+| Khác | Bỏ khung tài khoản demo ở màn đăng nhập; thêm lề cho nút trên ảnh ở D2 |
+| Tài liệu | [dang-nhap-google.md](../03-trien-khai/dang-nhap-google.md) (tạo client ID, cấu hình, giới hạn), [api.md](../02-thiet-ke/api.md) |
+
+Kiểm chứng: `npm test` 58/58, `tsc` + `expo lint` sạch, nút hiển thị đúng trên web 375px. **Chưa đăng nhập thử bằng tài khoản Google thật** (cần client ID của nhóm).
+
+---
+
 ## 25/10/2026 – Frontend đầy đủ (Web + Mobile)
 
 | Phần | Thay đổi |

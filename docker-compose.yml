@@ -46,6 +46,7 @@ services:
       STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
       UPLOAD_DIR: /app/uploads
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
       REQUEST_LOG: ${REQUEST_LOG:-true}
       SLOW_REQUEST_MS: ${SLOW_REQUEST_MS:-1000}
       SENTRY_DSN: ${SENTRY_DSN:-}

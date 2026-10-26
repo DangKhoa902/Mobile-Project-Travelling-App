@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import type { z } from "zod";
 import { userDao } from "../dao/user.dao.js";
+import { randomToken } from "../lib/crypto.js";
+import { verifyGoogleIdToken, type GoogleProfile } from "../lib/google.js";
 import { badRequest, conflict, forbidden, HttpError, notFound } from "../lib/http-error.js";
 import { parseDateOnly } from "./booking-rules.js";
 import { exposeDevTokens } from "./mail.service.js";
@@ -8,6 +10,7 @@ import { issueSession, revokeAllSessions, type SessionMeta } from "./session.ser
 import { consumeToken, sendPasswordResetEmail, sendVerificationEmail } from "./verification.service.js";
 import type {
   changePasswordSchema,
+  googleLoginSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
@@ -41,6 +44,59 @@ export async function login(input: z.infer<typeof loginSchema>, meta: SessionMet
 
   const { password: _password, ...user } = record;
   return { user, ...(await issueSession(user, { ...meta, deviceName: input.deviceName ?? meta.deviceName })) };
+}
+
+type GoogleCandidate = { id: number; googleId: string | null } | null;
+
+// Quyết định khi đăng nhập Google (tách riêng để kiểm thử, không đụng DB):
+// - đã liên kết "sub" → đăng nhập tài khoản đó;
+// - email đã có tài khoản → liên kết, chỉ khi Google xác nhận email (tránh chiếm tài khoản người khác);
+// - chưa có → tạo tài khoản mới, email coi như đã xác thực.
+export function planGoogleSignIn(byGoogle: GoogleCandidate, byEmail: GoogleCandidate, profile: GoogleProfile) {
+  if (byGoogle) return { kind: "existing" as const, userId: byGoogle.id };
+  if (!profile.emailVerified) {
+    throw conflict("Email Google của bạn chưa được xác minh, hãy dùng email và mật khẩu", "GOOGLE_EMAIL_UNVERIFIED");
+  }
+  if (byEmail) {
+    if (byEmail.googleId && byEmail.googleId !== profile.sub) {
+      throw conflict("Email này đã liên kết với một tài khoản Google khác", "GOOGLE_ACCOUNT_MISMATCH");
+    }
+    return { kind: "link" as const, userId: byEmail.id };
+  }
+  return { kind: "create" as const };
+}
+
+// Đăng nhập / đăng ký bằng Google: xác minh ID token rồi trả phiên giống đăng nhập thường.
+export async function googleSignIn(input: z.infer<typeof googleLoginSchema>, meta: SessionMeta) {
+  const profile = await verifyGoogleIdToken(input.idToken);
+  const [byGoogle, byEmail] = await userDao.findForGoogle(profile.sub, profile.email);
+  const plan = planGoogleSignIn(byGoogle, byEmail, profile);
+
+  let user;
+  if (plan.kind === "existing") {
+    user = byGoogle!;
+  } else if (plan.kind === "link") {
+    user = await userDao.update(plan.userId, {
+      googleId: profile.sub,
+      emailVerifiedAt: byEmail!.emailVerifiedAt ?? new Date(),
+      avatarUrl: byEmail!.avatarUrl ?? profile.picture,
+    });
+  } else {
+    user = await userDao.create({
+      name: profile.name.slice(0, 100),
+      email: profile.email,
+      googleId: profile.sub,
+      // Mật khẩu ngẫu nhiên không ai biết: muốn đăng nhập bằng mật khẩu thì dùng "Quên mật khẩu" để đặt.
+      password: await bcrypt.hash(randomToken(32), BCRYPT_ROUNDS),
+      emailVerifiedAt: new Date(),
+      avatarUrl: profile.picture,
+    });
+  }
+  if (user.status === "LOCKED") throw forbidden("Tài khoản đã bị khóa");
+
+  const { googleId: _googleId, ...publicUser } = user as typeof user & { googleId?: string | null };
+  const session = await issueSession(publicUser, { ...meta, deviceName: input.deviceName ?? meta.deviceName });
+  return { user: publicUser, ...session, isNewUser: plan.kind === "create" };
 }
 
 export async function getProfile(userId: number) {

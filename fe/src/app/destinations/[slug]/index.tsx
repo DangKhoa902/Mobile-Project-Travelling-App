@@ -117,11 +117,14 @@ function DestinationView({ destination }: { destination: DestinationDetail }) {
           />
         ))}
       </ScrollView>
-      <SafeAreaView edges={["top"]} className="absolute inset-x-0 top-0 flex-row justify-between px-3">
-        <IconButton icon="arrow-back" label="Quay lại" className="bg-white/90" onPress={() => goBack("/")} />
-        <View className="flex-row gap-2">
-          <IconButton icon="share-outline" label="Chia sẻ" className="bg-white/90" onPress={onShare} />
-          <IconButton icon={favorite ? "heart" : "heart-outline"} label={favorite ? "Bỏ yêu thích" : "Yêu thích"} color={favorite ? Colors.danger : Colors.brand} className="bg-white/90" onPress={onFavorite} />
+      {/* Lề đặt ở View bên trong: SafeAreaView tự đặt padding nên ghi đè className của nó. */}
+      <SafeAreaView edges={["top"]} className="absolute inset-x-0 top-0">
+        <View className="flex-row justify-between px-4 pt-3">
+          <IconButton icon="arrow-back" label="Quay lại" className="bg-white/90" onPress={() => goBack("/")} />
+          <View className="flex-row gap-3">
+            <IconButton icon="share-outline" label="Chia sẻ" className="bg-white/90" onPress={onShare} />
+            <IconButton icon={favorite ? "heart" : "heart-outline"} label={favorite ? "Bỏ yêu thích" : "Yêu thích"} color={favorite ? Colors.danger : Colors.brand} className="bg-white/90" onPress={onFavorite} />
+          </View>
         </View>
       </SafeAreaView>
       {images.length > 1 ? (
