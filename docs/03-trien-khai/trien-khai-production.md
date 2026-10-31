@@ -2,6 +2,8 @@
 
 Hướng dẫn đưa Travelling App lên môi trường thật: API + MariaDB trên một VPS có HTTPS, giao diện web trên domain riêng, và file APK Android cài được trên điện thoại. Cài đặt máy dev và bảng biến môi trường: [deploy.md](deploy.md). Đo và theo dõi app khi đang chạy: [giam-sat-van-hanh.md](giam-sat-van-hanh.md).
 
+> **Bộ file đã điền sẵn tên miền `chantroixaxoi.xyz`:** thư mục [`deploy/`](../../deploy/README.md) (Caddyfile, `docker-compose.prod.yml`, mẫu `.env`, script cài VPS / triển khai / sao lưu) và `fe/.env.production`, `fe/eas.json`. Làm theo [deploy/README.md](../../deploy/README.md); tài liệu này giải thích chi tiết từng bước.
+
 > **Trạng thái kiểm chứng (25/10/2026):** bản build production của backend (`npm run build` → `node dist/server.js`) đã chạy thử trên máy dev. Image Docker, Caddy, build web và build APK **chưa chạy thử** trong dự án (Docker Desktop tắt, chưa có tài khoản Expo của nhóm). Chạy lần lượt các bước dưới đây một lần trên môi trường thử trước khi demo.
 
 ## 1. Kiến trúc triển khai
