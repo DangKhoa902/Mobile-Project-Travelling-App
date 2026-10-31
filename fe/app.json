@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.travellingapp.app"
+      "package": "com.travellingapp.app",
+      "versionCode": 1
     },
     "web": {
       "output": "single",

@@ -1,0 +1,27 @@
+# Caddy: HTTPS tự động (Let's Encrypt) cho API và web.
+# Cần 2 bản ghi DNS loại A trỏ về IP của VPS: api.chantroixaxoi.xyz và app.chantroixaxoi.xyz.
+{
+	# Email nhận thông báo khi chứng chỉ sắp hết hạn / gặp lỗi gia hạn.
+	email {$ACME_EMAIL}
+}
+
+api.chantroixaxoi.xyz {
+	encode zstd gzip
+	reverse_proxy api:3000
+}
+
+app.chantroixaxoi.xyz {
+	encode zstd gzip
+	root * /srv/web
+	# Web build dạng SPA: route không có file thì trả index.html (mở thẳng /destinations/... không bị 404).
+	try_files {path} /index.html
+	file_server
+	@assets path /_expo/* /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+	header /index.html Cache-Control "no-cache"
+}
+
+# Gõ tên miền gốc thì chuyển sang web.
+chantroixaxoi.xyz, www.chantroixaxoi.xyz {
+	redir https://app.chantroixaxoi.xyz{uri} permanent
+}

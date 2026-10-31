@@ -156,6 +156,8 @@ npx expo export --platform web                                     # thử build
 
 ## Triển khai
 
+Tên miền của nhóm: **chantroixaxoi.xyz** – làm theo [deploy/README.md](deploy/README.md) (file cấu hình đã điền sẵn).
+
 Biến môi trường, Docker: [docs/03-trien-khai/deploy.md](docs/03-trien-khai/deploy.md). Triển khai thật (VPS, web, APK): [docs/03-trien-khai/trien-khai-production.md](docs/03-trien-khai/trien-khai-production.md). Giám sát: [docs/03-trien-khai/giam-sat-van-hanh.md](docs/03-trien-khai/giam-sat-van-hanh.md).
 
 ## Tài liệu
