@@ -449,3 +449,6 @@ export type AuditLog = {
 };
 
 export type Upload = { id: number; url: string; mimeType: string; size: number };
+
+export type AssistantTurn = { role: "user" | "model"; text: string };
+export type AssistantReply = { reply: string; destinations: DestinationSummary[] };

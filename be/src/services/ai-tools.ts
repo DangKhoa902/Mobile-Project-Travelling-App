@@ -18,7 +18,8 @@ export const HANDOFF_TOOL = "handoff_to_staff";
 const MAX_SEARCH_RESULTS = 5;
 const MAX_DESCRIPTION_CHARS = 1500;
 
-export const cskhToolDeclarations: FunctionDeclaration[] = [
+// Tool dùng chung cho CSKH và trợ lý tư vấn công khai (chỉ đọc dữ liệu công khai, không cần biết khách là ai).
+export const publicToolDeclarations: FunctionDeclaration[] = [
   {
     name: "search_destinations",
     description: "Tìm địa điểm du lịch đang mở bán. Trả về tối đa 5 địa điểm kèm giá thấp nhất và điểm đánh giá.",
@@ -66,6 +67,10 @@ export const cskhToolDeclarations: FunctionDeclaration[] = [
     description: "Chính sách chung của Travelling App: hủy, hoàn tiền, hạn thanh toán, đánh giá.",
     parametersJsonSchema: { type: "object", properties: {} },
   },
+];
+
+export const cskhToolDeclarations: FunctionDeclaration[] = [
+  ...publicToolDeclarations,
   {
     name: "list_my_bookings",
     description: "Danh sách booking của khách đang chat (mới nhất trước).",
@@ -256,12 +261,14 @@ const toolError = (code: string, message: string): ToolResult => ({ error: { cod
 const str = (value: unknown) => (typeof value === "string" && value.trim() ? value.trim() : undefined);
 const num = (value: unknown) => (typeof value === "number" && Number.isFinite(value) ? value : undefined);
 
-// customer: chủ hội thoại. Luôn dùng role USER và phạm vi "mine" để tool booking chỉ thấy booking của khách (BR-10),
-// kể cả khi tài khoản đó là OWNER/STAFF (khi đó listBookings mặc định trả booking họ quản lý).
-export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps = defaultToolDeps) {
-  const user: AuthUser = { id: customer.id, role: "USER", email: "", name: "" };
+type ToolHandlers = Record<string, (args: Record<string, unknown>) => Promise<ToolResult>>;
 
-  const handlers: Record<string, (args: Record<string, unknown>) => Promise<ToolResult>> = {
+// Địa điểm mà tool đã trả cho AI (để API trợ lý tư vấn trả kèm thẻ địa điểm).
+export type CollectedDestination = { id: number; slug: string; name: string };
+
+// Tool đọc dữ liệu công khai: tìm / xem địa điểm, báo giá, chính sách.
+function publicHandlers(deps: ToolDeps, onDestination?: (destination: CollectedDestination) => void): ToolHandlers {
+  return {
     async search_destinations(args) {
       const query = listDestinationsSchema.parse({
         q: str(args.q),
@@ -278,6 +285,7 @@ export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps 
         ...(str(args.categorySlug) ? { category: { slug: str(args.categorySlug) } } : {}),
       };
       const [data, total] = await deps.findDestinations(query, where, 0, query.limit);
+      for (const item of data) onDestination?.({ id: item.id, slug: item.slug, name: item.name });
       return {
         total,
         destinations: data.map((item) => ({
@@ -299,6 +307,7 @@ export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps 
       if (!destination || !destination.isActive || destination.listingStatus !== "APPROVED") {
         return toolError("NOT_FOUND", "Không tìm thấy Địa điểm");
       }
+      onDestination?.({ id: destination.id, slug: destination.slug, name: destination.name });
       return { destination: toDestinationForAi(destination) };
     },
 
@@ -329,7 +338,30 @@ export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps 
     async get_policies() {
       return { policies: policiesText() };
     },
+  };
+}
 
+// Lỗi nghiệp vụ (HttpError) trả về cho AI dưới dạng { error } để nó giải thích cho khách; lỗi khác ném tiếp.
+function toExecutor(handlers: ToolHandlers) {
+  return async function executeTool(name: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
+    const handler = Object.hasOwn(handlers, name) ? handlers[name] : undefined;
+    if (!handler) return toolError("UNKNOWN_TOOL", `Tool ${name} không tồn tại`);
+    try {
+      return await handler(args);
+    } catch (error) {
+      if (error instanceof HttpError) return toolError(error.code, error.message);
+      throw error;
+    }
+  };
+}
+
+// customer: chủ hội thoại. Luôn dùng role USER và phạm vi "mine" để tool booking chỉ thấy booking của khách (BR-10),
+// kể cả khi tài khoản đó là OWNER/STAFF (khi đó listBookings mặc định trả booking họ quản lý).
+export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps = defaultToolDeps) {
+  const user: AuthUser = { id: customer.id, role: "USER", email: "", name: "" };
+
+  return toExecutor({
+    ...publicHandlers(deps),
     async list_my_bookings(args) {
       const query = listBookingsSchema.parse({ scope: "mine", status: str(args.status), limit: 10 });
       const { data, total } = await deps.listBookings(user, query);
@@ -357,19 +389,19 @@ export function createCskhToolExecutor(customer: { id: number }, deps: ToolDeps 
         ...(cancellation.allowed ? {} : { cancelBlockedReason: cancellation.reason }),
       };
     },
-  };
-
-  // Lỗi nghiệp vụ (HttpError) trả về cho AI dưới dạng { error } để nó giải thích cho khách; lỗi khác ném tiếp.
-  return async function executeTool(name: string, args: Record<string, unknown> = {}): Promise<ToolResult> {
-    const handler = handlers[name];
-    if (!handler) return toolError("UNKNOWN_TOOL", `Tool ${name} không tồn tại`);
-    try {
-      return await handler(args);
-    } catch (error) {
-      if (error instanceof HttpError) return toolError(error.code, error.message);
-      throw error;
-    }
-  };
+  });
 }
 
 export type ToolExecutor = ReturnType<typeof createCskhToolExecutor>;
+
+// Trợ lý tư vấn công khai (giai đoạn 2): chỉ 4 tool "tư vấn", không có tool booking hay chuyển nhân viên.
+// Gom mọi địa điểm search_destinations / get_destination đã trả (theo thứ tự, không trùng) để trả kèm thẻ.
+export function createPublicToolExecutor(deps: ToolDeps = defaultToolDeps) {
+  const collected = new Map<number, CollectedDestination>();
+  const executeTool: ToolExecutor = toExecutor(
+    publicHandlers(deps, (destination) => {
+      if (!collected.has(destination.id)) collected.set(destination.id, destination);
+    }),
+  );
+  return { executeTool, collectedDestinations: () => [...collected.values()] };
+}

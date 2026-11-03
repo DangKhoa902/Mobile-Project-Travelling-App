@@ -1,4 +1,4 @@
-import { createPartFromFunctionResponse, FinishReason, type Content } from "@google/genai";
+import { createPartFromFunctionResponse, FinishReason, type Content, type FunctionDeclaration } from "@google/genai";
 import { env } from "../config/env.js";
 import { generate, type GenerateInput, type GenerateResult } from "../lib/gemini.js";
 import { captureError } from "../lib/monitoring.js";
@@ -53,7 +53,7 @@ export type AgentOutcome =
   | { kind: "reply"; text: string; model: string }
   | { kind: "handoff"; reason: string; summary: string | null; cause: "TOOL" | "ERROR"; error?: unknown };
 
-type GenerateFn = (input: GenerateInput) => Promise<GenerateResult>;
+export type GenerateFn = (input: GenerateInput) => Promise<GenerateResult>;
 
 const BLOCKED_FINISH_REASONS = new Set<string>([
   FinishReason.SAFETY,
@@ -66,15 +66,20 @@ const BLOCKED_FINISH_REASONS = new Set<string>([
 const truncate = (value: string, max: number) => (value.length > max ? `${value.slice(0, max - 3)}...` : value);
 
 // Vòng gọi tool thủ công. Mọi đường lỗi đều kết thúc bằng chuyển nhân viên (AI_ERROR), không ném lỗi.
+// functionDeclarations / handoffTool: mặc định bộ tool CSKH; trợ lý tư vấn công khai truyền bộ tool riêng và handoffTool = null.
 export async function runSupportAgent(input: {
   contents: Content[];
   systemInstruction: string;
   executeTool: ToolExecutor;
   maxRounds?: number;
   generateFn?: GenerateFn;
+  functionDeclarations?: FunctionDeclaration[];
+  handoffTool?: string | null;
 }): Promise<AgentOutcome> {
   const generateFn = input.generateFn ?? ((params) => generate(params));
   const maxRounds = input.maxRounds ?? env.AI_MAX_TOOL_ROUNDS;
+  const functionDeclarations = input.functionDeclarations ?? cskhToolDeclarations;
+  const handoffTool = input.handoffTool === undefined ? HANDOFF_TOOL : input.handoffTool;
   const contents = [...input.contents];
   const fail = (summary: string, error?: unknown): AgentOutcome => ({ kind: "handoff", reason: "AI_ERROR", summary, cause: "ERROR", error });
   // Đã phải dùng model dự phòng thì giữ model đó cho các vòng sau (thoughtSignature gắn với model đã sinh ra nó).
@@ -82,7 +87,7 @@ export async function runSupportAgent(input: {
 
   // Vòng cuối (round = maxRounds) chỉ để model trả lời sau khi nhận kết quả tool.
   for (let round = 0; round <= maxRounds; round += 1) {
-    const result = await generateFn({ contents, systemInstruction: input.systemInstruction, functionDeclarations: cskhToolDeclarations, models });
+    const result = await generateFn({ contents, systemInstruction: input.systemInstruction, functionDeclarations, models });
     if (!result.ok) return fail("Trợ lý AI gặp lỗi khi gọi Gemini (cả model chính và dự phòng).", result.error);
     if (result.model !== env.AI_MODEL_AGENT) models = [result.model];
 
@@ -99,7 +104,7 @@ export async function runSupportAgent(input: {
       return { kind: "reply", text, model: result.model };
     }
 
-    const handoff = calls.find((call) => call.name === HANDOFF_TOOL);
+    const handoff = handoffTool ? calls.find((call) => call.name === handoffTool) : undefined;
     if (handoff) {
       const reason = typeof handoff.args?.reason === "string" && handoff.args.reason.trim() ? handoff.args.reason.trim() : "AI_HANDOFF";
       const summary = typeof handoff.args?.summary === "string" && handoff.args.summary.trim() ? handoff.args.summary.trim() : null;
