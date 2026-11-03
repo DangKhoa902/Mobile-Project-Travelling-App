@@ -4,6 +4,19 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 04/11/2026 – Trợ lý tư vấn công khai và gợi ý cho Staff (giai đoạn 2–3)
+
+| Lớp | Thay đổi |
+|---|---|
+| Database | Không có migration mới. Tóm tắt dùng lại `Conversation.aiSummary`; trợ lý công khai không lưu gì |
+| Backend | `lib/gemini.ts` (client Gemini); `services/ai-tools.ts` (khai báo và thực thi tool; trợ lý công khai chỉ có 4 tool, tool khác trả `UNKNOWN_TOOL`); `services/ai-assistant.service.ts` (vòng lặp tool, tối đa 3 thẻ địa điểm, validation 1–20 tin, log một dòng JSON mỗi request không kèm nội dung tin); `services/ai-staff.service.ts` (gợi ý và tóm tắt, 30 tin gần nhất); `routes/ai.routes.ts` (`POST /api/ai/assistant`, giới hạn `AI_PUBLIC_RATE_LIMIT`); `POST /api/conversations/:id/ai/suggest` và `/ai/summary` (STAFF, ADMIN) |
+| Frontend | `/assistant` (AI1): lời chào, 3 câu hỏi mẫu, thẻ địa điểm mở D2, lỗi kèm Thử lại, trạng thái tắt, "Cuộc trò chuyện mới"; `components/assistant/message-bubble.tsx`; `services/ai.service.ts`; T1 có thẻ "Hỏi trợ lý AI" khi AI bật; M6 có nút Gợi ý trả lời (điền bản nháp, không tự gửi) và Tóm tắt |
+| Tài liệu | [ai-cskh.md](../02-thiet-ke/ai-cskh.md) (trạng thái, mục 5.2); [api.md](../02-thiet-ke/api.md); [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 8.2–8.3; [giao-dien.md](../02-thiet-ke/giao-dien.md) (AI1, T1, M6); [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 3.2–3.3; [lo-trinh.md](lo-trinh.md); [backend.md](../03-trien-khai/backend.md) |
+
+Kiểm chứng: `npm test` 126 test trong 10 file pass, gồm test với Gemini giả lập. Chưa thử với key Gemini thật.
+
+---
+
 ## 04/11/2026 – Trợ lý AI trong hội thoại CSKH (giai đoạn 1)
 
 | Lớp | Thay đổi |
@@ -13,7 +26,7 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 | Frontend | C1 (dòng chú thích khi AI bật); C2 (tin AI, "Trợ lý AI đang trả lời…", nút Gặp nhân viên, dải đã chuyển); M5 (lọc Chờ nhân viên / AI đang xử lý, nhãn lý do) |
 | Tài liệu | [ai-cskh.md](../02-thiet-ke/ai-cskh.md) (thiết kế, 3 giai đoạn); BR-28 → BR-31; [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 8.1; [api.md](../02-thiet-ke/api.md); [co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md); [giao-dien.md](../02-thiet-ke/giao-dien.md); [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 3.1; [deploy.md](../03-trien-khai/deploy.md) |
 
-Kiểm chứng: chưa. Đang triển khai; chưa thử với key Gemini thật.
+Kiểm chứng: `npm test` 84 test pass (Gemini giả lập), `tsc` + `expo lint` sạch; chạy thử local với `AI_ENABLED=false`: `GET /api/ai/status` → tắt, hội thoại mới vào thẳng nhân viên (`handler = STAFF`), handoff trả 409 `ALREADY_WITH_STAFF`, C2 và `/assistant` (trạng thái "đang tạm tắt") hiển thị đúng trên web. Chưa thử với key Gemini thật.
 
 ---
 

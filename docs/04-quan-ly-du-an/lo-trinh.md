@@ -79,9 +79,10 @@ Thiết kế, API, mã lỗi và biến môi trường: [ai-cskh.md](../02-thiet
 
 | Giai đoạn | Nội dung | Trạng thái |
 |---|---|---|
-| 1 | AI trả lời trong hội thoại CSKH (C1/C2); khách bấm gặp nhân viên; nhân viên tiếp quản; AI tự chuyển nhân viên khi lỗi | 🔄 |
-| 2 | Trợ lý tư vấn du lịch công khai (`/assistant`): hỏi đáp, gợi ý địa điểm kèm thẻ | ⬜ |
-| 3 | Cho Staff: gợi ý câu trả lời, tóm tắt hội thoại (M6) | ⬜ |
+| 1 | AI trả lời trong hội thoại CSKH (C1/C2); khách bấm gặp nhân viên; nhân viên tiếp quản; AI tự chuyển nhân viên khi lỗi | ✅ code + test, chưa thử key thật |
+| 2 | Trợ lý tư vấn du lịch công khai (`/assistant`): hỏi đáp, gợi ý địa điểm kèm thẻ | ✅ code + test, chưa thử key thật |
+| 3 | Cho Staff: gợi ý câu trả lời, tóm tắt hội thoại (M6) | ✅ code + test, chưa thử key thật |
+| Tiếp theo | Thử với `GEMINI_API_KEY` thật, đo chi phí / hạn mức free tier | ⬜ |
 
 ## Đề xuất sau đồ án (theo thứ tự giá trị)
 

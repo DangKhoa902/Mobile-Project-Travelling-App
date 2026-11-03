@@ -120,9 +120,9 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 | Method | Path | Quyền | Body / Query | Mô tả |
 |---|---|---|---|---|
 | GET | `/api/ai/status` | Công khai | | `{ data: { enabled } }`. Giao diện ẩn các nút AI khi `enabled = false` |
-| POST | `/api/ai/assistant` | Công khai (`optionalAuth`), giới hạn `AI_PUBLIC_RATE_LIMIT` mỗi 10 phút mỗi IP | `messages[]` (`role`: `user`·`model`, `text`; tối đa 20 tin, mỗi tin ≤ 2000 ký tự, tin cuối là `user`) | (giai đoạn 2) Hỏi trợ lý tư vấn → `{ reply, destinations[] }`. Lỗi: 429 `TOO_MANY_REQUESTS`, 503 `AI_UNAVAILABLE` |
-| POST | `/api/conversations/:id/ai/suggest` | STAFF, ADMIN | | (giai đoạn 3) Gợi ý câu trả lời cho nhân viên → `{ suggestion }`, không lưu |
-| POST | `/api/conversations/:id/ai/summary` | STAFF, ADMIN | | (giai đoạn 3) Tóm tắt hội thoại → `{ summary }`, lưu vào `aiSummary` |
+| POST | `/api/ai/assistant` | Công khai (`optionalAuth`), giới hạn `AI_PUBLIC_RATE_LIMIT` mỗi 10 phút mỗi IP | `messages[]` (`role`: `user`·`model`, `text`; 1–20 tin, mỗi tin sau khi cắt khoảng trắng còn 1–2000 ký tự, vai trò xen kẽ bắt đầu bằng `user`, tin cuối là `user`) | Hỏi trợ lý tư vấn → `{ data: { reply, destinations[] } }`. `destinations` là tối đa 3 địa điểm tool đã tra cứu mà tên hoặc slug xuất hiện trong `reply` (không khớp thì lấy tất cả địa điểm đã tra), chỉ tin đã duyệt và đang hoạt động; không lưu DB. Lỗi: 400 `VALIDATION_ERROR` (kiểm tra trước khi xét AI bật), 503 `AI_DISABLED`, 429 `TOO_MANY_REQUESTS`, 503 `AI_UNAVAILABLE` |
+| POST | `/api/conversations/:id/ai/suggest` | STAFF, ADMIN | | Gợi ý câu trả lời cho nhân viên → `{ data: { suggestion } }`, không lưu. Model `AI_MODEL_LITE`, không dùng tool. Lỗi: 503 `AI_DISABLED` (kiểm tra trước khi tìm hội thoại), 503 `AI_UNAVAILABLE` |
+| POST | `/api/conversations/:id/ai/summary` | STAFF, ADMIN | | Tóm tắt hội thoại → `{ data: { summary } }`, lưu vào `aiSummary`. Model `AI_MODEL_LITE`, không dùng tool. Lỗi: 503 `AI_DISABLED`, 503 `AI_UNAVAILABLE` |
 
 ## Đối tác – `/api/partners`
 

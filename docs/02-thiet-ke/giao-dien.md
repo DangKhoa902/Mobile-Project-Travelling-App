@@ -44,6 +44,7 @@ fe/src/app/
 │   └── verify-email.tsx             A5  Xác thực email (mở từ link email)
 │
 ├── search.tsx                       D1  Kết quả tìm kiếm + bộ lọc
+├── assistant.tsx                    AI1 Trợ lý tư vấn (hỏi đáp AI)
 ├── destinations/
 │   ├── [slug].tsx                   D2  Chi tiết địa điểm
 │   └── [slug]/reviews.tsx           D3  Tất cả đánh giá
@@ -132,10 +133,11 @@ flowchart LR
 
 1. Lời chào (có tên nếu đã đăng nhập).
 2. Ô tìm kiếm (chạm vào → mở D1).
-3. Danh mục dạng chip cuộn ngang: Biển, Núi, Resort...
-4. Băng chuyền "Nổi bật".
-5. Danh sách "Phổ biến" và "Mới".
-6. Badge số thông báo chưa đọc ở góc (nếu đã đăng nhập).
+3. Thẻ **Hỏi trợ lý AI** dưới ô tìm kiếm (chỉ khi `GET /api/ai/status` trả `enabled: true`; chạm → mở AI1).
+4. Danh mục dạng chip cuộn ngang: Biển, Núi, Resort...
+5. Băng chuyền "Nổi bật".
+6. Danh sách "Phổ biến" và "Mới".
+7. Badge số thông báo chưa đọc ở góc (nếu đã đăng nhập).
 
 **API**
 
@@ -146,6 +148,7 @@ flowchart LR
 | Phổ biến | `GET /api/destinations?sort=popular&limit=10` |
 | Mới | `GET /api/destinations?sort=newest&limit=10` |
 | Badge | `GET /api/notifications/unread-count` (chỉ khi đã đăng nhập) |
+| Thẻ trợ lý AI | `GET /api/ai/status` |
 
 **Thao tác**
 
@@ -509,10 +512,22 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 - **Route:** `fe/src/app/assistant.tsx` · **Ai dùng:** tất cả (khách vãng lai và User) · **Ưu tiên:** giai đoạn 2 (AI)
 - **Mục đích:** hỏi đáp tư vấn du lịch bằng Gemini: gợi ý địa điểm, giá, chính sách hủy. Nút **Hỏi trợ lý AI** ở T1 mở trang này.
 
-**Hiển thị:** bong bóng chat, ô nhập và nút gửi. Câu trả lời kèm thẻ địa điểm; chạm thẻ mở D2. Lịch sử hội thoại giữ trong bộ nhớ màn hình, tải lại trang là mất.
+**Hiển thị:**
 
-- **API:** `POST /api/ai/assistant` `{ messages: [{ role: "user" | "model", text }] }` → `{ reply, destinations }`. Gửi tối đa 20 tin gần nhất; tin cuối phải là của khách.
-- **Trạng thái:** 429 `TOO_MANY_REQUESTS` → báo "Bạn hỏi hơi nhanh, thử lại sau ít phút". 503 `AI_UNAVAILABLE` → báo "Trợ lý đang bận, thử lại sau". Trợ lý tắt (`GET /api/ai/status` trả `enabled: false`) → ẩn nút ở T1.
+- Lời chào kèm giới thiệu ngắn và 3 câu hỏi mẫu (chạm để gửi luôn).
+- Bong bóng chat (`components/assistant/message-bubble.tsx`): tin của khách và tin của trợ lý. Dưới tin trợ lý có các thẻ địa điểm; chạm thẻ mở D2.
+- Dòng "Trợ lý AI đang trả lời…" khi chờ, ô nhập và nút gửi.
+- Dòng chú thích dưới ô nhập: "Trợ lý AI có thể sai, hãy kiểm tra lại giá ở bước đặt chỗ."
+- Nút **Cuộc trò chuyện mới** xóa lịch sử trên màn hình.
+
+Lịch sử hội thoại giữ trong state của màn hình, tải lại trang là mất. Gọi API qua `services/ai.service.ts`.
+
+- **API:** `POST /api/ai/assistant` `{ messages: [{ role: "user" | "model", text }] }` → `{ data: { reply, destinations } }`. Gửi tối đa 20 tin gần nhất; tin cuối phải là của khách.
+- **Trạng thái:**
+  - Đang chờ: dòng "Trợ lý AI đang trả lời…".
+  - Lỗi mạng hoặc 503 `AI_UNAVAILABLE`: lỗi hiện ngay trong hội thoại, kèm nút **Thử lại** gửi lại đúng câu hỏi cuối.
+  - 429 `TOO_MANY_REQUESTS`: báo "Bạn hỏi hơi nhanh, thử lại sau ít phút".
+  - Trợ lý tắt (503 `AI_DISABLED`, hoặc `GET /api/ai/status` trả `enabled: false`): trạng thái rỗng "Trợ lý tư vấn chưa được bật" kèm link sang D1 tìm kiếm. Ở T1 thẻ **Hỏi trợ lý AI** bị ẩn.
 
 ---
 
@@ -776,7 +791,10 @@ Mỗi thao tác backend tự gửi thông báo cho khách; giao diện chỉ c�
 - **Quy tắc:** nhân viên trả lời đầu tiên được tự gán phụ trách; khách nhận thông báo "CSKH đã trả lời".
 - **M5 giai đoạn 1 (AI):** thêm bộ lọc **Chờ nhân viên** (`GET /api/conversations?handler=STAFF`) và **AI đang xử lý** (`handler=AI`). Mỗi hội thoại hiện nhãn lý do chuyển (`handoffReason`: `CUSTOMER_REQUEST`, `AI_ERROR`, `STAFF_TAKEOVER`, hoặc lý do do AI ghi).
 - **M6 giai đoạn 1 (AI):** hiện `aiSummary` nếu có. Staff gửi tin vào hội thoại đang do AI xử lý thì hội thoại tự chuyển sang nhân viên (`STAFF_TAKEOVER`).
-- **M6 giai đoạn 3:** nút **Gợi ý trả lời** (điền vào ô nhập, `POST /api/conversations/{id}/ai/suggest`) và **Tóm tắt** (`POST /api/conversations/{id}/ai/summary`, lưu vào `aiSummary`).
+- **M6 giai đoạn 3:** hai nút chỉ hiện khi AI bật và hội thoại đang mở:
+  - **Gợi ý trả lời** (`POST /api/conversations/{id}/ai/suggest`): điền nội dung gợi ý vào ô nhập như một bản nháp có thể sửa. Không tự gửi; nhân viên tự bấm gửi.
+  - **Tóm tắt** (`POST /api/conversations/{id}/ai/summary`): cập nhật card "Tóm tắt từ AI" (lưu vào `aiSummary`).
+  - Nhận `AI_DISABLED` thì ẩn cả hai nút. `AI_UNAVAILABLE` thì báo lỗi ngắn ngay tại nút đó, không làm hỏng màn hình.
 
 ### M7 – Danh sách địa điểm · M8 – Thêm / sửa địa điểm
 

@@ -5,8 +5,8 @@ Tài liệu thiết kế cho tính năng AI dùng **Google Gemini API** (SDK `@g
 | Giai đoạn | Nội dung | Trạng thái |
 |---|---|---|
 | 1 | AI trả lời trong hội thoại CSKH (C1/C2), chuyển nhân viên khi cần | ✅ code + test (04/11/2026); chưa thử với key thật |
-| 2 | Trợ lý tư vấn du lịch công khai: hỏi đáp, gợi ý địa điểm kèm thẻ | ⬜ |
-| 3 | Cho Staff: gợi ý câu trả lời, tóm tắt hội thoại (M6) | ⬜ |
+| 2 | Trợ lý tư vấn du lịch công khai: hỏi đáp, gợi ý địa điểm kèm thẻ | ✅ code + test (04/11/2026); chưa thử với key thật |
+| 3 | Cho Staff: gợi ý câu trả lời, tóm tắt hội thoại (M6) | ✅ code + test (04/11/2026); chưa thử với key thật |
 
 ## 1. Nguyên tắc
 
@@ -108,7 +108,7 @@ Mọi lần chuyển đều tạo thông báo `SUPPORT` "Hội thoại cần nh�
 |---|---|---|---|
 | `POST /api/conversations/:id/handoff` | Khách (chủ hội thoại) | `{ reason?: string }` → hội thoại với `handler = STAFF`, `handoffReason = "CUSTOMER_REQUEST"` hoặc lý do khách nhập. Mọi STAFF/ADMIN nhận thông báo `SUPPORT` | 1 |
 | `GET /api/ai/status` | Công khai | `{ data: { enabled: boolean } }` – giao diện ẩn các nút AI khi tắt | 1 |
-| `POST /api/ai/assistant` | Công khai (`optionalAuth`), giới hạn `AI_PUBLIC_RATE_LIMIT` | `{ messages: [{ role: "user" \| "model", text }] }` (≤ 20 tin, mỗi tin ≤ 2000 ký tự, tin cuối là `user`) → `{ data: { reply: string, destinations: DestinationSummary[] } }` | 2 |
+| `POST /api/ai/assistant` | Công khai (`optionalAuth`), giới hạn `AI_PUBLIC_RATE_LIMIT` mỗi IP trong 10 phút | `{ messages: [{ role: "user" \| "model", text }] }`: 1–20 tin, mỗi tin cắt khoảng trắng đầu cuối và còn 1–2000 ký tự, vai trò xen kẽ bắt đầu bằng `user`, tin cuối là `user` → `{ data: { reply: string, destinations: DestinationSummary[] } }` | 2 |
 | `POST /api/conversations/:id/ai/suggest` | STAFF, ADMIN | → `{ data: { suggestion: string } }` (không lưu) | 3 |
 | `POST /api/conversations/:id/ai/summary` | STAFF, ADMIN | → `{ data: { summary: string } }`, lưu vào `aiSummary` | 3 |
 
@@ -117,9 +117,18 @@ Lỗi mới:
 | `code` | Status | Khi nào |
 |---|---|---|
 | `AI_DISABLED` | 503 | Gọi API AI khi `AI_ENABLED=false` |
-| `AI_UNAVAILABLE` | 503 | Gemini lỗi cả model chính lẫn dự phòng (API mục 5.2 giai đoạn 2, 3) |
+| `AI_UNAVAILABLE` | 503 | Gemini lỗi cả model chính lẫn dự phòng, câu trả lời bị chặn hoặc rỗng, quá `AI_MAX_TOOL_ROUNDS`, hoặc lỗi trong tool (API mục 5.2 giai đoạn 2, 3) |
 | `ALREADY_WITH_STAFF` | 409 | Khách bấm chuyển nhân viên khi hội thoại đã do nhân viên phụ trách |
 | `TOO_MANY_REQUESTS` | 429 | Vượt giới hạn trợ lý công khai |
+
+Ghi chú giai đoạn 2–3:
+
+- **Thứ tự kiểm tra** `POST /api/ai/assistant`: validation trước, rồi mới đến `AI_DISABLED`. Body sai thì luôn `400 VALIDATION_ERROR`, kể cả khi AI tắt.
+- **Tool của trợ lý công khai** chỉ có `search_destinations`, `get_destination`, `quote_booking`, `get_policies` (`publicToolDeclarations`). Gọi tool khác nhận `UNKNOWN_TOOL` làm kết quả tool, vòng lặp tiếp tục; không dừng cả câu trả lời.
+- **Chọn thẻ địa điểm:** lấy tối đa 3 địa điểm mà tool đã tra cứu và có tên hoặc slug xuất hiện trong câu trả lời. Nếu không có địa điểm nào khớp thì lấy tất cả địa điểm đã tra. Các địa điểm được lấy lại với cùng dạng tóm tắt như danh sách địa điểm, chỉ gồm tin APPROVED và đang hoạt động.
+- **Không lưu DB:** trợ lý công khai không tạo hội thoại, tin nhắn hay bản ghi nào. Lịch sử chỉ nằm ở phía giao diện.
+- **Log:** mỗi request ghi đúng một dòng JSON: kết quả, model, số lần gọi tool, số tin, có đăng nhập hay không, thời gian xử lý (ms). Không ghi nội dung tin nhắn.
+- **Gợi ý và tóm tắt cho Staff** (`ai/suggest`, `ai/summary`) dùng `AI_MODEL_LITE`, không có tool. Transcript là 30 tin gần nhất, mỗi dòng tối đa 1000 ký tự, nhãn "Khách:", "Trợ lý AI:", "Nhân viên:". Prompt gợi ý có sẵn đoạn chính sách cố định. Tóm tắt tối đa 5 dòng: vấn đề, thông tin đã có, đã làm gì, việc cần làm tiếp. Kiểm tra `AI_DISABLED` trước khi tìm hội thoại, nên tắt AI thì luôn 503 kể cả khi id không tồn tại.
 
 ## 6. Tool của AI
 

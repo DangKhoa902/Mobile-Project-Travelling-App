@@ -17,7 +17,7 @@ cd be
 npm test
 ```
 
-Kết quả hiện tại: **4 file, 58 test pass**. Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
+Kết quả hiện tại: **10 file, 126 test pass** (gồm test AI với Gemini giả lập, không gọi mạng). Biến môi trường cho test nằm trong `be/vitest.config.ts` (không cần file `.env`).
 
 ## 2. Chạy kiểm thử end-to-end
 
@@ -98,6 +98,33 @@ Chuẩn bị: trong `be/.env` đặt `AI_ENABLED=true` và `GEMINI_API_KEY` là 
 | 6 | Khách tạo hội thoại thứ hai (không bấm gặp nhân viên). Staff mở hội thoại đó trong M5 và gửi một tin | Hội thoại chuyển sang "Chờ nhân viên", nhãn `STAFF_TAKEOVER`; AI không trả lời tiếp |
 | 7 | Đặt `AI_ENABLED=false`, chạy lại API, gọi `GET /api/ai/status` | Trả `enabled: false`; C1 không còn dòng chú thích AI |
 | 8 | Khách tạo hội thoại mới | Hội thoại đi thẳng tới nhân viên (`handler = STAFF`), không có tin AI, hiện ngay ở lọc **Chờ nhân viên** |
+
+### 3.2. Trợ lý tư vấn công khai (giai đoạn 2, thủ công)
+
+Chuẩn bị như mục 3.1 (`AI_ENABLED=true`, có `GEMINI_API_KEY`). Dữ liệu demo phải đã chạy `npm run db:seed`.
+
+| Bước | Thao tác | Kết quả mong đợi |
+|---|---|---|
+| 1 | Mở T1 (chưa đăng nhập hoặc đăng nhập đều được), chạm thẻ **Hỏi trợ lý AI** | Mở `/assistant` với lời chào và 3 câu hỏi mẫu |
+| 2 | Hỏi "Đi Đà Lạt 2 người cuối tuần, ngân sách 3 triệu" | Trả lời tiếng Việt, gợi ý địa điểm phù hợp; dưới câu trả lời có thẻ **Đà Lạt Pine Hill Resort** |
+| 3 | Chạm thẻ **Đà Lạt Pine Hill Resort** | Mở D2 đúng địa điểm đó |
+| 4 | Bấm **Cuộc trò chuyện mới** | Lịch sử trên màn hình bị xóa, ô nhập trống |
+| 5 | Gửi 21 câu hỏi trong 10 phút từ cùng một IP (mặc định `AI_PUBLIC_RATE_LIMIT=20`) | Câu thứ 21 báo "Bạn hỏi hơi nhanh, thử lại sau ít phút" |
+| 6 | Đặt `AI_ENABLED=false`, chạy lại API, mở `/assistant` | Hiện trạng thái rỗng "Trợ lý tư vấn chưa được bật" kèm link tới tìm kiếm; T1 không còn thẻ **Hỏi trợ lý AI** |
+
+Thông tin trong câu trả lời về giá và chính sách phải khớp với bước báo giá ở B1–B3. Nếu lệch, ghi lại câu hỏi và nội dung trả lời để sửa prompt hoặc tool.
+
+### 3.3. Gợi ý và tóm tắt cho nhân viên (giai đoạn 3, thủ công)
+
+Dùng hội thoại đang mở do khách tạo ở mục 3.1 (bước 2 trở đi).
+
+| Bước | Thao tác | Kết quả mong đợi |
+|---|---|---|
+| 1 | Đăng nhập `staff@travelling.app`, mở M5 rồi mở hội thoại đang mở (`OPEN`) trong M6 | Có nút **Gợi ý trả lời** và **Tóm tắt** |
+| 2 | Bấm **Gợi ý trả lời** | Ô nhập có nội dung gợi ý, chưa gửi; sửa được. Tin của khách không đổi, không có tin mới trong hội thoại |
+| 3 | Bấm **Tóm tắt** | Card **Tóm tắt từ AI** được cập nhật, tối đa 5 dòng: vấn đề, thông tin đã có, đã làm gì, việc cần làm tiếp |
+| 4 | Tải lại trang M6 | Card **Tóm tắt từ AI** vẫn còn (lưu trong `aiSummary`) |
+| 5 | Đặt `AI_ENABLED=false`, chạy lại API, mở lại M6 | Hai nút không hiện. Nếu đang mở sẵn, bấm một nút sẽ nhận `AI_DISABLED` và hai nút biến mất |
 
 ## 4. Kịch bản demo trước giảng viên (khoảng 10 phút)
 

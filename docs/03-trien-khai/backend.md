@@ -37,7 +37,7 @@ be/
 ├── .env.example                      Mẫu biến môi trường (xem deploy.md)
 ├── prisma.config.ts                  Prisma CLI: schema, migrations, seed
 ├── prisma/
-│   ├── schema.prisma                 26 model, 15 enum
+│   ├── schema.prisma                 26 model, 17 enum
 │   ├── migrations/                   SQL migration (đã sửa tên bảng PascalCase)
 │   ├── seed.ts                       Dữ liệu demo, chạy lại an toàn
 │   └── backfill-search.ts            Tính lại Destination.searchText (npm run db:backfill)
@@ -51,7 +51,7 @@ be/
     ├── app.ts                        Middleware chung + mount router
     ├── config/env.ts                 Đọc và kiểm tra biến môi trường bằng Zod
     ├── lib/                          prisma, http-error, pagination, slug, crypto (token + SHA-256), monitoring (Sentry),
-    │                                 search-text (bỏ dấu), storage (local / S3), destination-search
+    │                                 search-text (bỏ dấu), storage (local / S3), destination-search, gemini (client Gemini)
     ├── middlewares/
     │   ├── auth.ts                   authenticate, optionalAuth, requireRole, signAccessToken
     │   ├── request-log.ts            X-Request-Id + log JSON mỗi request (route, status, ms)
@@ -73,7 +73,11 @@ be/
     │   ├── push.service.ts           Gửi push qua Expo (outbox)
     │   ├── payout.service.ts         Đối soát: xem trước, lập kỳ, chuyển, hủy
     │   ├── audit.service.ts          Ghi nhật ký quản trị
-    │   └── stats.service.ts          Dashboard
+    │   ├── stats.service.ts          Dashboard
+    │   ├── ai-tools.ts               Khai báo và thực thi tool của AI (CSKH và công khai)
+    │   ├── ai-support.service.ts     AI trả lời hội thoại CSKH ở nền, chuyển nhân viên khi lỗi
+    │   ├── ai-assistant.service.ts   Trợ lý tư vấn công khai: vòng lặp tool, chọn thẻ địa điểm
+    │   └── ai-staff.service.ts       Gợi ý trả lời và tóm tắt hội thoại cho Staff
     ├── routes/
     │   ├── auth.routes.ts            /api/auth
     │   ├── user.routes.ts            /api/users
@@ -90,7 +94,8 @@ be/
     │   ├── payout.routes.ts          /api/payouts
     │   ├── audit.routes.ts           /api/audit-logs
     │   ├── device.routes.ts          /api/devices
-    │   └── upload.routes.ts          /api/uploads (+ ảnh phục vụ ở /uploads)
+    │   ├── upload.routes.ts          /api/uploads (+ ảnh phục vụ ở /uploads)
+    │   └── ai.routes.ts              /api/ai (status, trợ lý công khai)
     └── generated/prisma/             Prisma Client sinh tự động – không sửa tay
 ```
 
