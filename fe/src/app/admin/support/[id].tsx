@@ -1,11 +1,14 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
-import { Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 
 import { ChatView } from "@/components/support/chat-view";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, InfoRow, SectionTitle } from "@/components/ui/card";
 import { Screen } from "@/components/ui/screen";
+import { Colors } from "@/constants/theme";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
 import { errorMessage } from "@/services/api/client";
 import { useConversation, useUpdateConversation } from "@/services/support.service";
@@ -20,6 +23,7 @@ export default function SupportConversation() {
   const update = useUpdateConversation();
   const me = useAuthStore((state) => state.user);
   const { isLg } = useBreakpoint();
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const data = conversation.data;
 
   const run = (input: { status?: "OPEN" | "CLOSED"; staffId?: number | null }, message: string) =>
@@ -43,19 +47,32 @@ export default function SupportConversation() {
     </Card>
   ) : null;
 
+  const summary = data?.aiSummary ? (
+    <View className="mx-4 mb-2 rounded-xl border border-info/30 bg-info-soft">
+      <Pressable onPress={() => setSummaryOpen((value) => !value)} accessibilityRole="button" accessibilityLabel="Tóm tắt từ AI" accessibilityState={{ expanded: summaryOpen }} className="flex-row items-center gap-2 px-3 py-2">
+        <Ionicons name="sparkles" size={14} color={Colors.info} />
+        <Text className="flex-1 text-sm font-semibold text-brand">Tóm tắt từ AI</Text>
+        <Ionicons name={summaryOpen ? "chevron-up" : "chevron-down"} size={16} color={Colors.brand} />
+      </Pressable>
+      {summaryOpen ? <Text className="px-3 pb-3 text-sm text-brand">{data.aiSummary}</Text> : null}
+    </View>
+  ) : null;
+
   return (
     <Screen back backHref="/admin/support" title={data?.subject ?? "Hội thoại"} subtitle={data?.customer.name} scroll={false} padded={false}>
       {isLg ? (
         <View className="flex-1 flex-row gap-4 px-4 pb-4">
           <View className="flex-1 overflow-hidden rounded-2xl border border-line bg-surface">
-            <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} />
+            {summary}
+            <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} />
           </View>
           <View className="w-80">{panel}</View>
         </View>
       ) : (
         <View className="flex-1">
           <View className="px-4 pb-2">{panel}</View>
-          <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} />
+          {summary}
+          <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} />
         </View>
       )}
     </Screen>

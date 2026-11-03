@@ -287,11 +287,12 @@ export type NotificationData = {
 export type Message = {
   id: number;
   conversationId: number;
-  senderId: number;
+  senderId: number | null; // null khi senderType = "AI"
+  senderType: "USER" | "AI";
   content: string;
   readAt: string | null;
   createdAt: string;
-  sender?: { id: number; name: string; role: Role; avatarUrl: string | null };
+  sender?: { id: number; name: string; role: Role; avatarUrl: string | null } | null;
 };
 
 export type Conversation = {
@@ -301,6 +302,11 @@ export type Conversation = {
   bookingId: number | null;
   subject: string;
   status: "OPEN" | "CLOSED";
+  handler: "AI" | "STAFF";
+  handoffReason: string | null;
+  handoffAt: string | null;
+  aiSummary: string | null;
+  aiPending: boolean;
   lastMessageAt: string;
   createdAt: string;
   customer: { id: number; name: string; avatarUrl: string | null };

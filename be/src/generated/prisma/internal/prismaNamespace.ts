@@ -2596,6 +2596,10 @@ export const ConversationScalarFieldEnum = {
   subject: 'subject',
   status: 'status',
   lastMessageAt: 'lastMessageAt',
+  handler: 'handler',
+  handoffReason: 'handoffReason',
+  handoffAt: 'handoffAt',
+  aiSummary: 'aiSummary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2607,6 +2611,7 @@ export const MessageScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
   senderId: 'senderId',
+  senderType: 'senderType',
   content: 'content',
   readAt: 'readAt',
   createdAt: 'createdAt'
@@ -2869,7 +2874,9 @@ export type ReviewImageOrderByRelevanceFieldEnum = (typeof ReviewImageOrderByRel
 
 
 export const ConversationOrderByRelevanceFieldEnum = {
-  subject: 'subject'
+  subject: 'subject',
+  handoffReason: 'handoffReason',
+  aiSummary: 'aiSummary'
 } as const
 
 export type ConversationOrderByRelevanceFieldEnum = (typeof ConversationOrderByRelevanceFieldEnum)[keyof typeof ConversationOrderByRelevanceFieldEnum]
@@ -3040,6 +3047,20 @@ export type EnumReviewStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'ConversationStatus'
  */
 export type EnumConversationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConversationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ConversationHandler'
+ */
+export type EnumConversationHandlerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConversationHandler'>
+    
+
+
+/**
+ * Reference to a field of type 'MessageSenderType'
+ */
+export type EnumMessageSenderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageSenderType'>
     
 
 

@@ -108,11 +108,21 @@ Collection Postman chạy được toàn bộ luồng: `be/postman/travelling-ap
 
 | Method | Path | Quyền | Body / Query | Mô tả |
 |---|---|---|---|---|
-| POST | `/` | Đăng nhập | `subject`, `content`, `bookingId?` | Mở hội thoại kèm tin đầu tiên |
-| GET | `/` | Đăng nhập | `status`, `page` | USER: của mình; STAFF/ADMIN: tất cả |
-| GET | `/:id/messages` | Đăng nhập (của mình / staff) | `after?` (id tin cuối, để poll) | Tin nhắn, đánh dấu đã đọc |
-| POST | `/:id/messages` | Đăng nhập (của mình / staff) | `content` | Gửi tin |
-| PATCH | `/:id` | STAFF, ADMIN | `status?`, `staffId?` | Nhận xử lý / đóng |
+| POST | `/` | Đăng nhập | `subject`, `content`, `bookingId?` | Mở hội thoại kèm tin đầu tiên. Khi `AI_ENABLED` thì `handler = AI`, trả 201 ngay và trợ lý AI trả lời ở nền |
+| GET | `/` | Đăng nhập | `status`, `handler` (`AI`·`STAFF`), `page` | USER: của mình; STAFF/ADMIN: tất cả. Mỗi hội thoại có `handler`, `handoffReason`, `handoffAt`, `aiSummary`, `aiPending` |
+| GET | `/:id/messages` | Đăng nhập (của mình / staff) | `after?` (id tin cuối, để poll) | Tin nhắn (mỗi tin có `senderType`; tin AI có `senderId` và `sender` là `null`), đánh dấu đã đọc |
+| POST | `/:id/messages` | Đăng nhập (của mình / staff) | `content` | Gửi tin. Khách gửi vào hội thoại `AI` thì AI trả lời ở nền. Staff gửi vào hội thoại `AI` thì hội thoại chuyển sang `STAFF` (`handoffReason = STAFF_TAKEOVER`) |
+| PATCH | `/:id` | STAFF, ADMIN | `status?`, `staffId?`, `handler?` (`AI` để trả lại cho AI) | Nhận xử lý / đóng / trả lại cho AI |
+| POST | `/:id/handoff` | Đăng nhập (của mình) | `reason?` | Khách chuyển sang nhân viên: `handler = STAFF`, `handoffReason = CUSTOMER_REQUEST` (hoặc lý do khách nhập). Báo mọi STAFF/ADMIN (`SUPPORT`). Đã có nhân viên: 409 `ALREADY_WITH_STAFF` |
+
+## Trợ lý AI – `/api/ai`
+
+| Method | Path | Quyền | Body / Query | Mô tả |
+|---|---|---|---|---|
+| GET | `/api/ai/status` | Công khai | | `{ data: { enabled } }`. Giao diện ẩn các nút AI khi `enabled = false` |
+| POST | `/api/ai/assistant` | Công khai (`optionalAuth`), giới hạn `AI_PUBLIC_RATE_LIMIT` mỗi 10 phút mỗi IP | `messages[]` (`role`: `user`·`model`, `text`; tối đa 20 tin, mỗi tin ≤ 2000 ký tự, tin cuối là `user`) | (giai đoạn 2) Hỏi trợ lý tư vấn → `{ reply, destinations[] }`. Lỗi: 429 `TOO_MANY_REQUESTS`, 503 `AI_UNAVAILABLE` |
+| POST | `/api/conversations/:id/ai/suggest` | STAFF, ADMIN | | (giai đoạn 3) Gợi ý câu trả lời cho nhân viên → `{ suggestion }`, không lưu |
+| POST | `/api/conversations/:id/ai/summary` | STAFF, ADMIN | | (giai đoạn 3) Tóm tắt hội thoại → `{ summary }`, lưu vào `aiSummary` |
 
 ## Đối tác – `/api/partners`
 

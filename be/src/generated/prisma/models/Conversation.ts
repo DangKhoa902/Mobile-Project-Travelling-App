@@ -48,6 +48,10 @@ export type ConversationMinAggregateOutputType = {
   subject: string | null
   status: $Enums.ConversationStatus | null
   lastMessageAt: Date | null
+  handler: $Enums.ConversationHandler | null
+  handoffReason: string | null
+  handoffAt: Date | null
+  aiSummary: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +64,10 @@ export type ConversationMaxAggregateOutputType = {
   subject: string | null
   status: $Enums.ConversationStatus | null
   lastMessageAt: Date | null
+  handler: $Enums.ConversationHandler | null
+  handoffReason: string | null
+  handoffAt: Date | null
+  aiSummary: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,6 +80,10 @@ export type ConversationCountAggregateOutputType = {
   subject: number
   status: number
   lastMessageAt: number
+  handler: number
+  handoffReason: number
+  handoffAt: number
+  aiSummary: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -100,6 +112,10 @@ export type ConversationMinAggregateInputType = {
   subject?: true
   status?: true
   lastMessageAt?: true
+  handler?: true
+  handoffReason?: true
+  handoffAt?: true
+  aiSummary?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +128,10 @@ export type ConversationMaxAggregateInputType = {
   subject?: true
   status?: true
   lastMessageAt?: true
+  handler?: true
+  handoffReason?: true
+  handoffAt?: true
+  aiSummary?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +144,10 @@ export type ConversationCountAggregateInputType = {
   subject?: true
   status?: true
   lastMessageAt?: true
+  handler?: true
+  handoffReason?: true
+  handoffAt?: true
+  aiSummary?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -223,6 +247,10 @@ export type ConversationGroupByOutputType = {
   subject: string
   status: $Enums.ConversationStatus
   lastMessageAt: Date
+  handler: $Enums.ConversationHandler
+  handoffReason: string | null
+  handoffAt: Date | null
+  aiSummary: string | null
   createdAt: Date
   updatedAt: Date
   _count: ConversationCountAggregateOutputType | null
@@ -258,6 +286,10 @@ export type ConversationWhereInput = {
   subject?: Prisma.StringFilter<"Conversation"> | string
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
+  handler?: Prisma.EnumConversationHandlerFilter<"Conversation"> | $Enums.ConversationHandler
+  handoffReason?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
+  aiSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -273,6 +305,10 @@ export type ConversationOrderByWithRelationInput = {
   subject?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
+  handler?: Prisma.SortOrder
+  handoffReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoffAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.UserOrderByWithRelationInput
@@ -292,6 +328,10 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<{
   subject?: Prisma.StringFilter<"Conversation"> | string
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
+  handler?: Prisma.EnumConversationHandlerFilter<"Conversation"> | $Enums.ConversationHandler
+  handoffReason?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
+  aiSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -307,6 +347,10 @@ export type ConversationOrderByWithAggregationInput = {
   subject?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
+  handler?: Prisma.SortOrder
+  handoffReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoffAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ConversationCountOrderByAggregateInput
@@ -327,6 +371,10 @@ export type ConversationScalarWhereWithAggregatesInput = {
   subject?: Prisma.StringWithAggregatesFilter<"Conversation"> | string
   status?: Prisma.EnumConversationStatusWithAggregatesFilter<"Conversation"> | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeWithAggregatesFilter<"Conversation"> | Date | string
+  handler?: Prisma.EnumConversationHandlerWithAggregatesFilter<"Conversation"> | $Enums.ConversationHandler
+  handoffReason?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
+  handoffAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Conversation"> | Date | string | null
+  aiSummary?: Prisma.StringNullableWithAggregatesFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Conversation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Conversation"> | Date | string
 }
@@ -336,6 +384,10 @@ export type ConversationCreateInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutConversationsInput
@@ -351,6 +403,10 @@ export type ConversationUncheckedCreateInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutConversationInput
@@ -361,6 +417,10 @@ export type ConversationUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutConversationsNestedInput
@@ -376,6 +436,10 @@ export type ConversationUncheckedUpdateInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -389,6 +453,10 @@ export type ConversationCreateManyInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -398,6 +466,10 @@ export type ConversationUpdateManyMutationInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -410,6 +482,10 @@ export type ConversationUncheckedUpdateManyInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,6 +514,10 @@ export type ConversationCountOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
+  handler?: Prisma.SortOrder
+  handoffReason?: Prisma.SortOrder
+  handoffAt?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -457,6 +537,10 @@ export type ConversationMaxOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
+  handler?: Prisma.SortOrder
+  handoffReason?: Prisma.SortOrder
+  handoffAt?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -469,6 +553,10 @@ export type ConversationMinOrderByAggregateInput = {
   subject?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastMessageAt?: Prisma.SortOrder
+  handler?: Prisma.SortOrder
+  handoffReason?: Prisma.SortOrder
+  handoffAt?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -573,6 +661,10 @@ export type EnumConversationStatusFieldUpdateOperationsInput = {
   set?: $Enums.ConversationStatus
 }
 
+export type EnumConversationHandlerFieldUpdateOperationsInput = {
+  set?: $Enums.ConversationHandler
+}
+
 export type ConversationCreateNestedOneWithoutMessagesInput = {
   create?: Prisma.XOR<Prisma.ConversationCreateWithoutMessagesInput, Prisma.ConversationUncheckedCreateWithoutMessagesInput>
   connectOrCreate?: Prisma.ConversationCreateOrConnectWithoutMessagesInput
@@ -592,6 +684,10 @@ export type ConversationCreateWithoutCustomerInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   staff?: Prisma.UserCreateNestedOneWithoutAssignedConversationsInput
@@ -605,6 +701,10 @@ export type ConversationUncheckedCreateWithoutCustomerInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutConversationInput
@@ -625,6 +725,10 @@ export type ConversationCreateWithoutStaffInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutConversationsInput
@@ -638,6 +742,10 @@ export type ConversationUncheckedCreateWithoutStaffInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutConversationInput
@@ -680,6 +788,10 @@ export type ConversationScalarWhereInput = {
   subject?: Prisma.StringFilter<"Conversation"> | string
   status?: Prisma.EnumConversationStatusFilter<"Conversation"> | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
+  handler?: Prisma.EnumConversationHandlerFilter<"Conversation"> | $Enums.ConversationHandler
+  handoffReason?: Prisma.StringNullableFilter<"Conversation"> | string | null
+  handoffAt?: Prisma.DateTimeNullableFilter<"Conversation"> | Date | string | null
+  aiSummary?: Prisma.StringNullableFilter<"Conversation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string
 }
@@ -705,6 +817,10 @@ export type ConversationCreateWithoutMessagesInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.UserCreateNestedOneWithoutConversationsInput
@@ -719,6 +835,10 @@ export type ConversationUncheckedCreateWithoutMessagesInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -744,6 +864,10 @@ export type ConversationUpdateWithoutMessagesInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutConversationsNestedInput
@@ -758,6 +882,10 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -769,6 +897,10 @@ export type ConversationCreateManyCustomerInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -780,6 +912,10 @@ export type ConversationCreateManyStaffInput = {
   subject: string
   status?: $Enums.ConversationStatus
   lastMessageAt?: Date | string
+  handler?: $Enums.ConversationHandler
+  handoffReason?: string | null
+  handoffAt?: Date | string | null
+  aiSummary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -789,6 +925,10 @@ export type ConversationUpdateWithoutCustomerInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   staff?: Prisma.UserUpdateOneWithoutAssignedConversationsNestedInput
@@ -802,6 +942,10 @@ export type ConversationUncheckedUpdateWithoutCustomerInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -814,6 +958,10 @@ export type ConversationUncheckedUpdateManyWithoutCustomerInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -823,6 +971,10 @@ export type ConversationUpdateWithoutStaffInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.UserUpdateOneRequiredWithoutConversationsNestedInput
@@ -836,6 +988,10 @@ export type ConversationUncheckedUpdateWithoutStaffInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -848,6 +1004,10 @@ export type ConversationUncheckedUpdateManyWithoutStaffInput = {
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  handler?: Prisma.EnumConversationHandlerFieldUpdateOperationsInput | $Enums.ConversationHandler
+  handoffReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  handoffAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -891,6 +1051,10 @@ export type ConversationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   subject?: boolean
   status?: boolean
   lastMessageAt?: boolean
+  handler?: boolean
+  handoffReason?: boolean
+  handoffAt?: boolean
+  aiSummary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -909,11 +1073,15 @@ export type ConversationSelectScalar = {
   subject?: boolean
   status?: boolean
   lastMessageAt?: boolean
+  handler?: boolean
+  handoffReason?: boolean
+  handoffAt?: boolean
+  aiSummary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "staffId" | "bookingId" | "subject" | "status" | "lastMessageAt" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
+export type ConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "staffId" | "bookingId" | "subject" | "status" | "lastMessageAt" | "handler" | "handoffReason" | "handoffAt" | "aiSummary" | "createdAt" | "updatedAt", ExtArgs["result"]["conversation"]>
 export type ConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   staff?: boolean | Prisma.Conversation$staffArgs<ExtArgs>
@@ -936,6 +1104,10 @@ export type $ConversationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     subject: string
     status: $Enums.ConversationStatus
     lastMessageAt: Date
+    handler: $Enums.ConversationHandler
+    handoffReason: string | null
+    handoffAt: Date | null
+    aiSummary: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["conversation"]>
@@ -1317,6 +1489,10 @@ export interface ConversationFieldRefs {
   readonly subject: Prisma.FieldRef<"Conversation", 'String'>
   readonly status: Prisma.FieldRef<"Conversation", 'ConversationStatus'>
   readonly lastMessageAt: Prisma.FieldRef<"Conversation", 'DateTime'>
+  readonly handler: Prisma.FieldRef<"Conversation", 'ConversationHandler'>
+  readonly handoffReason: Prisma.FieldRef<"Conversation", 'String'>
+  readonly handoffAt: Prisma.FieldRef<"Conversation", 'DateTime'>
+  readonly aiSummary: Prisma.FieldRef<"Conversation", 'String'>
   readonly createdAt: Prisma.FieldRef<"Conversation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Conversation", 'DateTime'>
 }

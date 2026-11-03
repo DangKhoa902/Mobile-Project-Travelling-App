@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 import { StateView } from "@/components/ui/state-view";
@@ -15,7 +15,7 @@ import { formatDateTime } from "@/utils/format";
 const POLL_MS = 5000;
 
 // C2 / M6 – Chat: tải tin, poll tin mới mỗi 5 giây khi màn hình đang mở (?after=id tin cuối), dừng khi rời trang.
-export function ChatView({ conversationId, closed }: { conversationId: number; closed: boolean }) {
+export function ChatView({ conversationId, closed, aiPending = false }: { conversationId: number; closed: boolean; aiPending?: boolean }) {
   const me = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<Message[] | null>(null);
@@ -27,6 +27,10 @@ export function ChatView({ conversationId, closed }: { conversationId: number; c
   const locked = closed || closedByApi;
   const listRef = useRef<FlatList<Message>>(null);
   const lastId = useRef<number | undefined>(undefined);
+  const aiPendingRef = useRef(aiPending);
+  useEffect(() => {
+    aiPendingRef.current = aiPending;
+  }, [aiPending]);
 
   const load = useCallback(async () => {
     try {
@@ -44,6 +48,8 @@ export function ChatView({ conversationId, closed }: { conversationId: number; c
       } else {
         setMessages((current) => current ?? []);
       }
+      // AI đang soạn: làm mới danh sách hội thoại để cờ aiPending tự tắt khi AI xong.
+      if (aiPendingRef.current) void queryClient.invalidateQueries({ queryKey: ["conversations"] });
       setError(null);
     } catch (caught) {
       setError(caught);
@@ -86,11 +92,22 @@ export function ChatView({ conversationId, closed }: { conversationId: number; c
         contentContainerClassName="gap-2 p-4"
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
         renderItem={({ item }) => {
-          const mine = item.senderId === me?.id;
+          const isAi = item.senderType === "AI";
+          const mine = !isAi && item.senderId === me?.id;
           return (
             <View className={`max-w-[80%] gap-0.5 ${mine ? "self-end items-end" : "self-start"}`}>
-              {!mine && item.sender ? <Text className="text-xs font-semibold text-muted">{item.sender.name}</Text> : null}
-              <View className={`rounded-2xl px-3 py-2 ${mine ? "rounded-br-sm bg-brand" : "rounded-bl-sm border border-line bg-surface-card"}`}>
+              {isAi ? (
+                <View className="flex-row items-center gap-1">
+                  <Ionicons name="sparkles" size={12} color={Colors.info} />
+                  <Text className="text-xs font-semibold text-info">Trợ lý AI</Text>
+                  <View className="rounded bg-info-soft px-1">
+                    <Text className="text-[10px] font-bold text-info">AI</Text>
+                  </View>
+                </View>
+              ) : !mine && item.sender ? (
+                <Text className="text-xs font-semibold text-muted">{item.sender.name}</Text>
+              ) : null}
+              <View className={`rounded-2xl px-3 py-2 ${mine ? "rounded-br-sm bg-brand" : isAi ? "rounded-bl-sm border border-info/30 bg-info-soft" : "rounded-bl-sm border border-line bg-surface-card"}`}>
                 <Text className={`text-base ${mine ? "text-white" : "text-brand"}`}>{item.content}</Text>
               </View>
               <Text className="text-[10px] text-muted">{formatDateTime(item.createdAt)}</Text>
@@ -99,6 +116,12 @@ export function ChatView({ conversationId, closed }: { conversationId: number; c
         }}
         ListEmptyComponent={<StateView kind="empty" icon="chatbubbles-outline" message="Chưa có tin nhắn" compact />}
       />
+      {aiPending ? (
+        <View className="flex-row items-center gap-2 px-4 pb-2" accessibilityLiveRegion="polite">
+          <ActivityIndicator size="small" color={Colors.info} />
+          <Text className="text-sm text-muted">Trợ lý AI đang trả lời…</Text>
+        </View>
+      ) : null}
       {error ? <Text className="px-4 text-xs text-danger">{errorMessage(error)}</Text> : null}
       {locked ? (
         <View className="items-center border-t border-line bg-surface-card p-4">

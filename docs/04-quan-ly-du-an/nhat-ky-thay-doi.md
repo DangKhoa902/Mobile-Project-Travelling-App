@@ -4,6 +4,19 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 04/11/2026 – Trợ lý AI trong hội thoại CSKH (giai đoạn 1)
+
+| Lớp | Thay đổi |
+|---|---|
+| Database | Migration `20261104090000_ai_support`: enum `ConversationHandler` (`AI`, `STAFF`) và `MessageSenderType` (`USER`, `AI`); `Conversation.handler`, `handoffReason`, `handoffAt`, `aiSummary`; `Message.senderType`, `Message.senderId` cho phép NULL với tin của AI; index `(handler, status, lastMessageAt)` |
+| Backend | Gemini qua `@google/genai`, gọi từ backend; tool chỉ đọc và chỉ lấy booking của khách đang chat (BR-28, BR-29); AI tự chuyển nhân viên khi lỗi (`AI_ERROR`); `POST /api/conversations/:id/handoff`, `GET /api/ai/status`, lọc `?handler=`; Staff gửi tin vào hội thoại AI thì tiếp quản; mã lỗi `AI_DISABLED`, `AI_UNAVAILABLE`, `ALREADY_WITH_STAFF`; biến `AI_*` |
+| Frontend | C1 (dòng chú thích khi AI bật); C2 (tin AI, "Trợ lý AI đang trả lời…", nút Gặp nhân viên, dải đã chuyển); M5 (lọc Chờ nhân viên / AI đang xử lý, nhãn lý do) |
+| Tài liệu | [ai-cskh.md](../02-thiet-ke/ai-cskh.md) (thiết kế, 3 giai đoạn); BR-28 → BR-31; [luong-nghiep-vu.md](../01-dac-ta/luong-nghiep-vu.md) mục 8.1; [api.md](../02-thiet-ke/api.md); [co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md); [giao-dien.md](../02-thiet-ke/giao-dien.md); [kiem-thu.md](../03-trien-khai/kiem-thu.md) mục 3.1; [deploy.md](../03-trien-khai/deploy.md) |
+
+Kiểm chứng: chưa. Đang triển khai; chưa thử với key Gemini thật.
+
+---
+
 ## 26/10/2026 – Đăng nhập / đăng ký bằng Google
 
 | Lớp | Thay đổi |

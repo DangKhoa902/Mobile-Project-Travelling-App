@@ -484,6 +484,7 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
 - **Route:** `conversations/new.tsx?bookingId=` · **Ai dùng:** User · **Ưu tiên:** P2
 - **Hiển thị:** chủ đề (gợi ý nhanh: "Thay đổi booking", "Thanh toán", "Hoàn tiền", "Khác"), chọn booking liên quan (tùy chọn), nội dung tin nhắn đầu tiên.
 - **API:** `POST /api/conversations` `{ subject, content, bookingId? }` → mở C2.
+- **Giai đoạn 1 (AI):** khi `GET /api/ai/status` trả `enabled: true`, hiện dòng chú thích dưới ô nội dung: "Trợ lý AI sẽ trả lời ngay, bạn có thể gặp nhân viên bất cứ lúc nào." Khi AI tắt thì không hiện dòng này, và hội thoại mới được tạo với `handler = STAFF`.
 
 ### C2 – Màn hình chat
 
@@ -494,7 +495,24 @@ Cả hai có nút "Xem booking" → B6 và "Về trang chủ". Nút back của h
   - Lấy tin mới: gọi lại mỗi 5 giây với `?after={id tin cuối}` khi màn hình đang mở (polling)
   - Gửi: `POST /api/conversations/{id}/messages` `{ content }`
 - **Trạng thái:** 409 `CONVERSATION_CLOSED` → khóa ô nhập.
+- **Giai đoạn 1 (AI):**
+  - Tin của trợ lý AI (`senderType = AI`) hiển thị tên "Trợ lý AI" kèm nhãn AI.
+  - Khi `aiPending = true`: dòng "Trợ lý AI đang trả lời…" dưới tin cuối.
+  - Khi `handler = AI`: nút **Gặp nhân viên** → `POST /api/conversations/{id}/handoff` `{ reason? }`. Gặp 409 `ALREADY_WITH_STAFF` thì tải lại hội thoại.
+  - Khi `handler = STAFF` và có `handoffAt`: dải "Đã chuyển nhân viên CSKH" phía trên ô nhập.
 - **Nâng cấp sau:** chuyển polling sang WebSocket (Socket.IO) để tin đến tức thì.
+
+---
+
+### AI1 – Trợ lý tư vấn (giai đoạn 2)
+
+- **Route:** `fe/src/app/assistant.tsx` · **Ai dùng:** tất cả (khách vãng lai và User) · **Ưu tiên:** giai đoạn 2 (AI)
+- **Mục đích:** hỏi đáp tư vấn du lịch bằng Gemini: gợi ý địa điểm, giá, chính sách hủy. Nút **Hỏi trợ lý AI** ở T1 mở trang này.
+
+**Hiển thị:** bong bóng chat, ô nhập và nút gửi. Câu trả lời kèm thẻ địa điểm; chạm thẻ mở D2. Lịch sử hội thoại giữ trong bộ nhớ màn hình, tải lại trang là mất.
+
+- **API:** `POST /api/ai/assistant` `{ messages: [{ role: "user" | "model", text }] }` → `{ reply, destinations }`. Gửi tối đa 20 tin gần nhất; tin cuối phải là của khách.
+- **Trạng thái:** 429 `TOO_MANY_REQUESTS` → báo "Bạn hỏi hơi nhanh, thử lại sau ít phút". 503 `AI_UNAVAILABLE` → báo "Trợ lý đang bận, thử lại sau". Trợ lý tắt (`GET /api/ai/status` trả `enabled: false`) → ẩn nút ở T1.
 
 ---
 
@@ -756,6 +774,9 @@ Mỗi thao tác backend tự gửi thông báo cho khách; giao diện chỉ c�
 - **M5:** danh sách hội thoại sắp theo tin mới nhất, lọc Mở/Đã đóng, cột "Người phụ trách". **API:** `GET /api/conversations?status=OPEN`.
 - **M6:** dùng lại giao diện C2, thêm: thông tin khách và booking liên quan ở cột phải, nút **Nhận xử lý** (`PATCH /api/conversations/{id}` `{ staffId }`) và **Đóng hội thoại** (`{ status: "CLOSED" }`).
 - **Quy tắc:** nhân viên trả lời đầu tiên được tự gán phụ trách; khách nhận thông báo "CSKH đã trả lời".
+- **M5 giai đoạn 1 (AI):** thêm bộ lọc **Chờ nhân viên** (`GET /api/conversations?handler=STAFF`) và **AI đang xử lý** (`handler=AI`). Mỗi hội thoại hiện nhãn lý do chuyển (`handoffReason`: `CUSTOMER_REQUEST`, `AI_ERROR`, `STAFF_TAKEOVER`, hoặc lý do do AI ghi).
+- **M6 giai đoạn 1 (AI):** hiện `aiSummary` nếu có. Staff gửi tin vào hội thoại đang do AI xử lý thì hội thoại tự chuyển sang nhân viên (`STAFF_TAKEOVER`).
+- **M6 giai đoạn 3:** nút **Gợi ý trả lời** (điền vào ô nhập, `POST /api/conversations/{id}/ai/suggest`) và **Tóm tắt** (`POST /api/conversations/{id}/ai/summary`, lưu vào `aiSummary`).
 
 ### M7 – Danh sách địa điểm · M8 – Thêm / sửa địa điểm
 

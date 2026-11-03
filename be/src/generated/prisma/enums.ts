@@ -145,3 +145,19 @@ export const ConversationStatus = {
 } as const
 
 export type ConversationStatus = (typeof ConversationStatus)[keyof typeof ConversationStatus]
+
+
+export const ConversationHandler = {
+  AI: 'AI',
+  STAFF: 'STAFF'
+} as const
+
+export type ConversationHandler = (typeof ConversationHandler)[keyof typeof ConversationHandler]
+
+
+export const MessageSenderType = {
+  USER: 'USER',
+  AI: 'AI'
+} as const
+
+export type MessageSenderType = (typeof MessageSenderType)[keyof typeof MessageSenderType]

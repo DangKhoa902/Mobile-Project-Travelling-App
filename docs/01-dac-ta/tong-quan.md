@@ -77,6 +77,7 @@ stateDiagram-v2
 | UC-G3 | Xem chi tiết địa điểm, gói, phòng, dịch vụ, đánh giá |
 | UC-G4 | Kiểm tra phòng trống và xem báo giá |
 | UC-G5 | Đăng ký, đăng nhập |
+| UC-G6 | Hỏi trợ lý AI tư vấn du lịch *(giai đoạn 2)* |
 
 ### User (gồm mọi chức năng Guest)
 
@@ -91,6 +92,7 @@ stateDiagram-v2
 | UC-U7 | Xem thông báo |
 | UC-U8 | Quản lý hồ sơ (ảnh đại diện), đổi mật khẩu, xác thực email, quên mật khẩu, quản lý thiết bị đăng nhập, nhận push |
 | UC-U9 | **Nộp hồ sơ trở thành đối tác** |
+| UC-U10 | Chat với trợ lý AI CSKH, yêu cầu gặp nhân viên |
 
 ### Owner
 
@@ -114,6 +116,7 @@ stateDiagram-v2
 | UC-S2 | Kiểm duyệt đánh giá |
 | UC-S3 | Nhận và trả lời hội thoại CSKH, đóng hội thoại |
 | UC-S4 | Xem danh sách người dùng |
+| UC-S5 | Xem hội thoại AI chuyển sang, gợi ý/tóm tắt bằng AI *(giai đoạn 3)* |
 
 ### Admin (gồm mọi chức năng Staff)
 
@@ -145,9 +148,10 @@ Email (xác thực, quên mật khẩu), push notification, tải ảnh và giá
 | Nội dung | Tài liệu |
 |---|---|
 | Đăng ký tài khoản và hồ sơ đối tác: trường bắt buộc/tùy chọn | [tai-khoan-va-dang-ky.md](tai-khoan-va-dang-ky.md) |
-| Quy tắc nghiệp vụ BR-01 → BR-27 | [quy-tac-nghiep-vu.md](quy-tac-nghiep-vu.md) |
+| Quy tắc nghiệp vụ BR-01 → BR-31 | [quy-tac-nghiep-vu.md](quy-tac-nghiep-vu.md) |
 | Luồng nghiệp vụ chi tiết | [luong-nghiep-vu.md](luong-nghiep-vu.md) |
 | Thanh toán giả lập | [thanh-toan-gia-lap.md](thanh-toan-gia-lap.md) |
 | Cơ sở dữ liệu | [../02-thiet-ke/co-so-du-lieu.md](../02-thiet-ke/co-so-du-lieu.md) |
 | Danh sách API | [../02-thiet-ke/api.md](../02-thiet-ke/api.md) |
 | Trang giao diện | [../02-thiet-ke/giao-dien.md](../02-thiet-ke/giao-dien.md) |
+| Trợ lý AI (Gemini): tool, API, lộ trình 3 giai đoạn | [../02-thiet-ke/ai-cskh.md](../02-thiet-ke/ai-cskh.md) |

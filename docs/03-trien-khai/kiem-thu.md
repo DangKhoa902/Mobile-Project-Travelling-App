@@ -84,6 +84,21 @@ Trước khi thử bằng tay, chạy trong `fe/`: `npm run typecheck`, `npm run
 | Quay lại / điều hướng đúng | ☐ | ☐ | ☐ |
 | Sai quyền bị chuyển trang | ☐ | ☐ | ☐ |
 
+### 3.1. Trợ lý AI CSKH (giai đoạn 1, thủ công)
+
+Chuẩn bị: trong `be/.env` đặt `AI_ENABLED=true` và `GEMINI_API_KEY` là key thử lấy từ Google AI Studio, rồi chạy lại `npm run dev`. Không commit key vào git.
+
+| Bước | Thao tác | Kết quả mong đợi |
+|---|---|---|
+| 1 | Đăng nhập `user@travelling.app`, mở Hộp thư → **+ Yêu cầu hỗ trợ** (C1) | Có dòng chú thích "Trợ lý AI sẽ trả lời ngay…" |
+| 2 | Gửi nội dung "booking của tôi đã xác nhận chưa?" | Mở C2. Hiện "Trợ lý AI đang trả lời…", rồi xuất hiện tin AI có nhãn AI |
+| 3 | Đọc nội dung tin AI | Nêu đúng trạng thái booking của khách; không có email, số điện thoại hay địa chỉ |
+| 4 | Bấm **Gặp nhân viên** | Hiện dải "Đã chuyển nhân viên CSKH"; nút biến mất |
+| 5 | Đăng nhập `staff@travelling.app`, mở M5, lọc **Chờ nhân viên** | Hội thoại vừa chuyển có trong danh sách, nhãn lý do `CUSTOMER_REQUEST` |
+| 6 | Khách tạo hội thoại thứ hai (không bấm gặp nhân viên). Staff mở hội thoại đó trong M5 và gửi một tin | Hội thoại chuyển sang "Chờ nhân viên", nhãn `STAFF_TAKEOVER`; AI không trả lời tiếp |
+| 7 | Đặt `AI_ENABLED=false`, chạy lại API, gọi `GET /api/ai/status` | Trả `enabled: false`; C1 không còn dòng chú thích AI |
+| 8 | Khách tạo hội thoại mới | Hội thoại đi thẳng tới nhân viên (`handler = STAFF`), không có tin AI, hiện ngay ở lọc **Chờ nhân viên** |
+
 ## 4. Kịch bản demo trước giảng viên (khoảng 10 phút)
 
 1. **Khách** (`user@travelling.app`): tìm "Đà Lạt" → chi tiết → đặt gói Premium + Deluxe + voucher `WELCOME10` → cổng giả lập, thanh toán bằng ví → booking đã xác nhận, có thông báo.

@@ -60,6 +60,19 @@ const envSchema = z.object({
   SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
   // Số lượng proxy đứng trước app (Nginx, Render, Railway...) để đọc đúng IP client.
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
+  // Trợ lý AI dùng Google Gemini (docs/02-thiet-ke/ai-cskh.md). Tắt thì hội thoại mới do nhân viên phụ trách.
+  AI_ENABLED: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
+  // Key chỉ nằm ở backend, không đưa vào EXPO_PUBLIC_*.
+  GEMINI_API_KEY: z.string().optional(),
+  // Model cho chat có gọi tool (nhiều bước).
+  AI_MODEL_AGENT: z.string().default("gemini-3.8-flash"),
+  // Model rẻ, nhanh: tóm tắt, gợi ý, và dự phòng khi model chính lỗi.
+  AI_MODEL_LITE: z.string().default("gemini-3.5-flash-lite"),
+  AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(20_000),
+  AI_MAX_TOOL_ROUNDS: z.coerce.number().int().min(1).max(10).default(5),
+  AI_HISTORY_MESSAGES: z.coerce.number().int().min(1).max(100).default(20),
+  // Số lượt hỏi trợ lý công khai mỗi 10 phút mỗi IP (giai đoạn 2).
+  AI_PUBLIC_RATE_LIMIT: z.coerce.number().int().min(1).default(20),
 });
 
 // Biến khai báo nhưng để trống (S3_ENDPOINT=) được coi như chưa đặt.
@@ -75,6 +88,9 @@ export const env = parsed.data;
 
 if (env.EMAIL_TRANSPORT === "smtp" && !env.SMTP_HOST) {
   throw new Error("Invalid environment variables:\n  - SMTP_HOST: required when EMAIL_TRANSPORT=smtp");
+}
+if (env.AI_ENABLED && !env.GEMINI_API_KEY) {
+  throw new Error("Invalid environment variables:\n  - GEMINI_API_KEY: required when AI_ENABLED=true");
 }
 if (env.STORAGE_DRIVER === "s3" && (!env.S3_BUCKET || !env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY || !env.S3_PUBLIC_URL)) {
   throw new Error(

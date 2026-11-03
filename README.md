@@ -9,7 +9,7 @@ Sàn môi giới dịch vụ du lịch đa nền tảng (Android, iOS, Web). Ch�
 | Actor | Chức năng |
 |---|---|
 | Khách vãng lai | Khám phá, tìm kiếm không dấu, lọc, xem chi tiết, xem báo giá |
-| Khách hàng | Yêu thích, đặt chỗ 4 bước, thanh toán giả lập, hủy theo chính sách, đánh giá kèm ảnh, chat CSKH, thông báo, đăng ký làm đối tác |
+| Khách hàng | Yêu thích, đặt chỗ 4 bước, thanh toán giả lập, hủy theo chính sách, đánh giá kèm ảnh, chat CSKH có trợ lý AI trả lời trước, thông báo, đăng ký làm đối tác |
 | Chủ địa điểm | Đăng và quản lý địa điểm, gói, phòng, giá theo mùa; gửi duyệt; xác nhận booking; dashboard doanh thu; xem đối soát |
 | Nhân viên CSKH | Xử lý booking, kiểm duyệt đánh giá, trả lời chat |
 | Quản trị viên | Duyệt đối tác và tin đăng, hoa hồng, đối soát chuyển tiền, danh mục, voucher, người dùng, nhật ký, dashboard toàn sàn |
@@ -169,6 +169,7 @@ Biến môi trường, Docker: [docs/03-trien-khai/deploy.md](docs/03-trien-khai
 | Cơ sở dữ liệu | [docs/02-thiet-ke/co-so-du-lieu.md](docs/02-thiet-ke/co-so-du-lieu.md) |
 | API | [docs/02-thiet-ke/api.md](docs/02-thiet-ke/api.md) |
 | Giao diện | [docs/02-thiet-ke/giao-dien.md](docs/02-thiet-ke/giao-dien.md) |
+| Trợ lý AI (Gemini) | [docs/02-thiet-ke/ai-cskh.md](docs/02-thiet-ke/ai-cskh.md) |
 | Frontend: hiện trạng và quy ước | [docs/03-trien-khai/yeu-cau-frontend.md](docs/03-trien-khai/yeu-cau-frontend.md) |
 | Web + Mobile | [docs/03-trien-khai/frontend-web-mobile.md](docs/03-trien-khai/frontend-web-mobile.md) |
 | Lộ trình | [docs/04-quan-ly-du-an/lo-trinh.md](docs/04-quan-ly-du-an/lo-trinh.md) |
