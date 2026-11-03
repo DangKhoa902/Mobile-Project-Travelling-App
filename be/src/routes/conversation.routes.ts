@@ -7,6 +7,7 @@ import { conflict, HttpError, notFound } from "../lib/http-error.js";
 import { idParamSchema, paginated, paginationSchema, toSkipTake } from "../lib/pagination.js";
 import { prisma } from "../lib/prisma.js";
 import { type AuthUser, authenticate, currentUser, isStaff, requireRole } from "../middlewares/auth.js";
+import { suggestReply, summarize } from "../services/ai-staff.service.js";
 import { handoffToStaff, isAiPending, scheduleAiReply } from "../services/ai-support.service.js";
 import { createNotification } from "../services/notification.service.js";
 
@@ -151,6 +152,18 @@ conversationRouter.post("/:id/handoff", async (request, response) => {
   await handoffToStaff(id, { reason: reason ?? "CUSTOMER_REQUEST", postMessage: false });
   const updated = await prisma.conversation.findUniqueOrThrow({ where: { id }, include: conversationInclude });
   response.json({ data: withAiPending(updated) });
+});
+
+// Gợi ý câu trả lời cho nhân viên (không lưu).
+conversationRouter.post("/:id/ai/suggest", requireRole("STAFF", "ADMIN"), async (request, response) => {
+  const { id } = idParamSchema.parse(request.params);
+  response.json({ data: { suggestion: await suggestReply(id) } });
+});
+
+// Tóm tắt hội thoại, lưu vào Conversation.aiSummary.
+conversationRouter.post("/:id/ai/summary", requireRole("STAFF", "ADMIN"), async (request, response) => {
+  const { id } = idParamSchema.parse(request.params);
+  response.json({ data: { summary: await summarize(id) } });
 });
 
 conversationRouter.patch("/:id", requireRole("STAFF", "ADMIN"), async (request, response) => {

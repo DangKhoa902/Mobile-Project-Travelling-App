@@ -32,6 +32,14 @@ export const supportService = {
     const { data } = await apiClient.get<{ data: { enabled: boolean } }>("/ai/status");
     return data.data;
   },
+  async suggestReply(id: number) {
+    const { data } = await apiClient.post<{ data: { suggestion: string } }>(`/conversations/${id}/ai/suggest`);
+    return data.data.suggestion;
+  },
+  async summarize(id: number) {
+    const { data } = await apiClient.post<{ data: { summary: string } }>(`/conversations/${id}/ai/summary`);
+    return data.data.summary;
+  },
   async update(id: number, input: { status?: "OPEN" | "CLOSED"; staffId?: number | null }) {
     const { data } = await apiClient.patch<{ data: Conversation }>(`/conversations/${id}`, input);
     return data.data;
@@ -83,5 +91,19 @@ export function useUpdateConversation() {
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
       void queryClient.invalidateQueries({ queryKey: ["pending-counts"] });
     },
+  });
+}
+
+// NV/Admin: AI gợi ý câu trả lời (chỉ trả văn bản, không tự gửi).
+export function useSuggestReply() {
+  return useMutation({ mutationFn: (id: number) => supportService.suggestReply(id) });
+}
+
+// NV/Admin: AI tóm tắt hội thoại; server lưu vào aiSummary nên làm mới danh sách.
+export function useSummarize() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => supportService.summarize(id),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["conversations"] }),
   });
 }

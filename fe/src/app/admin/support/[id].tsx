@@ -10,8 +10,8 @@ import { Card, InfoRow, SectionTitle } from "@/components/ui/card";
 import { Screen } from "@/components/ui/screen";
 import { Colors } from "@/constants/theme";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
-import { errorMessage } from "@/services/api/client";
-import { useConversation, useUpdateConversation } from "@/services/support.service";
+import { ApiError, errorMessage } from "@/services/api/client";
+import { useAiStatus, useConversation, useSuggestReply, useSummarize, useUpdateConversation } from "@/services/support.service";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "@/store/toast-store";
 import { formatDateTime } from "@/utils/format";
@@ -24,10 +24,38 @@ export default function SupportConversation() {
   const me = useAuthStore((state) => state.user);
   const { isLg } = useBreakpoint();
   const [summaryOpen, setSummaryOpen] = useState(true);
+  const ai = useAiStatus();
+  const suggest = useSuggestReply();
+  const summarize = useSummarize();
+  const [draft, setDraft] = useState<{ text: string; nonce: number } | undefined>();
+  const [aiDisabled, setAiDisabled] = useState(false);
+  const aiError = suggest.error ?? summarize.error;
   const data = conversation.data;
 
   const run = (input: { status?: "OPEN" | "CLOSED"; staffId?: number | null }, message: string) =>
     update.mutate({ id: Number(id), ...input }, { onSuccess: () => toast.success(message), onError: (error) => toast.error(errorMessage(error)) });
+
+  const onAiError = (error: unknown) => {
+    if (error instanceof ApiError && error.code === "AI_DISABLED") setAiDisabled(true);
+  };
+  const askSuggest = () => {
+    suggest.mutate(Number(id), {
+      onSuccess: (text) => setDraft((current) => ({ text, nonce: (current?.nonce ?? 0) + 1 })),
+      onError: onAiError,
+    });
+  };
+  const askSummary = () => {
+    summarize.mutate(Number(id), { onSuccess: () => setSummaryOpen(true), onError: onAiError });
+  };
+
+  const toolbar =
+    ai.enabled && !aiDisabled && data?.status === "OPEN" ? (
+      <>
+        <Button title="Gợi ý trả lời" size="sm" variant="outline" loading={suggest.isPending} disabled={summarize.isPending} onPress={askSuggest} icon="sparkles" />
+        <Button title="Tóm tắt" size="sm" variant="outline" loading={summarize.isPending} disabled={suggest.isPending} onPress={askSummary} icon="document-text-outline" />
+        {aiError ? <Text className="w-full text-xs text-danger">{errorMessage(aiError)}</Text> : null}
+      </>
+    ) : null;
 
   const panel = data ? (
     <Card className="gap-2">
@@ -64,7 +92,7 @@ export default function SupportConversation() {
         <View className="flex-1 flex-row gap-4 px-4 pb-4">
           <View className="flex-1 overflow-hidden rounded-2xl border border-line bg-surface">
             {summary}
-            <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} />
+            <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} draft={draft} toolbar={toolbar} />
           </View>
           <View className="w-80">{panel}</View>
         </View>
@@ -72,7 +100,7 @@ export default function SupportConversation() {
         <View className="flex-1">
           <View className="px-4 pb-2">{panel}</View>
           {summary}
-          <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} />
+          <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} draft={draft} toolbar={toolbar} />
         </View>
       )}
     </Screen>

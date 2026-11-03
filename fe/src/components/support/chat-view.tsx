@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 import { StateView } from "@/components/ui/state-view";
@@ -15,12 +15,31 @@ import { formatDateTime } from "@/utils/format";
 const POLL_MS = 5000;
 
 // C2 / M6 – Chat: tải tin, poll tin mới mỗi 5 giây khi màn hình đang mở (?after=id tin cuối), dừng khi rời trang.
-export function ChatView({ conversationId, closed, aiPending = false }: { conversationId: number; closed: boolean; aiPending?: boolean }) {
+// draft: cha chèn nháp vào ô nhập (thay nội dung khi nonce đổi). toolbar: nút phụ đặt ngay trên ô nhập.
+export function ChatView({
+  conversationId,
+  closed,
+  aiPending = false,
+  draft,
+  toolbar,
+}: {
+  conversationId: number;
+  closed: boolean;
+  aiPending?: boolean;
+  draft?: { text: string; nonce: number };
+  toolbar?: ReactNode;
+}) {
   const me = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [text, setText] = useState("");
+  const [appliedNonce, setAppliedNonce] = useState(draft?.nonce);
+  // Điều chỉnh state ngay khi render (không cần effect): nonce mới => thay nội dung ô nhập bằng nháp.
+  if (draft && draft.nonce !== appliedNonce) {
+    setAppliedNonce(draft.nonce);
+    setText(draft.text);
+  }
   const [sending, setSending] = useState(false);
   // Đóng từ server (closed) hoặc API trả CONVERSATION_CLOSED khi gửi.
   const [closedByApi, setClosedByApi] = useState(false);
@@ -128,7 +147,9 @@ export function ChatView({ conversationId, closed, aiPending = false }: { conver
           <Text className="text-muted">Cuộc trò chuyện đã kết thúc</Text>
         </View>
       ) : (
-        <View className="flex-row items-end gap-2 border-t border-line bg-surface-card p-3">
+        <View className="border-t border-line bg-surface-card">
+          {toolbar ? <View className="flex-row flex-wrap items-center gap-2 px-3 pt-3">{toolbar}</View> : null}
+          <View className="flex-row items-end gap-2 p-3">
           <TextInput
             value={text}
             onChangeText={setText}
@@ -146,6 +167,7 @@ export function ChatView({ conversationId, closed, aiPending = false }: { conver
             className={`h-11 w-11 items-center justify-center rounded-full bg-brand ${sending || !text.trim() ? "opacity-40" : "active:opacity-80"}`}>
             {sending ? <ActivityIndicator color={Colors.white} /> : <Ionicons name="send" size={18} color={Colors.white} />}
           </Pressable>
+          </View>
         </View>
       )}
     </View>
