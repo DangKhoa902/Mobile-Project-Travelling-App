@@ -879,7 +879,9 @@ Tài khoản demo sau khi chạy `npm run db:seed` trong `be/` (mật khẩu `Pa
 |---|---|---|
 | `user@travelling.app` | USER | Khách đặt chỗ, có sẵn 1 chuyến đã hoàn thành + đánh giá |
 | `owner1@travelling.app` | OWNER | Chủ Đà Lạt, Sa Pa, Hạ Long (hoa hồng 15%) |
-| `owner2@travelling.app` | OWNER | Chủ Mỹ Khê, Phú Quốc (hoa hồng 12%) |
+| `owner2@travelling.app` | OWNER | Chủ Mỹ Khê, Phú Quốc và các cơ sở biển miền Trung (hoa hồng 12%) |
+| `owner3@travelling.app` | OWNER | Chủ các cơ sở miền Nam: Sài Gòn, Vũng Tàu, Mũi Né, Cần Thơ (hoa hồng 13%) |
+| `owner4@travelling.app` | OWNER | Chủ các cơ sở miền Bắc: Hà Nội, Ninh Bình, Hạ Long, Mai Châu (hoa hồng 15%) |
 | `partner.pending@travelling.app` | USER | Có hồ sơ đối tác đang chờ duyệt |
 | `staff@travelling.app` | STAFF | CSKH, kiểm duyệt đánh giá |
 | `admin@travelling.app` | ADMIN | Dashboard, duyệt đối tác và tin đăng |

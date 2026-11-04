@@ -94,7 +94,9 @@ npm run android               # emulator / Expo Go
 |---|---|---|
 | `user@travelling.app` | USER | Đặt chỗ, có 1 chuyến đã hoàn thành + đánh giá |
 | `owner1@travelling.app` | OWNER | Chủ Đà Lạt, Sa Pa, Hạ Long (hoa hồng 15%); phòng Deluxe Đà Lạt có giá Tết |
-| `owner2@travelling.app` | OWNER | Chủ Mỹ Khê, Phú Quốc (12%) |
+| `owner2@travelling.app` | OWNER | Chủ Mỹ Khê, Phú Quốc + biển miền Trung (12%) |
+| `owner3@travelling.app` | OWNER | Chủ các cơ sở miền Nam (13%) |
+| `owner4@travelling.app` | OWNER | Chủ các cơ sở miền Bắc (15%) |
 | `partner.pending@travelling.app` | USER | Hồ sơ đối tác đang chờ duyệt |
 | `staff@travelling.app` | STAFF | CSKH, kiểm duyệt đánh giá |
 | `admin@travelling.app` | ADMIN | Dashboard, duyệt, đối soát, nhật ký |

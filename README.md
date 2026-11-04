@@ -113,7 +113,9 @@ Mật khẩu chung `Password123` (tạo bởi `npm run db:seed`):
 |---|---|---|
 | `user@travelling.app` | Khách hàng | Đặt chỗ, thanh toán giả lập, đánh giá, chat CSKH |
 | `owner1@travelling.app` | Chủ địa điểm | `/owner`: dashboard, tin đăng, phòng + giá mùa, xử lý booking, đối soát |
-| `owner2@travelling.app` | Chủ địa điểm | Chủ của Mỹ Khê, Phú Quốc |
+| `owner2@travelling.app` | Chủ địa điểm | Chủ của Mỹ Khê, Phú Quốc và các cơ sở biển miền Trung |
+| `owner3@travelling.app` | Chủ địa điểm | Chủ các cơ sở miền Nam (Sài Gòn, Vũng Tàu, Mũi Né, Cần Thơ) |
+| `owner4@travelling.app` | Chủ địa điểm | Chủ các cơ sở miền Bắc (Hà Nội, Ninh Bình, Hạ Long, Mai Châu) |
 | `partner.pending@travelling.app` | Khách hàng | Hồ sơ đối tác đang chờ duyệt |
 | `staff@travelling.app` | CSKH | `/admin`: booking, kiểm duyệt đánh giá, chat |
 | `admin@travelling.app` | Quản trị | `/admin`: dashboard, duyệt đối tác / tin, đối soát, voucher, nhật ký |
