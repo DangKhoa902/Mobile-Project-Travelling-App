@@ -46,12 +46,22 @@ Tài khoản demo (mật khẩu `Password123`): xem [../02-thiet-ke/giao-dien.md
 | `CORS_ORIGINS` | | `*` | Production: domain web build, phân tách bằng dấu phẩy |
 | `BOOKING_TAX_RATE` | | `0.08` | Thuế/phí trên booking |
 | `PAYMENT_TIMEOUT_MINUTES` | | `15` | Hạn thanh toán online |
+| `AI_ENABLED` | | `false` | Bật trợ lý AI (Gemini). `true` mà thiếu `GEMINI_API_KEY` thì API không khởi động |
+| `GEMINI_API_KEY` | khi `AI_ENABLED=true` | | Key tạo tại Google AI Studio. Chỉ ở backend, không đưa vào `EXPO_PUBLIC_*` |
+| `AI_MODEL_AGENT` | | `gemini-3.6-flash` | Model cho chat có tool |
+| `AI_MODEL_LITE` | | `gemini-3.5-flash-lite` | Model cho tóm tắt, gợi ý và dự phòng khi model chính lỗi |
+| `AI_TIMEOUT_MS` | | `10000` | Thời gian chờ tối đa mỗi lần gọi Gemini; quá hạn thì chuyển model dự phòng |
+| `AI_MAX_TOOL_ROUNDS` | | `5` | Số vòng gọi tool tối đa trong một câu trả lời |
+| `AI_HISTORY_MESSAGES` | | `20` | Số tin gần nhất gửi kèm làm ngữ cảnh |
+| `AI_PUBLIC_RATE_LIMIT` | | `20` | Lượt hỏi trợ lý công khai mỗi 10 phút mỗi IP (giai đoạn 2) |
 | `TRUST_PROXY` | | `0` | `1` nếu đứng sau Nginx / Render / Railway |
 | `DATABASE_CONNECTION_LIMIT` | | `5` | Số kết nối DB tối đa |
 | `SEED_DEFAULT_PASSWORD` | | `Password123` | Mật khẩu tài khoản demo khi seed |
 | `REQUEST_LOG` | | `true` | Ghi một dòng JSON cho mỗi request |
 | `SLOW_REQUEST_MS` | | `1000` | Ngưỡng ghi request chậm (`level: warn`) |
 | `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `SENTRY_TRACES_SAMPLE_RATE` | | trống, `NODE_ENV`, trống, `0` | Gửi lỗi 500 lên Sentry; trống DSN = tắt ([giam-sat-van-hanh.md](giam-sat-van-hanh.md) mục 8) |
+
+Thiết kế trợ lý AI và các biến `AI_*`: [../02-thiet-ke/ai-cskh.md](../02-thiet-ke/ai-cskh.md). Khi chạy thật với khách, nên bật paid tier của Gemini vì free tier có thể dùng dữ liệu gửi qua để cải thiện sản phẩm.
 
 API **không khởi động** nếu thiếu biến bắt buộc hoặc sai định dạng (báo rõ biến nào sai). Biến khai báo nhưng để trống (`S3_ENDPOINT=`) được coi như chưa đặt.
 

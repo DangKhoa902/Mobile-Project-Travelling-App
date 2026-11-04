@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Screen } from "@/components/ui/screen";
 import { errorMessage, fieldErrors } from "@/services/api/client";
 import { useBookings } from "@/services/booking.service";
-import { useCreateConversation } from "@/services/support.service";
+import { useAiStatus, useCreateConversation } from "@/services/support.service";
 
 const SUBJECTS = ["Thay đổi booking", "Thanh toán", "Hoàn tiền", "Khác"];
 
@@ -18,6 +18,7 @@ export default function NewConversationScreen() {
   const params = useLocalSearchParams<{ bookingId?: string }>();
   const bookings = useBookings({ scope: "mine", limit: 10 });
   const create = useCreateConversation();
+  const ai = useAiStatus();
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [bookingId, setBookingId] = useState<number | undefined>(params.bookingId ? Number(params.bookingId) : undefined);
@@ -41,6 +42,7 @@ export default function NewConversationScreen() {
     <Screen back backHref="/inbox" title="Yêu cầu hỗ trợ" maxWidth={640} footer={<Button title="Gửi yêu cầu" full loading={create.isPending} disabled={subject.trim().length < 2 || !content.trim()} onPress={submit} />}>
       <View className="gap-5">
         {error ? <Banner tone="danger">{error}</Banner> : null}
+        {ai.enabled ? <Banner tone="info">Trợ lý AI sẽ trả lời ngay, bạn có thể gặp nhân viên bất cứ lúc nào</Banner> : null}
         <View className="gap-2">
           <Text className="text-sm font-medium text-brand">Chủ đề gợi ý</Text>
           <View className="flex-row flex-wrap gap-2">

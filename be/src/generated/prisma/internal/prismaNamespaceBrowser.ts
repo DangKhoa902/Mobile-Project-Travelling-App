@@ -494,6 +494,10 @@ export const ConversationScalarFieldEnum = {
   subject: 'subject',
   status: 'status',
   lastMessageAt: 'lastMessageAt',
+  handler: 'handler',
+  handoffReason: 'handoffReason',
+  handoffAt: 'handoffAt',
+  aiSummary: 'aiSummary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -505,6 +509,7 @@ export const MessageScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
   senderId: 'senderId',
+  senderType: 'senderType',
   content: 'content',
   readAt: 'readAt',
   createdAt: 'createdAt'
@@ -767,7 +772,9 @@ export type ReviewImageOrderByRelevanceFieldEnum = (typeof ReviewImageOrderByRel
 
 
 export const ConversationOrderByRelevanceFieldEnum = {
-  subject: 'subject'
+  subject: 'subject',
+  handoffReason: 'handoffReason',
+  aiSummary: 'aiSummary'
 } as const
 
 export type ConversationOrderByRelevanceFieldEnum = (typeof ConversationOrderByRelevanceFieldEnum)[keyof typeof ConversationOrderByRelevanceFieldEnum]

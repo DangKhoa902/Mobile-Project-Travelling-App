@@ -106,6 +106,8 @@ Booking
 | `DiscountType` | `PERCENT`, `FIXED` | `Voucher.discountType` |
 | `NotificationType` | `BOOKING`, `PAYMENT`, `SUPPORT`, `REVIEW`, `PARTNER`, `SYSTEM` | `Notification.type` |
 | `ConversationStatus` | `OPEN`, `CLOSED` | `Conversation.status` |
+| `ConversationHandler` | `AI`, `STAFF` | `Conversation.handler` (trợ lý AI hay nhân viên đang trả lời) |
+| `MessageSenderType` | `USER`, `AI` | `Message.senderType` |
 
 Dùng enum thay cho chuỗi tự do (thiết kế cũ có `status String`) để database từ chối giá trị sai chính tả như `"CONFIRM"`.
 
@@ -405,6 +407,10 @@ Review gắn với `bookingId` thay vì chỉ `destinationId`. Như vậy chỉ 
 | `subject` | VARCHAR(191) | | |
 | `status` | ENUM | mặc định `OPEN` | |
 | `lastMessageAt` | DATETIME | | Sắp xếp hộp thư |
+| `handler` | ENUM | mặc định `STAFF` | `AI` khi trợ lý AI trả lời; `STAFF` khi nhân viên tiếp quản. Hội thoại cũ giữ `STAFF` |
+| `handoffReason` | VARCHAR(255) | NULL | Lý do chuyển nhân viên: `CUSTOMER_REQUEST`, `STAFF_TAKEOVER`, `AI_ERROR`, `AI_DISABLED`, `AI_HANDOFF`, hoặc lý do khách nhập / AI ghi (xem [ai-cskh.md](ai-cskh.md) mục 4) |
+| `handoffAt` | DATETIME | NULL | Thời điểm chuyển nhân viên |
+| `aiSummary` | TEXT | NULL | Tóm tắt do AI viết khi chuyển nhân viên (giai đoạn 3: Staff bấm Tóm tắt) |
 
 `Message`
 
@@ -412,8 +418,9 @@ Review gắn với `bookingId` thay vì chỉ `destinationId`. Như vậy chỉ 
 |---|---|---|
 | `id` | INT | PK |
 | `conversationId` | INT | FK → `Conversation`, CASCADE |
-| `senderId` | INT | FK → `User`, CASCADE |
+| `senderId` | INT? | FK → `User`, CASCADE; NULL khi `senderType = AI` |
 | `content` | TEXT | |
+| `senderType` | ENUM | mặc định `USER` (`USER` hoặc `AI`) |
 | `readAt` | DATETIME? | Thời điểm phía bên kia đã đọc |
 | `createdAt` | DATETIME | |
 
@@ -466,6 +473,7 @@ Ghi trong cùng transaction với thao tác. Danh sách hành động được g
 | `Payout` | `(ownerId, status)` | Kỳ của chủ, kỳ chờ chuyển |
 | `Review` | `bookingId` (UQ), `(destinationId, status)`, `status` | Review đã duyệt của địa điểm, hàng chờ kiểm duyệt |
 | `Conversation` | `customerId`, `(status, lastMessageAt)` | Hộp thư khách, hàng đợi CSKH |
+| `Conversation` | `(handler, status, lastMessageAt)` | Hàng đợi "Chờ nhân viên" (M5) |
 | `Message` | `(conversationId, createdAt)` | Tải tin nhắn theo thứ tự |
 | `Notification` | `(userId, isRead)` | Đếm thông báo chưa đọc |
 | `Package`, `RoomType`, `AddonService`, `DestinationImage` | `destinationId` | Trang chi tiết địa điểm |
@@ -598,6 +606,7 @@ ownerRevenue     = (subtotal - discount) - commissionAmount
 | `20261025090000_platform_extensions` | Đối soát (`Payout`), giá mùa (`RoomRate`), refresh token, token email, thiết bị push + `Notification.pushedAt`, nhật ký, `Upload` + `ReviewImage`, `Destination.searchText`, `User.emailVerifiedAt`. Tài khoản có sẵn được coi là đã xác thực email; thông báo cũ không gửi push |
 | `20261026090000_google_sign_in` | `User.googleId` (unique) cho đăng nhập Google |
 | `20261024090000_partner_owner_dashboard` | Role `OWNER`, bảng `PartnerProfile`, `Destination.ownerId` + kiểm duyệt tin, hoa hồng trên `Booking`, `paymentDueAt`, `Payment.channel`, loại thông báo `PARTNER` |
+| `20261104090000_ai_support` | Enum `ConversationHandler`, `MessageSenderType`; `Conversation.handler`, `handoffReason`, `handoffAt`, `aiSummary`; `Message.senderType`, `Message.senderId` cho phép NULL (tin AI); index `(handler, status, lastMessageAt)`. Hội thoại cũ gán `handler = STAFF` |
 
 **Lưu ý khi tạo migration trên Windows:** MariaDB trên Windows mặc định `lower_case_table_names=1`, nên SQL do Prisma sinh ra có thể viết tên bảng thành chữ thường (`` `booking` ``). Trên Linux/Docker, tên bảng phân biệt hoa thường và migration đó sẽ lỗi khi deploy. Sau khi tạo migration, kiểm tra và sửa lại tên bảng đúng PascalCase (`` `Booking` ``) trước khi commit. Ba migration `business_domain`, `partner_owner_dashboard`, `platform_extensions` đã được sửa theo cách này. Sau migration `platform_extensions` chạy `npm run db:backfill` một lần để tính `searchText` cho địa điểm có sẵn.
 

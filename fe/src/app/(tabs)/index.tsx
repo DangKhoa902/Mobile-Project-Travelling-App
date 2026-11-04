@@ -14,12 +14,14 @@ import { Colors } from "@/constants/theme";
 import { useBreakpoint } from "@/hooks/use-breakpoint";
 import { useCategories, useDestinations, type DestinationFilters } from "@/services/destination.service";
 import { useUnreadCount } from "@/services/notification.service";
+import { useAiStatus } from "@/services/support.service";
 import { useAuthStore } from "@/store/auth-store";
 
 // T1 – Khám phá: lời chào, ô tìm kiếm, danh mục, Nổi bật, Phổ biến, Mới. Mỗi khối tải / lỗi riêng.
 export default function ExploreScreen() {
   const user = useAuthStore((state) => state.user);
   const unread = useUnreadCount();
+  const aiStatus = useAiStatus();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -57,6 +59,21 @@ export default function ExploreScreen() {
           <Ionicons name="search" size={20} color={Colors.muted} />
           <Text className="text-base text-muted">Tìm địa điểm, khu vực (ví dụ “da lat”)</Text>
         </Pressable>
+
+        {aiStatus.enabled ? (
+          <Pressable
+            onPress={() => router.push("/assistant")}
+            accessibilityRole="button"
+            accessibilityLabel="Hỏi trợ lý AI"
+            className="min-h-12 flex-row items-center gap-2 rounded-2xl border border-info/30 bg-info-soft px-4 py-3 active:opacity-80">
+            <Ionicons name="sparkles" size={20} color={Colors.info} />
+            <View className="flex-1">
+              <Text className="text-base font-semibold text-info">Hỏi trợ lý AI</Text>
+              <Text className="text-xs text-muted">Gợi ý chuyến đi theo ngân sách và sở thích của bạn</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={Colors.info} />
+          </Pressable>
+        ) : null}
 
         <CategoriesBlock />
         <CarouselBlock title="Nổi bật" filters={{ featured: true, sort: "rating", limit: 10 }} />

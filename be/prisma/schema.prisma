@@ -104,6 +104,18 @@ enum ConversationStatus {
   CLOSED
 }
 
+// Ai đang phụ trách trả lời hội thoại CSKH: Trợ lý AI hay nhân viên.
+enum ConversationHandler {
+  AI
+  STAFF
+}
+
+// USER = tin do một tài khoản gửi (khách hoặc nhân viên); AI = tin do Trợ lý AI gửi (senderId NULL).
+enum MessageSenderType {
+  USER
+  AI
+}
+
 model User {
   id              Int        @id @default(autoincrement())
   name            String
@@ -610,6 +622,13 @@ model Conversation {
   subject       String
   status        ConversationStatus @default(OPEN)
   lastMessageAt DateTime           @default(now())
+  // Hội thoại cũ mặc định STAFF; hội thoại mới do khách tạo là AI khi AI_ENABLED (docs/02-thiet-ke/ai-cskh.md).
+  handler       ConversationHandler @default(STAFF)
+  // Lý do chuyển nhân viên: CUSTOMER_REQUEST, STAFF_TAKEOVER, AI_ERROR, AI_DISABLED hoặc lý do AI/khách ghi.
+  handoffReason String?            @db.VarChar(255)
+  handoffAt     DateTime?
+  // Tóm tắt do AI viết khi chuyển nhân viên.
+  aiSummary     String?            @db.Text
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
@@ -619,18 +638,21 @@ model Conversation {
 
   @@index([customerId])
   @@index([status, lastMessageAt])
+  @@index([handler, status, lastMessageAt])
 }
 
 model Message {
   id             Int       @id @default(autoincrement())
   conversationId Int
-  senderId       Int
+  // NULL khi senderType = AI.
+  senderId       Int?
+  senderType     MessageSenderType @default(USER)
   content        String    @db.Text
   readAt         DateTime?
   createdAt      DateTime  @default(now())
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId, createdAt])
 }

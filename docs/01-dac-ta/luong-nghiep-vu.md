@@ -413,6 +413,89 @@ sequenceDiagram
 
 Polling mỗi 5 giây đủ cho đồ án. Chỉ poll khi màn hình C2/M6 đang hiển thị (dừng khi rời trang hoặc app chạy nền) để không tốn pin và tải server.
 
+### 8.1. Trợ lý AI trả lời trước
+
+Khi `AI_ENABLED=true`, hội thoại mới do khách tạo được gán `handler = AI` và trợ lý Gemini trả lời ngay ở nền; khách thấy câu trả lời qua polling như bình thường. Khách có thể bấm **Gặp nhân viên** bất cứ lúc nào. Thiết kế đầy đủ: [../02-thiet-ke/ai-cskh.md](../02-thiet-ke/ai-cskh.md).
+
+```mermaid
+sequenceDiagram
+    actor Khach
+    participant API
+    participant Gemini
+    participant DB
+    Khach->>API: POST /conversations { subject, content, bookingId? } (C1)
+    API->>DB: Tạo hội thoại handler = AI, lưu tin của khách
+    API-->>Khach: 201 Created, AI trả lời ở nền
+    API->>Gemini: Lịch sử gần nhất và danh sách tool
+    loop Tối đa AI_MAX_TOOL_ROUNDS vòng gọi tool
+        Gemini->>API: Gọi tool (list_my_bookings, get_my_booking, ...)
+        API-->>Gemini: Kết quả, không có email, SĐT, địa chỉ
+    end
+    alt Gemini trả lời được
+        Gemini-->>API: Câu trả lời
+        API->>DB: Lưu tin AI (senderType = AI, senderId = NULL)
+    else Lỗi cả model chính lẫn dự phòng
+        API->>DB: handler = STAFF, handoffReason = AI_ERROR
+    end
+    loop Mỗi 5 giây khi C2 đang mở
+        Khach->>API: GET /conversations/{id}/messages?after={idTinCuối}
+        API-->>Khach: Tin AI mới, aiPending
+    end
+    opt Khách bấm Gặp nhân viên
+        Khach->>API: POST /conversations/{id}/handoff { reason? }
+        API->>DB: handler = STAFF, handoffReason = CUSTOMER_REQUEST
+        API-->>Khach: Dải "Đã chuyển nhân viên CSKH"
+    end
+```
+
+- AI chỉ đọc dữ liệu qua tool (BR-28, BR-29). Tin của AI lưu như tin thường với `senderType = AI` và `senderId = NULL`.
+- Lỗi 429, 5xx hoặc timeout ở model chính thì thử lại một lần với model dự phòng. Vẫn lỗi thì hội thoại chuyển nhân viên với `handoffReason = AI_ERROR` (BR-30).
+- Khi đã chuyển (`handler = STAFF`), AI không trả lời hội thoại đó nữa. Staff có thể trả lại cho AI bằng `PATCH /api/conversations/{id}` với `handler: "AI"`.
+
+### 8.2. Trợ lý tư vấn công khai
+
+Khách vãng lai hoặc User mở `/assistant` (chạm **Hỏi trợ lý AI** ở T1) để hỏi về địa điểm, giá và chính sách. Trợ lý không lưu gì vào DB; lịch sử chỉ nằm trong màn hình. Thiết kế đầy đủ: [../02-thiet-ke/ai-cskh.md](../02-thiet-ke/ai-cskh.md) mục 5.2.
+
+```mermaid
+sequenceDiagram
+    actor NguoiDung as Người dùng
+    participant App as App /assistant
+    participant API
+    participant Gemini
+    NguoiDung->>App: Gửi câu hỏi
+    App->>API: POST /api/ai/assistant { messages } (tối đa 20 tin)
+    alt Vượt AI_PUBLIC_RATE_LIMIT trong 10 phút
+        API-->>App: 429 TOO_MANY_REQUESTS
+        App-->>NguoiDung: Bạn hỏi hơi nhanh, thử lại sau ít phút
+    else Trong giới hạn
+        loop Tối đa AI_MAX_TOOL_ROUNDS vòng
+            Gemini->>API: Gọi tool (search_destinations, get_destination, quote_booking, get_policies)
+            API-->>Gemini: Kết quả, tool khác trả UNKNOWN_TOOL
+        end
+        Gemini-->>API: Câu trả lời
+        API-->>App: { data: { reply, destinations[] } }
+        App-->>NguoiDung: Bong bóng trả lời kèm thẻ địa điểm
+        NguoiDung->>App: Chạm thẻ địa điểm
+        App-->>NguoiDung: Mở D2 Chi tiết địa điểm
+    end
+```
+
+- Chỉ đọc dữ liệu: tool không hủy, thanh toán hay sửa booking. Giá luôn lấy từ `quote_booking`, không để AI tự bịa.
+- Thẻ địa điểm lấy tối đa 3 địa điểm được nhắc trong câu trả lời, chỉ gồm tin đã duyệt và đang hoạt động.
+- Lỗi model (cả chính lẫn dự phòng, bị chặn, rỗng) trả 503 `AI_UNAVAILABLE`; giao diện hiện "Trợ lý đang bận, thử lại sau" và nút **Thử lại**.
+
+### 8.3. Gợi ý và tóm tắt cho nhân viên
+
+Staff (và ADMIN) mở M6 khi AI bật. Hai thao tác này chỉ hỗ trợ, không gửi thay nhân viên. Thiết kế: [../02-thiet-ke/ai-cskh.md](../02-thiet-ke/ai-cskh.md) mục 5.2.
+
+| Thao tác | API | Kết quả | Lưu DB | Lỗi |
+|---|---|---|---|---|
+| **Gợi ý trả lời** | `POST /api/conversations/{id}/ai/suggest` | Điền gợi ý vào ô nhập như bản nháp. Nhân viên sửa rồi tự bấm gửi; không tự gửi | Không | 503 `AI_DISABLED`, 503 `AI_UNAVAILABLE` |
+| **Tóm tắt** | `POST /api/conversations/{id}/ai/summary` | Cập nhật card "Tóm tắt từ AI" (tối đa 5 dòng: vấn đề, thông tin đã có, đã làm gì, việc cần làm tiếp) | Có, `Conversation.aiSummary` | 503 `AI_DISABLED`, 503 `AI_UNAVAILABLE` |
+
+- Cả hai dùng model `AI_MODEL_LITE`, không có tool, đọc 30 tin gần nhất của hội thoại.
+- Khi nhận `AI_DISABLED`, giao diện ẩn hai nút.
+
 ## 9. Luồng trở thành đối tác và đăng tin
 
 ### 9.1. Nộp hồ sơ và được duyệt
@@ -582,6 +665,9 @@ Backend tự tạo thông báo khi có sự kiện; giao diện chỉ cần đ�
 | `ALREADY_REVIEWED` | 409 | Đánh giá lần hai | Chuyển sang chế độ sửa |
 | `REJECT_REASON_REQUIRED` | 400 | Từ chối review/hồ sơ không lý do | Bắt buộc ô lý do |
 | `CONVERSATION_CLOSED` | 409 | Nhắn vào hội thoại đã đóng | Khóa ô nhập |
+| `ALREADY_WITH_STAFF` | 409 | Khách bấm Gặp nhân viên khi hội thoại đã do nhân viên phụ trách | Tải lại hội thoại, ẩn nút |
+| `AI_DISABLED` | 503 | Gọi API AI khi `AI_ENABLED=false` | Ẩn các nút AI (theo `GET /api/ai/status`) |
+| `AI_UNAVAILABLE` | 503 | Gemini lỗi cả model chính lẫn dự phòng (API giai đoạn 2, 3) | Báo "Trợ lý đang bận", vẫn cho gặp nhân viên |
 | `INVALID_ROLE` | 409 | Tài khoản không phải USER nộp hồ sơ đối tác | Ẩn nút "Trở thành đối tác" |
 | `ALREADY_APPLIED` | 409 | Đã có hồ sơ đang chờ / đã duyệt | Mở trang trạng thái hồ sơ |
 | `PARTNER_BANK_REQUIRED` | 409 | Duyệt hồ sơ thiếu ngân hàng | Admin yêu cầu đối tác bổ sung |
