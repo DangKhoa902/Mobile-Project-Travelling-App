@@ -2,7 +2,7 @@
   "expo": {
     "name": "Travelling App",
     "slug": "Travelling-App",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "travellingapp",
@@ -20,7 +20,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.travellingapp.app",
-      "versionCode": 1
+      "versionCode": 2
     },
     "web": {
       "output": "single",
