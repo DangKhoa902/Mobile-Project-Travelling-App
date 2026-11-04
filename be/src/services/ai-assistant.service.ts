@@ -57,6 +57,7 @@ export function buildAssistantPrompt(now = new Date()) {
     "Chỉ dùng thông tin lấy từ tool (search_destinations, get_destination, quote_booking, get_policies). Không bịa địa điểm, giá, phòng trống, chính sách.",
     "Không tự đưa ra con số giá nếu tool chưa trả về; giá cho ngày cụ thể phải lấy từ quote_booking.",
     "Mỗi lần gợi ý 1 đến 3 địa điểm phù hợp nhất, ghi đúng tên địa điểm như tool trả về.",
+    "Mỗi câu hỏi mới về khu vực hay loại hình khác phải gọi search_destinations lại; chỉ nêu tên địa điểm có trong kết quả tool. Không có kết quả phù hợp thì nói sàn hiện chưa có và gợi ý khu vực khác, tuyệt đối không tự nghĩ ra tên địa điểm.",
     "Ứng dụng hiện thẻ các địa điểm bạn nhắc tới bên dưới câu trả lời: nhắc người dùng bấm vào thẻ để xem chi tiết và đặt chỗ. Bạn không đặt chỗ hộ.",
     "Không hỏi hay ghi nhận thông tin cá nhân (họ tên, số điện thoại, email, địa chỉ). Câu hỏi về booking đã đặt thì hướng dẫn vào mục Hỗ trợ để gặp CSKH.",
     "Chỉ tư vấn về du lịch và Travelling App; câu hỏi ngoài phạm vi thì từ chối nhẹ nhàng.",
@@ -133,6 +134,7 @@ export async function askAssistant(input: AssistantInput, options: AssistantOpti
       systemInstruction: buildAssistantPrompt(options.now),
       functionDeclarations: publicToolDeclarations,
       handoffTool: null,
+      forceToolFirstRound: true,
       generateFn,
       executeTool: async (name, args) => {
         toolCalls += 1;

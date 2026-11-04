@@ -153,6 +153,9 @@ describe("askAssistant", () => {
     const firstCall = generateFn.mock.calls[0][0];
     expect(firstCall.functionDeclarations?.map((tool) => tool.name)).not.toContain("handoff_to_staff");
     expect(firstCall.contents[0]).toEqual({ role: "user", parts: [{ text: "Gợi ý chỗ nghỉ ở Đà Lạt" }] } satisfies Content);
+    // Vòng đầu bắt buộc gọi tool (tránh bịa tên địa điểm), vòng sau để model tự quyết.
+    expect(firstCall.toolMode).toBe("ANY");
+    expect(generateFn.mock.calls[1][0].toolMode).toBeUndefined();
     // thoughtSignature của model được gửi lại ở vòng sau.
     expect(generateFn.mock.calls[1][0].contents[1].parts?.[0].thoughtSignature).toBe("sig");
 

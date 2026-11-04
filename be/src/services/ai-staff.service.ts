@@ -4,6 +4,7 @@ import { generate, type GenerateInput, type GenerateResult } from "../lib/gemini
 import { HttpError, notFound } from "../lib/http-error.js";
 import { captureError } from "../lib/monitoring.js";
 import { prisma } from "../lib/prisma.js";
+import { toPlainText } from "./ai-support.service.js";
 import { policiesText } from "./ai-tools.js";
 
 // Trợ lý AI cho nhân viên CSKH (docs/02-thiet-ke/ai-cskh.md, giai đoạn 3): gợi ý câu trả lời và tóm tắt hội thoại.
@@ -71,7 +72,7 @@ export async function runText(systemInstruction: string, userText: string, gener
   if (response.promptFeedback?.blockReason || (finish && BLOCKED.has(finish))) throw aiUnavailable();
   const text = response.text?.trim();
   if (!text) throw aiUnavailable();
-  return text;
+  return toPlainText(text);
 }
 
 async function loadContext(conversationId: number) {

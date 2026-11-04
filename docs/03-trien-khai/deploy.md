@@ -48,9 +48,9 @@ Tài khoản demo (mật khẩu `Password123`): xem [../02-thiet-ke/giao-dien.md
 | `PAYMENT_TIMEOUT_MINUTES` | | `15` | Hạn thanh toán online |
 | `AI_ENABLED` | | `false` | Bật trợ lý AI (Gemini). `true` mà thiếu `GEMINI_API_KEY` thì API không khởi động |
 | `GEMINI_API_KEY` | khi `AI_ENABLED=true` | | Key tạo tại Google AI Studio. Chỉ ở backend, không đưa vào `EXPO_PUBLIC_*` |
-| `AI_MODEL_AGENT` | | `gemini-3.8-flash` | Model cho chat có tool |
+| `AI_MODEL_AGENT` | | `gemini-3.6-flash` | Model cho chat có tool |
 | `AI_MODEL_LITE` | | `gemini-3.5-flash-lite` | Model cho tóm tắt, gợi ý và dự phòng khi model chính lỗi |
-| `AI_TIMEOUT_MS` | | `20000` | Thời gian chờ tối đa mỗi lần gọi Gemini |
+| `AI_TIMEOUT_MS` | | `10000` | Thời gian chờ tối đa mỗi lần gọi Gemini; quá hạn thì chuyển model dự phòng |
 | `AI_MAX_TOOL_ROUNDS` | | `5` | Số vòng gọi tool tối đa trong một câu trả lời |
 | `AI_HISTORY_MESSAGES` | | `20` | Số tin gần nhất gửi kèm làm ngữ cảnh |
 | `AI_PUBLIC_RATE_LIMIT` | | `20` | Lượt hỏi trợ lý công khai mỗi 10 phút mỗi IP (giai đoạn 2) |

@@ -4,6 +4,18 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 04/11/2026 – Thử trợ lý AI với key Gemini thật, sửa lỗi
+
+| Lớp | Thay đổi |
+|---|---|
+| Backend | Model chính mặc định `gemini-3.8-flash` → `gemini-3.6-flash` (3.8 quá tải liên tục ở free tier); `AI_TIMEOUT_MS` 20000 → 10000. Trợ lý công khai bắt buộc gọi tool ở vòng đầu (`toolMode: "ANY"`) và prompt cấm nêu tên địa điểm ngoài kết quả tool – trước đó AI bịa "Danang Beach Resort". `toPlainText` bỏ Markdown khỏi mọi câu trả lời AI. Prompt CSKH cấm đề nghị đặt chỗ hộ. Log `aiSupportReply` mỗi lượt (model, số tool, ms). `vitest.config.ts` ghim `AI_ENABLED=false` |
+| Frontend | `Screen` với `scroll={false}` vừa khít khung (trước đó giãn theo nội dung, M6 trên màn hình hẹp bị tràn); M6 hẹp: thông tin + tóm tắt cuộn riêng tối đa 45% |
+| Tài liệu | [ai-cskh.md](../02-thiet-ke/ai-cskh.md) mục 2, 3 và mục 10 (kết quả thử thật); [deploy.md](../03-trien-khai/deploy.md) |
+
+Kiểm chứng: thử với key thật trên máy dev (free tier) toàn bộ kịch bản ở ai-cskh.md mục 10, cả API và giao diện web; `npm test` 127/127, `tsc` + `expo lint` sạch. Độ trễ 4–24 giây do free tier hay quá tải. Chưa thử trên Android và trên VPS.
+
+---
+
 ## 04/11/2026 – Trợ lý tư vấn công khai và gợi ý cho Staff (giai đoạn 2–3)
 
 | Lớp | Thay đổi |

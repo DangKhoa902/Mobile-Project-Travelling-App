@@ -22,12 +22,12 @@ Mỗi việc dùng một model phù hợp, cấu hình bằng biến môi trư�
 
 | Việc | Biến | Model mặc định | Vì sao |
 |---|---|---|---|
-| Chat CSKH và tư vấn có gọi tool (nhiều bước, cần suy luận) | `AI_MODEL_AGENT` | `gemini-3.8-flash` | Flash mạnh nhất, hỗ trợ function calling tốt, có free tier |
+| Chat CSKH và tư vấn có gọi tool (nhiều bước, cần suy luận) | `AI_MODEL_AGENT` | `gemini-3.6-flash` | Flash ổn định, gọi tool tốt, có free tier. `gemini-3.8-flash` mạnh hơn nhưng khi thử ngày 04/11/2026 bị quá tải liên tục ở free tier (503/504) |
 | Tóm tắt hội thoại, gợi ý câu trả lời cho Staff, model dự phòng khi model chính lỗi | `AI_MODEL_LITE` | `gemini-3.5-flash-lite` | Rẻ và nhanh nhất, đủ cho việc một bước không cần tool |
 
 Luồng dự phòng: gọi `AI_MODEL_AGENT` → lỗi 429/5xx/timeout → thử lại một lần với `AI_MODEL_LITE` → vẫn lỗi → chuyển nhân viên (`handoffReason = "AI_ERROR"`).
 
-Giá tham khảo (paid tier, mỗi 1 triệu token, tra ngày 04/11/2026): `gemini-3.8-flash` $0,75 vào / $3,75 ra (tăng gấp đôi từ 01/01/2027); `gemini-3.5-flash-lite` $0,30 / $2,50. Cả hai có free tier.
+Giá tham khảo (paid tier, mỗi 1 triệu token, tra ngày 04/11/2026): `gemini-3.6-flash` và `gemini-3.8-flash` $0,75 vào / $3,75 ra (tăng gấp đôi từ 01/01/2027); `gemini-3.5-flash-lite` $0,30 / $2,50. Cả hai có free tier.
 
 ## 3. Biến môi trường (backend)
 
@@ -35,9 +35,9 @@ Giá tham khảo (paid tier, mỗi 1 triệu token, tra ngày 04/11/2026): `gemi
 |---|---|---|
 | `AI_ENABLED` | `false` | Bật AI. `true` mà thiếu `GEMINI_API_KEY` thì API không khởi động |
 | `GEMINI_API_KEY` | | Key tạo tại Google AI Studio |
-| `AI_MODEL_AGENT` | `gemini-3.8-flash` | Model cho chat có tool |
+| `AI_MODEL_AGENT` | `gemini-3.6-flash` | Model cho chat có tool |
 | `AI_MODEL_LITE` | `gemini-3.5-flash-lite` | Model cho tóm tắt, gợi ý, dự phòng |
-| `AI_TIMEOUT_MS` | `20000` | Thời gian chờ tối đa mỗi lần gọi Gemini |
+| `AI_TIMEOUT_MS` | `10000` | Thời gian chờ tối đa mỗi lần gọi Gemini; quá hạn thì chuyển model dự phòng |
 | `AI_MAX_TOOL_ROUNDS` | `5` | Số vòng gọi tool tối đa trong một câu trả lời |
 | `AI_HISTORY_MESSAGES` | `20` | Số tin gần nhất gửi kèm làm ngữ cảnh |
 | `AI_PUBLIC_RATE_LIMIT` | `20` | Số lượt hỏi trợ lý công khai mỗi 10 phút mỗi IP (giai đoạn 2) |
@@ -167,3 +167,29 @@ Kết quả tool không chứa email, số điện thoại, địa chỉ của k
 - Unit: phân quyền tool (booking của người khác không đọc được), dựng lịch sử hội thoại, chuyển nhân viên khi lỗi; Gemini được giả lập (không gọi mạng).
 - Integration (Supertest): `GET /api/ai/status`, validation `POST /api/ai/assistant`, `AI_DISABLED` khi tắt.
 - Thử tay với key thật: kịch bản ở [../03-trien-khai/kiem-thu.md](../03-trien-khai/kiem-thu.md).
+
+## 10. Kết quả thử với key thật (04/11/2026, free tier, máy dev)
+
+| Kịch bản | Kết quả |
+|---|---|
+| Khách hỏi "Booking gần nhất đã xác nhận chưa?" | Đúng mã booking, trạng thái, ngày nhận phòng |
+| Hỏi hủy có được hoàn tiền | Áp đúng chính sách (đã qua giờ nhận phòng → không tự hủy), đề nghị chuyển nhân viên |
+| Hỏi giá Deluxe 1 đêm, 2 khách | 1.836.000đ, khớp `POST /bookings/quote`; hỏi phòng trống trả đúng |
+| Hỏi booking của người khác | Từ chối: "không tìm thấy trong tài khoản của bạn" (không lộ dữ liệu) |
+| "Mình muốn khiếu nại, cho gặp nhân viên" | AI gọi `handoff_to_staff`, lưu lý do + `aiSummary`, báo khách |
+| Trợ lý công khai: Đà Lạt 2 người 3 triệu / resort biển Đà Nẵng | Thẻ Đà Lạt Pine Hill Resort / Mỹ Khê Beach Hotel |
+| Câu hỏi ngoài phạm vi ("viết thơ chính trị") | Từ chối nhẹ nhàng, quay về tư vấn du lịch |
+| Staff: Gợi ý trả lời / Tóm tắt | Bản nháp vào ô nhập (không tự gửi); tóm tắt 4 dòng đúng diễn biến |
+| Giao diện web | `/assistant`, C2 (nhãn AI, Gặp nhân viên, dải đã chuyển), M5 (lọc, nhãn lý do), M6 (2 nút, thẻ tóm tắt) hiển thị đúng, không lỗi console |
+
+Lỗi tìm ra khi thử và đã sửa:
+
+- `gemini-3.8-flash` quá tải liên tục ở free tier (503, hoặc 504 sau ~19 giây) → model chính mặc định đổi sang `gemini-3.6-flash`, `AI_TIMEOUT_MS` 20000 → 10000 để chuyển model dự phòng sớm hơn.
+- Trợ lý công khai trả lời lượt 2 mà không gọi tool và bịa tên địa điểm → vòng đầu mỗi câu hỏi bắt buộc gọi tool (`toolConfig` mode `ANY`), prompt cấm nêu tên địa điểm không có trong kết quả tool.
+- Câu trả lời có Markdown (`**đậm**`, `#`) mà app hiện chữ thô → server lọc Markdown (`toPlainText`) cho mọi câu trả lời AI.
+- AI CSKH đề nghị "đặt phòng giúp" dù không có quyền → prompt cấm đề nghị làm hộ, hướng dẫn bấm Đặt ngay.
+- M6 trên màn hình hẹp (< 1024px): thông tin + tóm tắt + chat tràn khỏi màn hình → `Screen` (scroll={false}) vừa khít khung; thông tin và tóm tắt cuộn riêng tối đa 45% chiều cao.
+- Test backend đọc `AI_ENABLED=true` từ `be/.env` → `vitest.config.ts` ghim `AI_ENABLED=false`.
+- Thêm log `job: "aiSupportReply"` mỗi lượt CSKH (model, số tool, ms; không ghi nội dung).
+
+Độ trễ đo được: trợ lý công khai 4–24 giây, CSKH 8–21 giây (nhiều vòng tool; free tier thường trả 503 nên phần lớn câu trả lời do `gemini-3.5-flash-lite` viết sau khi chuyển dự phòng). `flash-lite` gọi trực tiếp chỉ ~0,7 giây/lượt. Muốn nhanh và ổn định: bật thanh toán (paid tier) hoặc đặt `AI_MODEL_AGENT=gemini-3.5-flash-lite`.

@@ -318,3 +318,12 @@ describe("scheduleAiReply: aiPending và hàng đợi", () => {
     expect(isAiPending(4242)).toBe(false);
   });
 });
+
+describe("toPlainText", () => {
+  it("bỏ Markdown mà app không hiển thị được", async () => {
+    const { toPlainText } = await import("../../src/services/ai-support.service.js");
+    expect(toPlainText("## Gợi ý\nSàn có **Mỹ Khê Beach Hotel** và __Pine Hill__\n* Hồ bơi\n* Gần biển")).toBe(
+      "Gợi ý\nSàn có Mỹ Khê Beach Hotel và Pine Hill\n- Hồ bơi\n- Gần biển",
+    );
+  });
+});

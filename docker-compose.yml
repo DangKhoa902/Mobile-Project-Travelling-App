@@ -49,7 +49,7 @@ services:
       GOOGLE_CLIENT_IDS: ${GOOGLE_CLIENT_IDS:-}
       AI_ENABLED: ${AI_ENABLED:-false}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      AI_MODEL_AGENT: ${AI_MODEL_AGENT:-gemini-3.8-flash}
+      AI_MODEL_AGENT: ${AI_MODEL_AGENT:-gemini-3.6-flash}
       AI_MODEL_LITE: ${AI_MODEL_LITE:-gemini-3.5-flash-lite}
       REQUEST_LOG: ${REQUEST_LOG:-true}
       SLOW_REQUEST_MS: ${SLOW_REQUEST_MS:-1000}

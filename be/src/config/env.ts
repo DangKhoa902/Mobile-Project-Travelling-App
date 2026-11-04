@@ -65,10 +65,10 @@ const envSchema = z.object({
   // Key chỉ nằm ở backend, không đưa vào EXPO_PUBLIC_*.
   GEMINI_API_KEY: z.string().optional(),
   // Model cho chat có gọi tool (nhiều bước).
-  AI_MODEL_AGENT: z.string().default("gemini-3.8-flash"),
+  AI_MODEL_AGENT: z.string().default("gemini-3.6-flash"),
   // Model rẻ, nhanh: tóm tắt, gợi ý, và dự phòng khi model chính lỗi.
   AI_MODEL_LITE: z.string().default("gemini-3.5-flash-lite"),
-  AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(20_000),
+  AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(10_000),
   AI_MAX_TOOL_ROUNDS: z.coerce.number().int().min(1).max(10).default(5),
   AI_HISTORY_MESSAGES: z.coerce.number().int().min(1).max(100).default(20),
   // Số lượt hỏi trợ lý công khai mỗi 10 phút mỗi IP (giai đoạn 2).

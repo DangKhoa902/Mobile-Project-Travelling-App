@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { ChatView } from "@/components/support/chat-view";
 import { Badge } from "@/components/ui/badge";
@@ -97,9 +97,12 @@ export default function SupportConversation() {
           <View className="w-80">{panel}</View>
         </View>
       ) : (
-        <View className="flex-1">
-          <View className="px-4 pb-2">{panel}</View>
-          {summary}
+        <View className="min-h-0 flex-1">
+          {/* Thông tin + tóm tắt cuộn riêng, tối đa 45% màn hình, để khung chat luôn còn chỗ. */}
+          <ScrollView className="max-h-[45%] grow-0" contentContainerClassName="pb-2">
+            <View className="px-4 pb-2">{panel}</View>
+            {summary}
+          </ScrollView>
           <ChatView conversationId={Number(id)} closed={data?.status === "CLOSED"} aiPending={data?.aiPending ?? false} draft={draft} toolbar={toolbar} />
         </View>
       )}

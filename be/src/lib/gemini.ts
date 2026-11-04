@@ -1,5 +1,6 @@
 import {
   ApiError,
+  FunctionCallingConfigMode,
   GoogleGenAI,
   ThinkingLevel,
   type Content,
@@ -36,6 +37,8 @@ export type GenerateInput = {
   functionDeclarations?: FunctionDeclaration[];
   // Thứ tự model thử lần lượt; mặc định AGENT rồi LITE (mục 2 của tài liệu thiết kế).
   models?: string[];
+  // "ANY": bắt model phải gọi tool ở lượt này (không trả lời chay); mặc định để model tự quyết.
+  toolMode?: "ANY" | "AUTO";
 };
 
 export type GenerateResult =
@@ -66,6 +69,9 @@ export async function generate(input: GenerateInput, geminiClient: GeminiClient 
         config: {
           systemInstruction: input.systemInstruction,
           ...(input.functionDeclarations?.length ? { tools: [{ functionDeclarations: input.functionDeclarations }] } : {}),
+          ...(input.toolMode === "ANY" && input.functionDeclarations?.length
+            ? { toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY } } }
+            : {}),
           // App tự chạy vòng gọi tool để kiểm soát phạm vi dữ liệu và số vòng.
           automaticFunctionCalling: { disable: true },
           thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
