@@ -45,7 +45,12 @@ export function Screen({
 }: ScreenProps) {
   // Không có thanh đáy: chừa chỗ cho thanh điều hướng cử chỉ của Android / home indicator iOS.
   const insets = useSafeAreaInsets();
-  const body = <View className={`w-full self-center ${padded ? "px-4 pb-8" : ""}`} style={{ maxWidth }}>{children}</View>;
+  // scroll={false}: nội dung phải vừa khít phần còn lại của màn hình (chat tự cuộn bên trong), không giãn theo nội dung.
+  const body = (
+    <View className={`w-full self-center ${scroll ? "" : "min-h-0 flex-1"} ${padded ? "px-4 pb-8" : ""}`} style={{ maxWidth }}>
+      {children}
+    </View>
+  );
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-surface">

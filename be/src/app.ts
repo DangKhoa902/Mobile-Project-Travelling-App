@@ -6,6 +6,7 @@ import { prisma } from "./lib/prisma.js";
 import { localUploadRoot } from "./lib/storage.js";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler.js";
 import { requestLog } from "./middlewares/request-log.js";
+import { aiRouter } from "./routes/ai.routes.js";
 import { auditRouter } from "./routes/audit.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { bookingRouter } from "./routes/booking.routes.js";
@@ -81,6 +82,7 @@ app.use("/api/payouts", payoutRouter);
 app.use("/api/audit-logs", auditRouter);
 app.use("/api/devices", deviceRouter);
 app.use("/api/uploads", uploadRouter);
+app.use("/api/ai", aiRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

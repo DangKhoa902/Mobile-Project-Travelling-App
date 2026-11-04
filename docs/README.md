@@ -7,14 +7,15 @@ docs/
 ├── 01-dac-ta/                  HỆ THỐNG LÀM GÌ
 │   ├── tong-quan.md            Mục tiêu, mô hình môi giới, 5 actor, use case, phạm vi
 │   ├── tai-khoan-va-dang-ky.md Trường bắt buộc / tùy chọn: đăng ký, hồ sơ, đối tác, tin đăng
-│   ├── quy-tac-nghiep-vu.md    BR-01 → BR-27 và chỗ code thực thi
+│   ├── quy-tac-nghiep-vu.md    BR-01 → BR-31 và chỗ code thực thi
 │   ├── luong-nghiep-vu.md      Luồng chi tiết + sơ đồ + bảng mã lỗi
 │   └── thanh-toan-gia-lap.md   Cổng thanh toán giả lập, hạn 15 phút, hoàn tiền
 │
 ├── 02-thiet-ke/                THIẾT KẾ
 │   ├── co-so-du-lieu.md        ERD, 27 bảng, enum, index, công thức giá và hoa hồng
 │   ├── api.md                  Toàn bộ endpoint theo module và quyền
-│   └── giao-dien.md            Sitemap + đặc tả từng trang (khách, chủ địa điểm, admin)
+│   ├── giao-dien.md            Sitemap + đặc tả từng trang (khách, chủ địa điểm, admin)
+│   └── ai-cskh.md              Trợ lý AI (Gemini): tool, API, prompt, lộ trình 3 giai đoạn
 │
 ├── 03-trien-khai/              LÀM VÀ CHẠY
 │   ├── backend.md              Kiến trúc lớp, cấu trúc file, quy ước, thêm chức năng, migration
@@ -43,6 +44,7 @@ docs/
 | Thành viên mới | [tong-quan.md](01-dac-ta/tong-quan.md) → [deploy.md](03-trien-khai/deploy.md) mục 1 → [git.md](04-quan-ly-du-an/git.md) |
 | Làm giao diện | [yeu-cau-frontend.md](03-trien-khai/yeu-cau-frontend.md) → [frontend-web-mobile.md](03-trien-khai/frontend-web-mobile.md) → [giao-dien.md](02-thiet-ke/giao-dien.md) → [luong-nghiep-vu.md](01-dac-ta/luong-nghiep-vu.md) → [api.md](02-thiet-ke/api.md) |
 | Làm backend | [backend.md](03-trien-khai/backend.md) → [quy-tac-nghiep-vu.md](01-dac-ta/quy-tac-nghiep-vu.md) → [co-so-du-lieu.md](02-thiet-ke/co-so-du-lieu.md) → [api.md](02-thiet-ke/api.md) |
+| Làm trợ lý AI | [ai-cskh.md](02-thiet-ke/ai-cskh.md) → [quy-tac-nghiep-vu.md](01-dac-ta/quy-tac-nghiep-vu.md) (BR-28 → BR-31) → [api.md](02-thiet-ke/api.md) → [kiem-thu.md](03-trien-khai/kiem-thu.md) mục 3.1 |
 | Kiểm thử / demo | [kiem-thu.md](03-trien-khai/kiem-thu.md) |
 | Đăng nhập Google | [dang-nhap-google.md](03-trien-khai/dang-nhap-google.md) |
 | Triển khai / vận hành | [trien-khai-production.md](03-trien-khai/trien-khai-production.md) → [giam-sat-van-hanh.md](03-trien-khai/giam-sat-van-hanh.md) |

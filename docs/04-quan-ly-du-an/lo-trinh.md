@@ -14,6 +14,7 @@ Trạng thái: ✅ xong · 🔄 đang làm · ⬜ chưa làm. Cập nhật mục
 | 5 | Giao diện Web + Mobile theo đặc tả | ✅ (25/10/2026) |
 | 6 | Kết nối giao diện với API, trạng thái tải/lỗi | ✅ (25/10/2026) |
 | 7 | Kiểm thử đa nền tảng, build, triển khai | 🔄 (backend xong) |
+| 8 | Trợ lý AI (Gemini): AI trả lời CSKH, trợ lý tư vấn, hỗ trợ Staff | 🔄 |
 
 ## Giai đoạn 3 – Backend nghiệp vụ (✅ 21/10/2026)
 
@@ -71,6 +72,18 @@ Thực hiện theo [frontend-web-mobile.md](../03-trien-khai/frontend-web-mobile
 | Web build (`npx expo export --platform web` chạy được) | ✅ |
 | Deploy web lên hosting | ⬜ |
 | File `.apk` chạy trên điện thoại thật | ⬜ |
+
+## Giai đoạn 8 – Trợ lý AI (Gemini) (🔄)
+
+Thiết kế, API, mã lỗi và biến môi trường: [ai-cskh.md](../02-thiet-ke/ai-cskh.md).
+
+| Giai đoạn | Nội dung | Trạng thái |
+|---|---|---|
+| 1 | AI trả lời trong hội thoại CSKH (C1/C2); khách bấm gặp nhân viên; nhân viên tiếp quản; AI tự chuyển nhân viên khi lỗi | ✅ code + test, chưa thử key thật |
+| 2 | Trợ lý tư vấn du lịch công khai (`/assistant`): hỏi đáp, gợi ý địa điểm kèm thẻ | ✅ code + test, chưa thử key thật |
+| 3 | Cho Staff: gợi ý câu trả lời, tóm tắt hội thoại (M6) | ✅ code + test, chưa thử key thật |
+| Tiếp theo | Thử với `GEMINI_API_KEY` thật trên máy dev (04/11/2026, [ai-cskh.md](../02-thiet-ke/ai-cskh.md) mục 10) | ✅ |
+| Tiếp theo | Thử trên Android và VPS; quyết định free tier hay paid tier (độ trễ 4–24 giây ở free tier) | ⬜ |
 
 ## Đề xuất sau đồ án (theo thứ tự giá trị)
 

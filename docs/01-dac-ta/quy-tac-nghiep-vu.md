@@ -1,6 +1,6 @@
 # Quy tắc nghiệp vụ
 
-BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thêm chủ địa điểm, hoa hồng, hạn thanh toán và dashboard; BR-21 → BR-27 khi thêm phiên đăng nhập, email, giá mùa, đối soát, nhật ký, ảnh, tìm không dấu. Cột **Thực thi tại** chỉ chỗ code đảm bảo quy tắc, để khi sửa biết phải sửa ở đâu.
+BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thêm chủ địa điểm, hoa hồng, hạn thanh toán và dashboard; BR-21 → BR-27 khi thêm phiên đăng nhập, email, giá mùa, đối soát, nhật ký, ảnh, tìm không dấu; BR-28 → BR-31 khi thêm trợ lý AI CSKH. Cột **Thực thi tại** chỉ chỗ code đảm bảo quy tắc, để khi sửa biết phải sửa ở đâu.
 
 ## Tài khoản và phân quyền
 
@@ -62,3 +62,12 @@ BR-01 → BR-10 lấy từ tài liệu gốc. BR-11 → BR-20 bổ sung khi thê
 |---|---|
 | Doanh thu chỉ tính booking `CONFIRMED` và `COMPLETED`, theo **ngày tạo booking** (giờ Việt Nam). | `stats.service.ts` (`REVENUE_STATUSES`) |
 | Admin xem số liệu toàn sàn; chủ địa điểm chỉ xem số liệu địa điểm của mình. | `getOverview` theo `user.role` |
+
+## AI hỗ trợ CSKH (bổ sung 04/11/2026)
+
+| Mã | Quy tắc | Thực thi tại |
+|---|---|---|
+| BR-28 | AI chỉ đọc dữ liệu qua tool. AI không hủy booking, thanh toán, hoàn tiền hay sửa dữ liệu; các việc đó chuyển cho nhân viên. Tool gọi lại service / DAO sẵn có nên quy tắc nghiệp vụ không bị viết lại. | `ai-tools.ts` |
+| BR-29 | Tool về booking chỉ đọc booking của **khách đang chat** (như BR-10). Không gửi email, số điện thoại, địa chỉ của khách cho Gemini. | `ai-tools.ts` |
+| BR-30 | Khách được chuyển sang nhân viên bất cứ lúc nào. Nhân viên trả lời trong hội thoại AI thì tiếp quản (`handler = STAFF`). AI lỗi (tắt, hết hạn mức, lỗi mạng, câu trả lời bị chặn) thì hội thoại tự chuyển cho nhân viên kèm lý do; khách vẫn chat bình thường. | `ai-support.service.ts`, `conversation.routes.ts` |
+| BR-31 | API key Gemini (`GEMINI_API_KEY`) chỉ nằm ở backend, không đưa vào `EXPO_PUBLIC_*`. `AI_ENABLED=true` mà thiếu key thì API không khởi động. | `config/env.ts` |
