@@ -4,6 +4,19 @@ Ghi lại **thay đổi gì, ở lớp nào, vì sao** – để thành viên m�
 
 ---
 
+## 04/11/2026 – Dữ liệu mẫu: 50 địa điểm du lịch
+
+| Lớp | Thay đổi |
+|---|---|
+| Database | Không có migration. `npm run db:seed` thêm 44 địa điểm (tổng 50) ở `be/prisma/seed-data/destinations.ts`: 15 miền Bắc, 18 miền Trung – Tây Nguyên, 11 miền Nam; đủ 8 danh mục (Biển 6, Núi 5, Resort 8, Khách sạn 5, Khu vui chơi 6, Di tích lịch sử 6, Văn hóa 5, Sinh thái 9); mỗi địa điểm có 1–2 gói, 1–3 loại phòng, dịch vụ bổ sung, tiện ích, 3 ảnh; 14 địa điểm nổi bật |
+| Database | Thêm đối tác `owner3@` (miền Nam, hoa hồng 13%) và `owner4@` (miền Bắc, 15%); `owner1@`, `owner2@` nhận thêm cơ sở theo vùng; các địa điểm còn lại do sàn tự quản lý |
+| Database | `seed-data/reviews.ts`: 8 tài khoản khách mẫu (mật khẩu ngẫu nhiên, không đăng nhập được) viết 1–4 đánh giá đã duyệt cho mỗi địa điểm, mỗi đánh giá gắn booking `COMPLETED` 40–250 ngày trước (BR-02). Booking này được gom vào một kỳ đối soát đã chuyển cho từng chủ, nên không làm phình "tiền chưa đối soát" |
+| Tài liệu | Bảng tài khoản demo trong README, giao-dien.md, yeu-cau-frontend.md; dòng seed trong co-so-du-lieu.md |
+
+Seed vẫn chạy lại an toàn: địa điểm đã có slug bị bỏ qua, đánh giá mẫu chỉ tạo một lần (đánh dấu `note = "[seed-review]"`). Tên cơ sở là tên giả định cho demo; địa danh và tọa độ là thật; ảnh lấy từ picsum.photos như dữ liệu cũ. Kiểm chứng: chạy seed 2 lần trên DB dev, 50 địa điểm hiển thị, tìm "ha noi", "nha trang", "hue", "can tho" ra đúng, báo giá Phong Nha 1.944.000đ, trang chi tiết có 4 đánh giá.
+
+---
+
 ## 26/10/2026 – Đăng nhập / đăng ký bằng Google
 
 | Lớp | Thay đổi |

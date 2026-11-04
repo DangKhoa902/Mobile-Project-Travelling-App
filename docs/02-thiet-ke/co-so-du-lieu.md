@@ -606,7 +606,7 @@ Lệnh thường dùng (chạy trong `be/`):
 ```bash
 npm run db:migrate -- --name ten_migration   # tạo + áp dụng migration khi dev
 npm run db:deploy                            # áp dụng migration ở server/production
-npm run db:seed                              # dữ liệu mẫu: 6 tài khoản (gồm 2 chủ địa điểm), 8 danh mục, 6 địa điểm, voucher WELCOME10, booking 30 ngày cho dashboard
+npm run db:seed                              # dữ liệu mẫu: tài khoản demo (4 chủ địa điểm), 8 danh mục, 50 địa điểm (seed.ts + seed-data/destinations.ts), ~135 đánh giá mẫu, voucher WELCOME10, booking 30 ngày cho dashboard
 npm run db:studio                            # xem dữ liệu
 ```
 

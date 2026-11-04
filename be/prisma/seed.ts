@@ -4,6 +4,9 @@ import { prisma } from "../src/lib/prisma.js";
 import { refreshDestinationMinPrice, refreshDestinationRating } from "../src/services/destination.service.js";
 import { generateBookingCode } from "../src/services/booking-rules.js";
 import { backfillSearchText } from "./backfill-search.js";
+import { extraDestinations } from "./seed-data/destinations.js";
+import { seedSampleReviews } from "./seed-data/reviews.js";
+import type { SeedDestination } from "./seed-data/types.js";
 
 const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD ?? "Password123";
 
@@ -31,23 +34,8 @@ const facilities = [
   { name: "Nhà hàng", iconName: "restaurant" },
 ];
 
-type SeedDestination = {
-  name: string;
-  slug: string;
-  category: string;
-  location: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  description: string;
-  isFeatured: boolean;
-  facilities: string[];
-  packages: { name: string; durationDays: number; durationNights: number; price: number; inclusions: string[]; freeCancellationHours?: number }[];
-  roomTypes: { name: string; capacity: number; pricePerNight: number; totalRooms: number }[];
-  services: { name: string; price: number; pricingUnit: "PER_BOOKING" | "PER_GUEST" | "PER_NIGHT" }[];
-};
-
-const destinations: SeedDestination[] = [
+// 6 địa điểm gốc dùng cho kịch bản demo; 44 địa điểm bổ sung ở seed-data/destinations.ts.
+const baseDestinations: SeedDestination[] = [
   {
     name: "Đà Lạt Pine Hill Resort",
     slug: "da-lat-pine-hill-resort",
@@ -171,6 +159,9 @@ const destinations: SeedDestination[] = [
   },
 ];
 
+const destinations = [...baseDestinations, ...extraDestinations];
+const ownedBy = (email: string) => extraDestinations.filter((item) => item.owner === email).map((item) => item.slug);
+
 async function main() {
   const password = await bcrypt.hash(DEFAULT_PASSWORD, 10);
   const accounts = [
@@ -236,7 +227,7 @@ async function main() {
         contactPhone: "0263381234",
         commissionRate: 0.15,
       },
-      destinations: ["da-lat-pine-hill-resort", "sa-pa-mountain-lodge", "vinh-ha-long-cruise"],
+      destinations: ["da-lat-pine-hill-resort", "sa-pa-mountain-lodge", "vinh-ha-long-cruise", ...ownedBy("owner1@travelling.app")],
     },
     {
       email: "owner2@travelling.app",
@@ -249,7 +240,33 @@ async function main() {
         contactPhone: "0236391234",
         commissionRate: 0.12,
       },
-      destinations: ["my-khe-beach-hotel", "phu-quoc-sunset-resort"],
+      destinations: ["my-khe-beach-hotel", "phu-quoc-sunset-resort", ...ownedBy("owner2@travelling.app")],
+    },
+    {
+      email: "owner3@travelling.app",
+      name: "Võ Thị Hồng",
+      status: "APPROVED" as const,
+      profile: {
+        businessName: "Công ty CP Du lịch Phương Nam",
+        taxCode: "0312345678",
+        businessAddress: "45 Lê Thánh Tôn, Bến Nghé, Quận 1, TP. Hồ Chí Minh",
+        contactPhone: "0283822123",
+        commissionRate: 0.13,
+      },
+      destinations: ownedBy("owner3@travelling.app"),
+    },
+    {
+      email: "owner4@travelling.app",
+      name: "Đỗ Quang Huy",
+      status: "APPROVED" as const,
+      profile: {
+        businessName: "Hà Thành Heritage Travel",
+        taxCode: "0109876543",
+        businessAddress: "18 Hàng Bạc, Hoàn Kiếm, Hà Nội",
+        contactPhone: "0243926123",
+        commissionRate: 0.15,
+      },
+      destinations: ownedBy("owner4@travelling.app"),
     },
     {
       email: "partner.pending@travelling.app",
@@ -363,6 +380,7 @@ async function main() {
 
   await seedDashboardBookings(demoUser.id);
   await seedSeasonalRates();
+  await seedSampleReviews(users.STAFF.id);
   await backfillSearchText();
 
   console.log(`Seed completed. Demo accounts (password: ${DEFAULT_PASSWORD}):`);
